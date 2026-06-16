@@ -48,25 +48,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Fallback list of common places in Voss
-const COMMON_PLACES = {
-  no: [
-    { name: 'Voss Stasjon', address: 'Jernbaneplass 1, 5700 Voss' },
-    { name: 'Voss Sjukehus', address: 'Haugastøl, 5700 Voss' },
-    { name: 'Voss Sentrum', address: 'Evangersvingen, 5700 Voss' },
-    { name: 'Voss Lufthavn', address: 'Botnelva, 5700 Voss' },
-    { name: 'Oppheim Stasjon', address: 'Oppheim, 5700 Voss' },
-    { name: 'Voss Hotell', address: 'Utenesgt. 6, 5700 Voss' },
-  ],
-  en: [
-    { name: 'Voss Station', address: 'Jernbaneplass 1, 5700 Voss' },
-    { name: 'Voss Hospital', address: 'Haugastøl, 5700 Voss' },
-    { name: 'Voss City Center', address: 'Evangersvingen, 5700 Voss' },
-    { name: 'Voss Airport', address: 'Botnelva, 5700 Voss' },
-    { name: 'Oppheim Station', address: 'Oppheim, 5700 Voss' },
-    { name: 'Voss Hotel', address: 'Utenesgt. 6, 5700 Voss' },
-  ],
-};
+// No fallback - use only OpenStreetMap data
+// If Nominatim returns nothing, return empty array
 
 async function getAddressSuggestionsFromNominatim(
   query: string,
@@ -95,21 +78,21 @@ async function getAddressSuggestionsFromNominatim(
     });
 
     if (response.status === 429) {
-      console.warn('Nominatim rate limited (429), using fallback');
-      return getFallbackSuggestions(query, lang);
+      console.warn('Nominatim rate limited (429)');
+      return [];
     }
 
     if (!response.ok) {
       console.error('Nominatim API error:', response.status);
-      return getFallbackSuggestions(query, lang);
+      return [];
     }
 
     const data = await response.json();
     console.log(`Nominatim returned ${Array.isArray(data) ? data.length : 0} results`);
 
     if (!Array.isArray(data) || data.length === 0) {
-      console.log('No results from Nominatim, using fallback');
-      return getFallbackSuggestions(query, lang);
+      console.log('No results from Nominatim');
+      return [];
     }
 
     // Map Nominatim response to our format
@@ -139,21 +122,6 @@ async function getAddressSuggestionsFromNominatim(
     return suggestions;
   } catch (error) {
     console.error('Error fetching from Nominatim:', error);
-    return getFallbackSuggestions(query, lang);
+    return [];
   }
-}
-
-function getFallbackSuggestions(query: string, lang: 'no' | 'en'): any[] {
-  const places = COMMON_PLACES[lang] || COMMON_PLACES.no;
-  const searchTerm = query.toLowerCase().trim();
-
-  console.log(`Using fallback suggestions for "${query}"`);
-
-  return places
-    .filter(
-      (place) =>
-        place.name.toLowerCase().includes(searchTerm) ||
-        place.address.toLowerCase().includes(searchTerm)
-    )
-    .slice(0, 8);
 }

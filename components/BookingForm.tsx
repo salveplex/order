@@ -267,12 +267,12 @@ export default function BookingForm() {
           {/* Main Form Container */}
           <div className="p-1.5 rounded-[2rem] bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 shadow-2xl backdrop-blur-xl">
             {/* Inner Core */}
-            <div className="p-6 md:p-10 rounded-[calc(2rem-0.375rem)] bg-slate-900/80 border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
-              <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+            <div className="p-6 md:p-10 rounded-[calc(2rem-0.375rem)] bg-slate-900/80 border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] overflow-visible">
+              <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 overflow-visible">
                 {/* Pickup & Dropoff */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   {/* Pickup Location with Autocomplete */}
-                  <div className="group relative animate-[slideInLeft_0.6s_ease-out_0.3s_both]">
+                  <div className="group relative animate-[slideInLeft_0.6s_ease-out_0.3s_both] overflow-visible">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <MapPin className="w-4 h-4 inline mr-2" />
                       {t.pickupLocation}
@@ -295,18 +295,20 @@ export default function BookingForm() {
                       {showPickupSuggestions && pickupSuggestions.length > 0 && (
                         <div
                           style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            right: 0,
-                            marginTop: '8px',
-                            backgroundColor: 'rgb(15, 23, 42)',
-                            border: '3px solid rgb(59, 130, 246)',
-                            borderRadius: '12px',
-                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
-                            zIndex: 9999,
-                            maxHeight: '224px',
-                            overflowY: 'auto',
+                            position: 'absolute !important' as any,
+                            top: '100% !important' as any,
+                            left: '0 !important' as any,
+                            right: '0 !important' as any,
+                            marginTop: '8px !important' as any,
+                            backgroundColor: 'rgb(15, 23, 42) !important' as any,
+                            border: '3px solid rgb(59, 130, 246) !important' as any,
+                            borderRadius: '12px !important' as any,
+                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5) !important' as any,
+                            zIndex: 99999,
+                            maxHeight: '224px !important' as any,
+                            overflowY: 'auto !important' as any,
+                            opacity: '1 !important' as any,
+                            visibility: 'visible !important' as any,
                           }}
                         >
                           {pickupSuggestions.map((suggestion, idx) => (
@@ -317,14 +319,17 @@ export default function BookingForm() {
                                 selectAddressSuggestion('pickupLocation', suggestion)
                               }
                               style={{
-                                width: '100%',
-                                padding: '12px 16px',
+                                width: '100% !important' as any,
+                                padding: '12px 16px !important' as any,
                                 textAlign: 'left',
-                                backgroundColor: 'rgb(15, 23, 42)',
-                                color: 'white',
-                                borderBottom: idx === pickupSuggestions.length - 1 ? 'none' : '1px solid rgb(51, 65, 85)',
+                                backgroundColor: 'rgb(15, 23, 42) !important' as any,
+                                color: 'white !important' as any,
+                                borderBottom: idx === pickupSuggestions.length - 1 ? 'none !important' as any : '1px solid rgb(51, 65, 85) !important' as any,
                                 cursor: 'pointer',
-                                transition: 'background-color 0.2s',
+                                transition: 'background-color 0.2s !important' as any,
+                                display: 'block !important' as any,
+                                border: 'none',
+                                opacity: '1 !important' as any,
                               }}
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.backgroundColor = 'rgb(51, 65, 85)';
@@ -347,7 +352,7 @@ export default function BookingForm() {
                   </div>
 
                   {/* Dropoff Location with Autocomplete */}
-                  <div className="group relative animate-[slideInRight_0.6s_ease-out_0.3s_both]">
+                  <div className="group relative animate-[slideInRight_0.6s_ease-out_0.3s_both] overflow-visible">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <MapPin className="w-4 h-4 inline mr-2" />
                       {t.dropoffLocation}
@@ -371,18 +376,20 @@ export default function BookingForm() {
                         dropoffSuggestions.length > 0 && (
                           <div
                             style={{
-                              position: 'absolute',
-                              top: '100%',
-                              left: 0,
-                              right: 0,
-                              marginTop: '8px',
-                              backgroundColor: 'rgb(15, 23, 42)',
-                              border: '3px solid rgb(59, 130, 246)',
-                              borderRadius: '12px',
-                              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
-                              zIndex: 9999,
-                              maxHeight: '224px',
-                              overflowY: 'auto',
+                              position: 'absolute !important' as any,
+                              top: '100% !important' as any,
+                              left: '0 !important' as any,
+                              right: '0 !important' as any,
+                              marginTop: '8px !important' as any,
+                              backgroundColor: 'rgb(15, 23, 42) !important' as any,
+                              border: '3px solid rgb(59, 130, 246) !important' as any,
+                              borderRadius: '12px !important' as any,
+                              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5) !important' as any,
+                              zIndex: 99999,
+                              maxHeight: '224px !important' as any,
+                              overflowY: 'auto !important' as any,
+                              opacity: '1 !important' as any,
+                              visibility: 'visible !important' as any,
                             }}
                           >
                             {dropoffSuggestions.map((suggestion, idx) => (
@@ -396,14 +403,17 @@ export default function BookingForm() {
                                   )
                                 }
                                 style={{
-                                  width: '100%',
-                                  padding: '12px 16px',
+                                  width: '100% !important' as any,
+                                  padding: '12px 16px !important' as any,
                                   textAlign: 'left',
-                                  backgroundColor: 'rgb(15, 23, 42)',
-                                  color: 'white',
-                                  borderBottom: idx === dropoffSuggestions.length - 1 ? 'none' : '1px solid rgb(51, 65, 85)',
+                                  backgroundColor: 'rgb(15, 23, 42) !important' as any,
+                                  color: 'white !important' as any,
+                                  borderBottom: idx === dropoffSuggestions.length - 1 ? 'none !important' as any : '1px solid rgb(51, 65, 85) !important' as any,
                                   cursor: 'pointer',
-                                  transition: 'background-color 0.2s',
+                                  transition: 'background-color 0.2s !important' as any,
+                                  display: 'block !important' as any,
+                                  border: 'none',
+                                  opacity: '1 !important' as any,
                                 }}
                                 onMouseEnter={(e) => {
                                   e.currentTarget.style.backgroundColor = 'rgb(51, 65, 85)';
