@@ -20,8 +20,10 @@ interface BookingData {
   additionalInfo: string;
   pickupLat?: number;
   pickupLon?: number;
+  pickupCity?: string;
   dropoffLat?: number;
   dropoffLon?: number;
+  dropoffCity?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -88,10 +90,12 @@ async function createBookingWithTaxi4U(data: BookingData) {
   // Taxi4U AppBook API expects:
   // - centralCode: "VS" for Voss/Sogn
   // - fromStreet: pickup address (required)
+  // - fromCity: pickup city (helps avoid manual processing)
   // - toStreet: dropoff address
+  // - toCity: dropoff city (helps avoid manual processing)
   // - pickupTime: UTC datetime (required)
-  // - fromLat/fromLon: coordinates (used to resolve zone)
-  // - toLat/toLon: coordinates (used to resolve zone)
+  // - fromLat/fromLon: coordinates (required for auto-zone resolution)
+  // - toLat/toLon: coordinates
   // - customerName, tel, messageToCar
 
   const taxi4uBookingData: Record<string, any> = {
@@ -101,8 +105,20 @@ async function createBookingWithTaxi4U(data: BookingData) {
     pickupTime: pickupTimeISO,
     customerName: data.name,
     tel: data.phone,
-    messageToCar: data.additionalInfo || undefined,
   };
+
+  // Add city information if available (prevents manual processing)
+  if (data.pickupCity) {
+    taxi4uBookingData.fromCity = data.pickupCity;
+  }
+  if (data.dropoffCity) {
+    taxi4uBookingData.toCity = data.dropoffCity;
+  }
+
+  // Add message to driver if additional info provided
+  if (data.additionalInfo && data.additionalInfo.trim()) {
+    taxi4uBookingData.messageToCar = data.additionalInfo;
+  }
 
   // Add coordinates if provided (from address lookup)
   if (data.pickupLat && data.pickupLon) {
