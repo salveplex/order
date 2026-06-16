@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Taxi4U Premium Booking Page
+
+A modern, premium taxi booking interface built with Next.js and Tailwind CSS, designed to replace the existing outdated booking system with a professional, English-language experience.
+
+## Features
+
+- **Premium Dark Design** - Elegant gradient background with subtle animated orbs
+- **Complete Booking Form** with fields for:
+  - Pickup and dropoff locations
+  - Date and time selection
+  - Passenger count
+  - Vehicle type (Sedan, 6-seater, 8-seater, Wheelchair accessible)
+  - Passenger name and phone number
+  - Additional special requests
+- **High-End UI Patterns**:
+  - Double-Bezel card architecture for depth
+  - Asymmetrical Bento grid layout
+  - Smooth entry animations with cubic-bezier easing
+  - Responsive design (mobile-first, falls back to single column)
+  - GPU-optimized animations (transform & opacity only)
+- **Ready for Taxi4U API Integration** - Backend hooks for booking submission
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Edit .env.local and add your Taxi4U API credentials
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── app/
+│   ├── page.tsx          # Main page with animated background
+│   ├── layout.tsx        # Root layout with metadata
+│   └── globals.css       # Global styles and animations
+├── components/
+│   └── BookingForm.tsx   # Main booking form component
+├── lib/
+│   └── taxi4u-api.ts     # Taxi4U API integration (in progress)
+└── package.json
+```
 
-## Learn More
+## API Integration
 
-To learn more about Next.js, take a look at the following resources:
+The booking form is ready to integrate with the Taxi4U API. See `lib/taxi4u-api.ts` for the placeholder functions that need to be implemented:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `createBooking()` - Submit booking request
+- `validateLocation()` - Validate/autocomplete addresses
+- `getAvailableVehicles()` - Check vehicle availability and pricing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+Required (in `.env.local`):
+- `TAXI4U_USERNAME` - Your Taxi4U API username
+- `TAXI4U_PASSWORD` - Your Taxi4U API password
+- `NEXT_PUBLIC_API_URL` - Taxi4U API base URL
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Building for Production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```
+
+## Technologies Used
+
+- [Next.js 16](https://nextjs.org) - React framework
+- [Tailwind CSS 4](https://tailwindcss.com) - Utility-first CSS
+- [TypeScript](https://www.typescriptlang.org) - Type safety
+- [Lucide React](https://lucide.dev) - Icon library
+
+## License
+
+Private - Taxi4U Booking System
