@@ -293,7 +293,7 @@ export default function BookingForm() {
                         className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                       />
                       {showPickupSuggestions && pickupSuggestions.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-white/10 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border-2 border-blue-500 rounded-lg shadow-2xl z-50 max-h-56 overflow-y-auto">
                           {pickupSuggestions.map((suggestion, idx) => (
                             <button
                               key={idx}
@@ -301,10 +301,10 @@ export default function BookingForm() {
                               onClick={() =>
                                 selectAddressSuggestion('pickupLocation', suggestion)
                               }
-                              className="w-full px-4 py-2 text-left hover:bg-slate-700 text-sm text-white border-b border-slate-700 last:border-b-0"
+                              className="w-full px-4 py-3 text-left hover:bg-slate-700 hover:bg-opacity-50 text-sm text-white border-b border-slate-700 last:border-b-0 transition-colors"
                             >
-                              <div className="font-semibold">{suggestion.name}</div>
-                              <div className="text-xs text-slate-400">
+                              <div className="font-semibold text-white">{suggestion.name}</div>
+                              <div className="text-xs text-slate-300 mt-1">
                                 {suggestion.address}
                               </div>
                             </button>
@@ -337,7 +337,7 @@ export default function BookingForm() {
                       />
                       {showDropoffSuggestions &&
                         dropoffSuggestions.length > 0 && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-white/10 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border-2 border-blue-500 rounded-lg shadow-2xl z-50 max-h-56 overflow-y-auto">
                             {dropoffSuggestions.map((suggestion, idx) => (
                               <button
                                 key={idx}
@@ -348,12 +348,12 @@ export default function BookingForm() {
                                     suggestion
                                   )
                                 }
-                                className="w-full px-4 py-2 text-left hover:bg-slate-700 text-sm text-white border-b border-slate-700 last:border-b-0"
+                                className="w-full px-4 py-3 text-left hover:bg-slate-700 hover:bg-opacity-50 text-sm text-white border-b border-slate-700 last:border-b-0 transition-colors"
                               >
-                                <div className="font-semibold">
+                                <div className="font-semibold text-white">
                                   {suggestion.name}
                                 </div>
-                                <div className="text-xs text-slate-400">
+                                <div className="text-xs text-slate-300 mt-1">
                                   {suggestion.address}
                                 </div>
                               </button>
