@@ -56,9 +56,7 @@ export async function GET(request: NextRequest) {
 async function getAddressSuggestionsFromEntur(query: string, lang: 'no' | 'en') {
   try {
     const params = new URLSearchParams({
-      text: query,
-      lang: lang === 'no' ? 'no' : 'en',
-      size: '10',
+      q: query,
     });
 
     const response = await fetch(
@@ -88,29 +86,31 @@ async function getAddressSuggestionsFromEntur(query: string, lang: 'no' | 'en') 
     const suggestions = data.features.map((feature: any) => {
       const props = feature.properties || {};
       const coords = feature.geometry?.coordinates || [0, 0];
+      const address = props.address || {};
+
+      // Get name from Entur's names object
+      const name = props.names?.default || props.names?.display || props.name || '';
 
       // Build address from properties
       const addressParts = [];
       if (props.street && props.housenumber) {
         addressParts.push(`${props.street} ${props.housenumber}`);
-      } else if (props.street) {
-        addressParts.push(props.street);
       }
-      if (props.locality) {
-        addressParts.push(props.locality);
+      if (address.locality) {
+        addressParts.push(address.locality);
       }
-      if (props.postalcode) {
-        addressParts.push(props.postalcode);
+      if (address.postCode) {
+        addressParts.push(address.postCode);
       }
 
       return {
-        name: props.name || props.label || '',
-        address: addressParts.join(', ') || props.label || '',
+        name: name,
+        address: addressParts.length > 0 ? addressParts.join(', ') : address.locality || name,
         lat: coords[1],
         lng: coords[0],
-        type: props.layer || props.category?.[0] || '',
+        type: props.layer || '',
       };
-    }).filter((item: any) => item.name && item.address);
+    }).filter((item: any) => item.name);
 
     console.log(`Entur returned ${suggestions.length} results`);
     return suggestions;
