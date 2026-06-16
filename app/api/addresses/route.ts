@@ -6,8 +6,9 @@ const searchCache = new Map<
   string,
   { results: any[]; timestamp: number }
 >();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
-const MIN_REQUEST_DELAY = 1000; // 1 second minimum between requests to same query
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+const MIN_REQUEST_DELAY = 2000; // 2 seconds minimum between requests to avoid rate limiting
+let lastRequestTime = 0;
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,8 +28,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ suggestions: cached.results });
     }
 
+    // Rate limit protection: wait before making API request
+    const timeSinceLastRequest = Date.now() - lastRequestTime;
+    if (timeSinceLastRequest < MIN_REQUEST_DELAY) {
+      await new Promise(resolve =>
+        setTimeout(resolve, MIN_REQUEST_DELAY - timeSinceLastRequest)
+      );
+    }
+
     // Use OpenStreetMap Nominatim for address lookup
     const suggestions = await getAddressSuggestionsFromNominatim(query, lang);
+    lastRequestTime = Date.now();
 
     // Cache the results
     searchCache.set(cacheKey, {
@@ -57,9 +67,12 @@ async function getAddressSuggestionsFromNominatim(
 ) {
   try {
     // Use OpenStreetMap Nominatim API (free, no API key needed)
-    // Limit search to Norway
+    // Improve search with region context
     const searchUrl = new URL('https://nominatim.openstreetmap.org/search');
-    searchUrl.searchParams.append('q', `${query}, Hordaland, Norway`);
+    const searchQuery = query.includes('voss') || query.includes('hordaland')
+      ? `${query}, Norway`
+      : `${query}, Voss, Norway`;
+    searchUrl.searchParams.append('q', searchQuery);
     searchUrl.searchParams.append('countrycodes', 'no');
     searchUrl.searchParams.append('format', 'json');
     searchUrl.searchParams.append('addressdetails', '1');
