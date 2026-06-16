@@ -300,7 +300,7 @@ export default function BookingForm() {
                         required
                         className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                       />
-                      {showPickupSuggestions && pickupSuggestions.length > 0 && (
+                      {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
                         <div
                           style={{
                             position: 'absolute !important' as any,
@@ -319,7 +319,8 @@ export default function BookingForm() {
                             visibility: 'visible !important' as any,
                           }}
                         >
-                          {pickupSuggestions.map((suggestion, idx) => (
+                          {pickupSuggestions.length > 0 ? (
+                            pickupSuggestions.map((suggestion, idx) => (
                             <button
                               key={idx}
                               type="button"
@@ -350,7 +351,14 @@ export default function BookingForm() {
                                 {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                               </div>
                             </button>
-                          ))}
+                            ))
+                          ) : (
+                            <div style={{ padding: '12px 16px', color: 'rgb(148, 163, 184)', fontSize: '12px' }}>
+                              {language === 'no'
+                                ? 'Ingen forslag funnet, men du kan skrive adressen selv'
+                                : 'No suggestions found, but you can enter the address yourself'}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -378,7 +386,7 @@ export default function BookingForm() {
                         className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                       />
                       {showDropoffSuggestions &&
-                        dropoffSuggestions.length > 0 && (
+                        (dropoffSuggestions.length > 0 || formData.dropoffLocation.length >= 2) && (
                           <div
                             style={{
                               position: 'absolute !important' as any,
@@ -397,41 +405,49 @@ export default function BookingForm() {
                               visibility: 'visible !important' as any,
                             }}
                           >
-                            {dropoffSuggestions.map((suggestion, idx) => (
-                              <button
-                                key={idx}
-                                type="button"
-                                onClick={() =>
-                                  selectAddressSuggestion(
-                                    'dropoffLocation',
-                                    suggestion
-                                  )
-                                }
-                                style={{
-                                  width: '100% !important' as any,
-                                  padding: '12px 16px !important' as any,
-                                  textAlign: 'left',
-                                  backgroundColor: 'rgb(15, 23, 42) !important' as any,
-                                  color: 'white !important' as any,
-                                  borderBottom: idx === dropoffSuggestions.length - 1 ? 'none !important' as any : '1px solid rgb(51, 65, 85) !important' as any,
-                                  cursor: 'pointer',
-                                  transition: 'background-color 0.2s !important' as any,
-                                  display: 'block !important' as any,
-                                  border: 'none',
-                                  opacity: '1 !important' as any,
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.backgroundColor = 'rgb(51, 65, 85)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.backgroundColor = 'rgb(15, 23, 42)';
-                                }}
-                              >
-                                <div style={{ color: 'white' }}>
-                                  {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
-                                </div>
-                              </button>
-                            ))}
+                            {dropoffSuggestions.length > 0 ? (
+                              dropoffSuggestions.map((suggestion, idx) => (
+                                <button
+                                  key={idx}
+                                  type="button"
+                                  onClick={() =>
+                                    selectAddressSuggestion(
+                                      'dropoffLocation',
+                                      suggestion
+                                    )
+                                  }
+                                  style={{
+                                    width: '100% !important' as any,
+                                    padding: '12px 16px !important' as any,
+                                    textAlign: 'left',
+                                    backgroundColor: 'rgb(15, 23, 42) !important' as any,
+                                    color: 'white !important' as any,
+                                    borderBottom: idx === dropoffSuggestions.length - 1 ? 'none !important' as any : '1px solid rgb(51, 65, 85) !important' as any,
+                                    cursor: 'pointer',
+                                    transition: 'background-color 0.2s !important' as any,
+                                    display: 'block !important' as any,
+                                    border: 'none',
+                                    opacity: '1 !important' as any,
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgb(51, 65, 85)';
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'rgb(15, 23, 42)';
+                                  }}
+                                >
+                                  <div style={{ color: 'white' }}>
+                                    {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
+                                  </div>
+                                </button>
+                              ))
+                            ) : (
+                              <div style={{ padding: '12px 16px', color: 'rgb(148, 163, 184)', fontSize: '12px' }}>
+                                {language === 'no'
+                                  ? 'Ingen forslag funnet, men du kan skrive adressen selv'
+                                  : 'No suggestions found, but you can enter the address yourself'}
+                              </div>
+                            )}
                           </div>
                         )}
                     </div>
