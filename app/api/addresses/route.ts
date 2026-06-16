@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { VOSS_PLACES } from '@/lib/osm-places';
 
-// Simple in-memory cache for address searches
-const searchCache = new Map<
-  string,
-  { results: any[]; timestamp: number }
->();
+const searchCache = new Map<string, { results: any[]; timestamp: number }>();
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 export async function GET(request: NextRequest) {
@@ -26,12 +22,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ suggestions: cached.results });
     }
 
-    // Use OpenStreetMap Nominatim (works well for all Norwegian addresses)
-    let suggestions = await getAddressSuggestionsFromNominatim(query, lang);
+    // Try Entur Geocoder v3 (best for Norwegian addresses, stations, POI)
+    let suggestions = await getAddressSuggestionsFromEntur(query, lang);
 
-    // Fallback to local favorites if Nominatim fails
+    // Fallback to Kartverket if Entur fails
     if (suggestions.length === 0) {
-      console.log('Nominatim returned no results, using local favorites...');
+      console.log('Entur returned no results, trying Kartverket...');
+      suggestions = await getAddressSuggestionsFromKartverket(query);
+    }
+
+    // Final fallback to local favorites
+    if (suggestions.length === 0) {
+      console.log('Kartverket returned no results, using local favorites...');
       suggestions = getFallbackSuggestions(query, lang);
     }
 
@@ -48,6 +50,119 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Address lookup error:', error);
     return NextResponse.json({ suggestions: [] });
+  }
+}
+
+async function getAddressSuggestionsFromEntur(query: string, lang: 'no' | 'en') {
+  try {
+    const params = new URLSearchParams({
+      text: query,
+      lang: lang === 'no' ? 'no' : 'en',
+      size: '10',
+    });
+
+    const response = await fetch(
+      `https://api.entur.io/geocoder/v3/autocomplete?${params}`,
+      {
+        method: 'GET',
+        headers: {
+          'ET-Client-Name': 'vosstaxi-booking',
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Entur API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.features || !Array.isArray(data.features) || data.features.length === 0) {
+      console.log('No results from Entur');
+      return [];
+    }
+
+    // Map Entur response to our format
+    const suggestions = data.features.map((feature: any) => {
+      const props = feature.properties || {};
+      const coords = feature.geometry?.coordinates || [0, 0];
+
+      // Build address from properties
+      const addressParts = [];
+      if (props.street && props.housenumber) {
+        addressParts.push(`${props.street} ${props.housenumber}`);
+      } else if (props.street) {
+        addressParts.push(props.street);
+      }
+      if (props.locality) {
+        addressParts.push(props.locality);
+      }
+      if (props.postalcode) {
+        addressParts.push(props.postalcode);
+      }
+
+      return {
+        name: props.name || props.label || '',
+        address: addressParts.join(', ') || props.label || '',
+        lat: coords[1],
+        lng: coords[0],
+        type: props.layer || props.category?.[0] || '',
+      };
+    }).filter((item: any) => item.name && item.address);
+
+    console.log(`Entur returned ${suggestions.length} results`);
+    return suggestions;
+  } catch (error) {
+    console.error('Error fetching from Entur:', error);
+    return [];
+  }
+}
+
+async function getAddressSuggestionsFromKartverket(query: string) {
+  try {
+    const response = await fetch(
+      `https://ws.geonorge.no/adresser/v1/sok?sok=${encodeURIComponent(query)}&treffPerSide=10`,
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Kartverket API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.adresser || !Array.isArray(data.adresser) || data.adresser.length === 0) {
+      console.log('No results from Kartverket');
+      return [];
+    }
+
+    // Map Kartverket response to our format
+    const suggestions = data.adresser
+      .map((address: any) => {
+        const fullAddress = `${address.adressebetegnelse}, ${address.postnummer} ${address.poststed}`;
+
+        return {
+          name: address.adressebetegnelse,
+          address: fullAddress,
+          lat: address.representasjonspunkt?.lat || 0,
+          lng: address.representasjonspunkt?.lon || 0,
+        };
+      })
+      .filter((item: any) => item.name && item.address);
+
+    console.log(`Kartverket returned ${suggestions.length} results`);
+    return suggestions;
+  } catch (error) {
+    console.error('Error fetching from Kartverket:', error);
+    return [];
   }
 }
 
