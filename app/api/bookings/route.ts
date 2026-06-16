@@ -18,6 +18,10 @@ interface BookingData {
   phone: string;
   email: string;
   additionalInfo: string;
+  pickupLat?: number;
+  pickupLon?: number;
+  dropoffLat?: number;
+  dropoffLon?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -82,18 +86,16 @@ async function createBookingWithTaxi4U(data: BookingData) {
   const pickupTimeISO = `${data.date}T${data.time}:00Z`;
 
   // Taxi4U AppBook API expects:
-  // - centralCode: 2-letter code (e.g., "VO" for Voss, or from API_USERNAME)
+  // - centralCode: "VS" for Voss/Sogn
   // - fromStreet: pickup address (required)
+  // - toStreet: dropoff address
   // - pickupTime: UTC datetime (required)
-  // - toStreet: dropoff address (optional)
-  // - customerName, tel, messageToCar, etc.
-
-  // Extract central code from username (e.g., "voss" -> "VO")
-  // Or use "VO" as default for Voss
-  const centralCode = API_USERNAME.toUpperCase().substring(0, 2) || 'VO';
+  // - fromLat/fromLon: coordinates (used to resolve zone)
+  // - toLat/toLon: coordinates (used to resolve zone)
+  // - customerName, tel, messageToCar
 
   const taxi4uBookingData: Record<string, any> = {
-    centralCode: centralCode,
+    centralCode: 'VS',  // Voss/Sogn central code
     fromStreet: data.pickupLocation,
     toStreet: data.dropoffLocation,
     pickupTime: pickupTimeISO,
@@ -101,6 +103,17 @@ async function createBookingWithTaxi4U(data: BookingData) {
     tel: data.phone,
     messageToCar: data.additionalInfo || undefined,
   };
+
+  // Add coordinates if provided (from address lookup)
+  if (data.pickupLat && data.pickupLon) {
+    taxi4uBookingData.fromLat = data.pickupLat;
+    taxi4uBookingData.fromLon = data.pickupLon;
+  }
+
+  if (data.dropoffLat && data.dropoffLon) {
+    taxi4uBookingData.toLat = data.dropoffLat;
+    taxi4uBookingData.toLon = data.dropoffLon;
+  }
 
   // Note: Email is not a standard field in Taxi4U API
   // In production, you might handle email notifications separately

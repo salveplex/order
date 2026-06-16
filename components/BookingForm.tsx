@@ -23,6 +23,10 @@ interface FormData {
   phone: string;
   email: string;
   additionalInfo: string;
+  pickupLat?: number;
+  pickupLon?: number;
+  dropoffLat?: number;
+  dropoffLon?: number;
 }
 
 interface BookingStatus {
@@ -119,14 +123,22 @@ export default function BookingForm() {
         ? `${suggestion.name}, ${suggestion.address}`
         : suggestion.address;
 
-    setFormData((prev) => ({
-      ...prev,
-      [field]: finalAddress,
-    }));
-
+    // Store address + coordinates for API submission
     if (field === 'pickupLocation') {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: finalAddress,
+        pickupLat: suggestion.lat,
+        pickupLon: suggestion.lng,
+      }));
       setShowPickupSuggestions(false);
     } else {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: finalAddress,
+        dropoffLat: suggestion.lat,
+        dropoffLon: suggestion.lng,
+      }));
       setShowDropoffSuggestions(false);
     }
   };
@@ -177,6 +189,10 @@ export default function BookingForm() {
           phone: '',
           email: '',
           additionalInfo: '',
+          pickupLat: undefined,
+          pickupLon: undefined,
+          dropoffLat: undefined,
+          dropoffLon: undefined,
         });
 
         // Hide success message after 4 seconds
