@@ -2,14 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { VOSS_PLACES } from '@/lib/osm-places';
 
 // Simple in-memory cache for address searches
-// Cache key: query, value: { results, timestamp }
 const searchCache = new Map<
   string,
   { results: any[]; timestamp: number }
 >();
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-const MIN_REQUEST_DELAY = 2000; // 2 seconds minimum between requests to avoid rate limiting
-let lastRequestTime = 0;
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,7 +18,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ suggestions: [] });
     }
 
-    // Check cache first (but only if it has results)
+    // Check cache first
     const cacheKey = `${query.toLowerCase()}:${lang}`;
     const cached = searchCache.get(cacheKey);
     if (cached && cached.results.length > 0 && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -29,19 +26,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ suggestions: cached.results });
     }
 
-    // Rate limit protection: wait before making API request
-    const timeSinceLastRequest = Date.now() - lastRequestTime;
-    if (timeSinceLastRequest < MIN_REQUEST_DELAY) {
-      await new Promise(resolve =>
-        setTimeout(resolve, MIN_REQUEST_DELAY - timeSinceLastRequest)
-      );
+    // Try Entur Geocoder v3 (best for Norwegian addresses)
+    let suggestions = await getAddressSuggestionsFromEntur(query);
+
+    // Fallback to Kartverket if Entur fails
+    if (suggestions.length === 0) {
+      console.log('Entur returned no results, trying Kartverket...');
+      suggestions = await getAddressSuggestionsFromKartverket(query);
     }
 
-    // Use OpenStreetMap Nominatim for address lookup
-    const suggestions = await getAddressSuggestionsFromNominatim(query, lang);
-    lastRequestTime = Date.now();
+    // Final fallback to local favorites
+    if (suggestions.length === 0) {
+      console.log('Kartverket returned no results, using local favorites...');
+      suggestions = getFallbackSuggestions(query, lang);
+    }
 
-    // Cache only non-empty results to avoid caching rate-limit failures
+    // Cache only non-empty results
     if (suggestions.length > 0) {
       searchCache.set(cacheKey, {
         results: suggestions,
@@ -50,10 +50,6 @@ export async function GET(request: NextRequest) {
     }
 
     console.log(`Address search for "${query}": found ${suggestions.length} results`);
-    if (suggestions.length > 0) {
-      console.log('First result:', suggestions[0]);
-    }
-
     return NextResponse.json({ suggestions });
   } catch (error) {
     console.error('Address lookup error:', error);
@@ -63,6 +59,115 @@ export async function GET(request: NextRequest) {
 
 // No fallback - use only OpenStreetMap data
 // If Nominatim returns nothing, return empty array
+
+async function getAddressSuggestionsFromEntur(query: string) {
+  try {
+    // Entur Geocoder v3 API - best for Norwegian addresses, POI, and transit stops
+    const response = await fetch(
+      `https://geocoder.entur.org/v3/search?text=${encodeURIComponent(query)}&size=10&lang=no`,
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Entur API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.features || !Array.isArray(data.features) || data.features.length === 0) {
+      console.log('No results from Entur');
+      return [];
+    }
+
+    // Map Entur response to our format
+    const suggestions = data.features
+      .map((feature: any) => {
+        const properties = feature.properties || {};
+        const geometry = feature.geometry || {};
+
+        // Build address from properties
+        const addressParts = [];
+        if (properties.name) addressParts.push(properties.name);
+        if (properties.street) addressParts.push(properties.street);
+        if (properties.postalcode) addressParts.push(properties.postalcode);
+        if (properties.city) addressParts.push(properties.city);
+
+        const name = properties.name || '';
+        const address = addressParts.join(', ');
+        const [lng, lat] = geometry.coordinates || [0, 0];
+
+        return {
+          name,
+          address,
+          lat: parseFloat(lat),
+          lng: parseFloat(lng),
+        };
+      })
+      .filter((item: any) => item.name && item.address)
+      .slice(0, 8);
+
+    console.log(`Entur returned ${suggestions.length} results`);
+    return suggestions;
+  } catch (error) {
+    console.error('Error fetching from Entur:', error);
+    return [];
+  }
+}
+
+async function getAddressSuggestionsFromKartverket(query: string) {
+  try {
+    // Kartverket Adresse API as fallback
+    const response = await fetch(
+      `https://ws.geonorge.no/adresser/v1/sok?sok=${encodeURIComponent(query)}&treffPerSide=10`,
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Kartverket API error:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.adresser || !Array.isArray(data.adresser) || data.adresser.length === 0) {
+      console.log('No results from Kartverket');
+      return [];
+    }
+
+    // Map Kartverket response to our format
+    const suggestions = data.adresser
+      .map((address: any) => {
+        const name = `${address.adressebetegnelse}`;
+        const fullAddress = `${address.adressebetegnelse}, ${address.postnummer} ${address.poststed}`;
+
+        return {
+          name,
+          address: fullAddress,
+          lat: address.representasjonspunkt?.lat || 0,
+          lng: address.representasjonspunkt?.lon || 0,
+        };
+      })
+      .filter((item: any) => item.name && item.address)
+      .slice(0, 8);
+
+    console.log(`Kartverket returned ${suggestions.length} results`);
+    return suggestions;
+  } catch (error) {
+    console.error('Error fetching from Kartverket:', error);
+    return [];
+  }
+}
 
 async function getAddressSuggestionsFromNominatim(
   query: string,
