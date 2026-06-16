@@ -1,9 +1,4 @@
-// Taxi4U API Integration
-// Base configuration for booking requests
-
-const API_BASE = 'https://api.taxi4u.cab';
-const API_USERNAME = process.env.TAXI4U_USERNAME || '';
-const API_PASSWORD = process.env.TAXI4U_PASSWORD || '';
+// Taxi4U API Integration via Next.js API routes
 
 export interface BookingRequest {
   pickupLocation: string;
@@ -11,58 +6,87 @@ export interface BookingRequest {
   date: string;
   time: string;
   passengers: number;
-  carType: 'sedan' | 'six-seater' | 'eight-seater' | 'wheelchair';
+  carType: 'estatecar' | 'sixseater' | 'eightseater' | 'wheelchair';
   name: string;
   phone: string;
+  email: string;
   additionalInfo: string;
 }
 
-export async function createBooking(data: BookingRequest) {
-  try {
-    // TODO: Implement actual API call to Taxi4U
-    // This will use the credentials from environment variables
-    // The API endpoint should be something like:
-    // POST https://api.taxi4u.cab/api/v2/bookings
+export interface BookingResponse {
+  success: boolean;
+  bookingId: string;
+  bookingNumber: string;
+  estimatedPrice?: number;
+  message: string;
+}
 
-    console.log('Creating booking with Taxi4U API:', {
-      ...data,
-      // Don't log credentials
+export interface AddressSuggestion {
+  name: string;
+  address: string;
+  lat?: number;
+  lng?: number;
+}
+
+export async function createBooking(data: BookingRequest): Promise<BookingResponse> {
+  try {
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
     });
 
-    // Placeholder response
-    return {
-      success: true,
-      bookingId: `BK-${Date.now()}`,
-      message: 'Booking created successfully',
-    };
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create booking');
+    }
+
+    return await response.json();
   } catch (error) {
     console.error('Failed to create booking:', error);
     throw error;
   }
 }
 
-export async function validateLocation(location: string) {
-  // TODO: Implement location validation/autocomplete
-  // Could use Taxi4U's address lookup API if available
-  return {
-    valid: true,
-    location: location,
-  };
+export async function getAddressSuggestions(
+  query: string,
+  language: 'no' | 'en' = 'no'
+): Promise<AddressSuggestion[]> {
+  if (!query || query.length < 2) {
+    return [];
+  }
+
+  try {
+    const response = await fetch(
+      `/api/addresses?q=${encodeURIComponent(query)}&lang=${language}`
+    );
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    return data.suggestions || [];
+  } catch (error) {
+    console.error('Failed to get address suggestions:', error);
+    return [];
+  }
 }
 
-export async function getAvailableVehicles(
-  pickupLocation: string,
-  datetime: string
-) {
-  // TODO: Implement vehicle availability check
-  // This would query the Taxi4U API for available vehicles
-  return {
-    available: true,
-    vehicles: [
-      { type: 'sedan', available: true, price: 299 },
-      { type: 'six-seater', available: true, price: 399 },
-      { type: 'eight-seater', available: false, price: 499 },
-      { type: 'wheelchair', available: true, price: 349 },
-    ],
-  };
+export async function getBookingStatus(bookingId: string) {
+  try {
+    const response = await fetch(`/api/bookings/status?id=${encodeURIComponent(bookingId)}`);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to check booking status');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to get booking status:', error);
+    throw error;
+  }
 }

@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search } from 'lucide-react';
 import { useTranslation, type Language } from '@/lib/i18n';
-import { getAddressSuggestions, type AddressSuggestion } from '@/lib/address-autocomplete';
+import {
+  createBooking,
+  getAddressSuggestions,
+  getBookingStatus,
+  type AddressSuggestion
+} from '@/lib/taxi4u-api';
 
 type CarType = 'estatecar' | 'sixseater' | 'eightseater' | 'wheelchair';
 
@@ -22,9 +27,11 @@ interface FormData {
 
 interface BookingStatus {
   bookingId: string;
+  bookingNumber: string;
   status: 'pending' | 'accepted' | 'inProgress' | 'completed';
   vehicle?: string;
   driver?: string;
+  found: boolean;
 }
 
 const CAR_TYPES: { value: CarType; label_no: string; label_en: string; icon: string }[] = [
@@ -61,6 +68,8 @@ export default function BookingForm() {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [bookingNumber, setBookingNumber] = useState('');
 
   // Status check state
   const [statusBookingNumber, setStatusBookingNumber] = useState('');
@@ -79,13 +88,17 @@ export default function BookingForm() {
     }));
 
     if (value.length >= 2) {
-      const suggestions = await getAddressSuggestions(value, language);
-      if (field === 'pickupLocation') {
-        setPickupSuggestions(suggestions);
-        setShowPickupSuggestions(true);
-      } else {
-        setDropoffSuggestions(suggestions);
-        setShowDropoffSuggestions(true);
+      try {
+        const suggestions = await getAddressSuggestions(value, language);
+        if (field === 'pickupLocation') {
+          setPickupSuggestions(suggestions);
+          setShowPickupSuggestions(true);
+        } else {
+          setDropoffSuggestions(suggestions);
+          setShowDropoffSuggestions(true);
+        }
+      } catch (err) {
+        console.error('Error fetching suggestions:', err);
       }
     }
   };
@@ -125,16 +138,15 @@ export default function BookingForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    setSuccess(false);
 
     try {
-      console.log('Creating booking with data:', formData);
+      const response = await createBooking(formData);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
+      if (response.success) {
+        setSuccess(true);
+        setBookingNumber(response.bookingNumber);
         setFormData({
           pickupLocation: '',
           dropoffLocation: '',
@@ -147,9 +159,16 @@ export default function BookingForm() {
           email: '',
           additionalInfo: '',
         });
-      }, 2000);
-    } catch (error) {
-      console.error('Booking failed:', error);
+
+        // Hide success message after 4 seconds
+        setTimeout(() => {
+          setSuccess(false);
+        }, 4000);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
+      setError(errorMessage);
+      console.error('Booking error:', err);
     } finally {
       setLoading(false);
     }
@@ -162,32 +181,21 @@ export default function BookingForm() {
     setBookingStatus(null);
 
     try {
-      // TODO: Implement actual API call to check booking status
-      // This would query the backend for booking information
+      const status = await getBookingStatus(statusBookingNumber);
 
-      // Mock response for demo
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      if (statusBookingNumber.length > 3) {
-        setBookingStatus({
-          bookingId: statusBookingNumber,
-          status: 'accepted',
-          vehicle: 'Tesla Model Y - BK-2024',
-          driver: 'Knut Hansen',
-        });
+      if (status.found) {
+        setBookingStatus(status);
       } else {
         setStatusError(
           language === 'no'
             ? 'Bookingnummer ikke funnet'
-            : 'Booking number not found'
+            : 'Booking not found'
         );
       }
-    } catch (error) {
-      setStatusError(
-        language === 'no'
-          ? 'Feil ved søk i booking'
-          : 'Error checking booking'
-      );
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error checking booking';
+      setStatusError(errorMessage);
+      console.error('Status check error:', err);
     } finally {
       setStatusLoading(false);
     }
@@ -521,7 +529,19 @@ export default function BookingForm() {
                 {/* Success Message */}
                 {success && (
                   <div className="animate-[slideInUp_0.4s_ease-out] p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-center font-semibold text-sm md:text-base">
-                    {t.bookingConfirmed}
+                    <div>{t.bookingConfirmed}</div>
+                    {bookingNumber && (
+                      <div className="text-xs md:text-sm mt-2">
+                        {language === 'no' ? 'Bookingnummer' : 'Booking Number'}: <span className="font-mono">{bookingNumber}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                  <div className="animate-[slideInUp_0.4s_ease-out] p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-center font-semibold text-sm md:text-base">
+                    {error}
                   </div>
                 )}
               </form>
@@ -587,7 +607,7 @@ export default function BookingForm() {
                     <div className="space-y-3 text-sm md:text-base">
                       <div className="flex justify-between items-center">
                         <span className="text-slate-400">{t.bookingNumber}:</span>
-                        <span className="text-white font-semibold">{bookingStatus.bookingId}</span>
+                        <span className="text-white font-semibold">{bookingStatus.bookingNumber}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-slate-400">{t.status}:</span>
