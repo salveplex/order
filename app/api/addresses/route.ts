@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { VOSS_PLACES } from '@/lib/osm-places';
 
 // Simple in-memory cache for address searches
 // Cache key: query, value: { results, timestamp }
@@ -93,21 +94,21 @@ async function getAddressSuggestionsFromNominatim(
     });
 
     if (response.status === 429) {
-      console.warn('Nominatim rate limited (429)');
-      return [];
+      console.warn('Nominatim rate limited (429), using fallback');
+      return getFallbackSuggestions(query, lang);
     }
 
     if (!response.ok) {
       console.error('Nominatim API error:', response.status);
-      return [];
+      return getFallbackSuggestions(query, lang);
     }
 
     const data = await response.json();
     console.log(`Nominatim returned ${Array.isArray(data) ? data.length : 0} results`);
 
     if (!Array.isArray(data) || data.length === 0) {
-      console.log('No results from Nominatim');
-      return [];
+      console.log('No results from Nominatim, using fallback');
+      return getFallbackSuggestions(query, lang);
     }
 
     // Map Nominatim response to our format
@@ -137,6 +138,21 @@ async function getAddressSuggestionsFromNominatim(
     return suggestions;
   } catch (error) {
     console.error('Error fetching from Nominatim:', error);
-    return [];
+    return getFallbackSuggestions(query, lang);
   }
+}
+
+function getFallbackSuggestions(query: string, lang: 'no' | 'en'): any[] {
+  const places = VOSS_PLACES[lang] || VOSS_PLACES.no;
+  const searchTerm = query.toLowerCase().trim();
+
+  console.log(`Using fallback suggestions for "${query}"`);
+
+  return places
+    .filter(
+      (place) =>
+        place.name.toLowerCase().includes(searchTerm) ||
+        place.address.toLowerCase().includes(searchTerm)
+    )
+    .slice(0, 8);
 }
