@@ -160,11 +160,17 @@ export default function BookingForm() {
       if (response.success) {
         setSuccess(true);
         setBookingNumber(response.bookingNumber);
+
+        // Reset form but keep today's date and current time
+        const resetToday = new Date().toISOString().split('T')[0];
+        const resetNow = new Date();
+        const resetTime = resetNow.getHours().toString().padStart(2, '0') + ':' + resetNow.getMinutes().toString().padStart(2, '0');
+
         setFormData({
           pickupLocation: '',
           dropoffLocation: '',
-          date: '',
-          time: '',
+          date: resetToday,
+          time: resetTime,
           passengers: 1,
           carType: 'estatecar',
           name: '',
@@ -583,8 +589,7 @@ export default function BookingForm() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder={language === 'no' ? 'Din epost' : 'Your email'}
-                    required
+                    placeholder={language === 'no' ? 'Din epost (valgfritt)' : 'Your email (optional)'}
                     className="w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-white/10 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
                   />
                 </div>
