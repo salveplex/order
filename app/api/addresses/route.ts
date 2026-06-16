@@ -20,10 +20,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ suggestions: [] });
     }
 
-    // Check cache first
+    // Check cache first (but only if it has results)
     const cacheKey = `${query.toLowerCase()}:${lang}`;
     const cached = searchCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    if (cached && cached.results.length > 0 && Date.now() - cached.timestamp < CACHE_TTL) {
       console.log(`Cache hit for "${query}": ${cached.results.length} results`);
       return NextResponse.json({ suggestions: cached.results });
     }
@@ -40,11 +40,13 @@ export async function GET(request: NextRequest) {
     const suggestions = await getAddressSuggestionsFromNominatim(query, lang);
     lastRequestTime = Date.now();
 
-    // Cache the results
-    searchCache.set(cacheKey, {
-      results: suggestions,
-      timestamp: Date.now(),
-    });
+    // Cache only non-empty results to avoid caching rate-limit failures
+    if (suggestions.length > 0) {
+      searchCache.set(cacheKey, {
+        results: suggestions,
+        timestamp: Date.now(),
+      });
+    }
 
     console.log(`Address search for "${query}": found ${suggestions.length} results`);
     if (suggestions.length > 0) {
