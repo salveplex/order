@@ -346,11 +346,8 @@ export default function BookingForm() {
                                 e.currentTarget.style.backgroundColor = 'rgb(15, 23, 42)';
                               }}
                             >
-                              <div style={{ fontWeight: 'bold', color: 'white', marginBottom: '4px' }}>
-                                {suggestion.name}
-                              </div>
-                              <div style={{ fontSize: '12px', color: 'rgb(148, 163, 184)' }}>
-                                {suggestion.address}
+                              <div style={{ color: 'white' }}>
+                                {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                               </div>
                             </button>
                           ))}
@@ -430,11 +427,8 @@ export default function BookingForm() {
                                   e.currentTarget.style.backgroundColor = 'rgb(15, 23, 42)';
                                 }}
                               >
-                                <div style={{ fontWeight: 'bold', color: 'white', marginBottom: '4px' }}>
-                                  {suggestion.name}
-                                </div>
-                                <div style={{ fontSize: '12px', color: 'rgb(148, 163, 184)' }}>
-                                  {suggestion.address}
+                                <div style={{ color: 'white' }}>
+                                  {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                                 </div>
                               </button>
                             ))}
