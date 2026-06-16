@@ -47,12 +47,17 @@ export default function BookingForm() {
 
   const [activeTab, setActiveTab] = useState<'booking' | 'status'>('booking');
 
+  // Initialize date and time with current values
+  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
   // Booking form state
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: '',
     dropoffLocation: '',
-    date: '',
-    time: '',
+    date: today,
+    time: currentTime,
     passengers: 1,
     carType: 'estatecar',
     name: '',
@@ -261,7 +266,7 @@ export default function BookingForm() {
 
       {/* Booking Form Tab */}
       {activeTab === 'booking' && (
-        <div className="w-full max-w-2xl animate-[fadeInUp_0.8s_ease-out_0.2s_both]">
+        <div className="w-full max-w-2xl animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
           {/* Header */}
           <div className="mb-8 text-center md:mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight">
@@ -280,7 +285,7 @@ export default function BookingForm() {
                 {/* Pickup & Dropoff */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   {/* Pickup Location with Autocomplete */}
-                  <div className="group relative animate-[slideInLeft_0.6s_ease-out_0.3s_both] overflow-visible">
+                  <div className="group relative animate-[slideInLeft_0.6s_ease-out_0.3s_forwards] overflow-visible">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <MapPin className="w-4 h-4 inline mr-2" />
                       {t.pickupLocation}
@@ -365,7 +370,7 @@ export default function BookingForm() {
                   </div>
 
                   {/* Dropoff Location with Autocomplete */}
-                  <div className="group relative animate-[slideInRight_0.6s_ease-out_0.3s_both] overflow-visible">
+                  <div className="group relative animate-[slideInRight_0.6s_ease-out_0.3s_forwards] overflow-visible">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <MapPin className="w-4 h-4 inline mr-2" />
                       {t.dropoffLocation}
@@ -456,7 +461,7 @@ export default function BookingForm() {
 
                 {/* Date & Time */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="group animate-[slideInLeft_0.6s_ease-out_0.4s_both]">
+                  <div className="group animate-[slideInLeft_0.6s_ease-out_0.4s_forwards]">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <Clock className="w-4 h-4 inline mr-2" />
                       {t.date}
@@ -471,7 +476,7 @@ export default function BookingForm() {
                     />
                   </div>
 
-                  <div className="group animate-[slideInRight_0.6s_ease-out_0.4s_both]">
+                  <div className="group animate-[slideInRight_0.6s_ease-out_0.4s_forwards]">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <Clock className="w-4 h-4 inline mr-2" />
                       {t.time}
@@ -489,7 +494,7 @@ export default function BookingForm() {
 
                 {/* Passengers & Car Type */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="group animate-[slideInLeft_0.6s_ease-out_0.5s_both]">
+                  <div className="group animate-[slideInLeft_0.6s_ease-out_0.5s_forwards]">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <Users className="w-4 h-4 inline mr-2" />
                       {t.passengers}
@@ -509,7 +514,7 @@ export default function BookingForm() {
                   </div>
 
                   {/* Car Type Selection */}
-                  <div className="animate-[slideInRight_0.6s_ease-out_0.5s_both]">
+                  <div className="animate-[slideInRight_0.6s_ease-out_0.5s_forwards]">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <Car className="w-4 h-4 inline mr-2" />
                       {t.vehicleType}
@@ -535,9 +540,9 @@ export default function BookingForm() {
 
                 {/* Name & Phone */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="group animate-[slideInLeft_0.6s_ease-out_0.6s_both]">
+                  <div className="group animate-[slideInLeft_0.6s_ease-out_0.6s_forwards]">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
-                      {t.fullName}
+                      {t.fullName} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -550,10 +555,10 @@ export default function BookingForm() {
                     />
                   </div>
 
-                  <div className="group animate-[slideInRight_0.6s_ease-out_0.6s_both]">
+                  <div className="group animate-[slideInRight_0.6s_ease-out_0.6s_forwards]">
                     <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                       <Phone className="w-4 h-4 inline mr-2" />
-                      {t.phone}
+                      {t.phone} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="tel"
@@ -568,7 +573,7 @@ export default function BookingForm() {
                 </div>
 
                 {/* Email */}
-                <div className="group animate-[slideInLeft_0.6s_ease-out_0.65s_both]">
+                <div className="group animate-[slideInLeft_0.6s_ease-out_0.65s_forwards]">
                   <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                     <Mail className="w-4 h-4 inline mr-2" />
                     {t.email}
@@ -585,7 +590,7 @@ export default function BookingForm() {
                 </div>
 
                 {/* Additional Info */}
-                <div className="animate-[slideInUp_0.6s_ease-out_0.7s_both]">
+                <div className="animate-[slideInUp_0.6s_ease-out_0.7s_forwards]">
                   <label className="block text-xs md:text-sm font-semibold text-slate-300 mb-2 md:mb-3 uppercase tracking-wider">
                     <MessageSquare className="w-4 h-4 inline mr-2" />
                     {t.additionalInfo}
@@ -601,7 +606,7 @@ export default function BookingForm() {
                 </div>
 
                 {/* Submit Button */}
-                <div className="animate-[slideInUp_0.6s_ease-out_0.8s_both] pt-4">
+                <div className="animate-[slideInUp_0.6s_ease-out_0.8s_forwards] pt-4">
                   <button
                     type="submit"
                     disabled={loading}
@@ -639,7 +644,7 @@ export default function BookingForm() {
           </div>
 
           {/* Footer */}
-          <div className="mt-8 md:mt-12 text-center text-slate-400 text-xs md:text-sm animate-[fadeIn_1s_ease-out_1s_both]">
+          <div className="mt-8 md:mt-12 text-center text-slate-400 text-xs md:text-sm animate-[fadeIn_1s_ease-out_1s_forwards]">
             <p>{t.supportText}</p>
           </div>
         </div>
@@ -647,7 +652,7 @@ export default function BookingForm() {
 
       {/* Status Check Tab */}
       {activeTab === 'status' && (
-        <div className="w-full max-w-2xl animate-[fadeInUp_0.8s_ease-out_0.2s_both]">
+        <div className="w-full max-w-2xl animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
           {/* Header */}
           <div className="mb-8 text-center md:mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 leading-tight">
