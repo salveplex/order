@@ -103,31 +103,17 @@ export default function BookingForm() {
     }
   };
 
-  const selectAddressSuggestion = async (
+  const selectAddressSuggestion = (
     field: 'pickupLocation' | 'dropoffLocation',
     suggestion: AddressSuggestion
   ) => {
-    let finalAddress = suggestion.address;
+    // If suggestion is a POI/station with short address, combine name + address
+    // e.g., "Voss stasjon" + "Voss" → "Voss stasjon, Voss"
+    const finalAddress =
+      suggestion.address && suggestion.address !== suggestion.name
+        ? `${suggestion.name}, ${suggestion.address}`
+        : suggestion.address;
 
-    // If address is too short (e.g., just city name), do reverse lookup
-    if (finalAddress && finalAddress.split(',').length < 2) {
-      try {
-        const response = await fetch(
-          `/api/addresses/reverse?lat=${suggestion.lat}&lng=${suggestion.lng}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          if (data.address) {
-            // Use proper address but keep original name
-            finalAddress = data.address;
-          }
-        }
-      } catch (error) {
-        console.error('Reverse lookup failed:', error);
-      }
-    }
-
-    // Store both name and address
     setFormData((prev) => ({
       ...prev,
       [field]: finalAddress,
