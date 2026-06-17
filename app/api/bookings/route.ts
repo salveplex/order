@@ -30,6 +30,11 @@ export async function POST(request: NextRequest) {
   try {
     const body: BookingData = await request.json();
 
+    // Log what frontend sent to this API
+    console.log('=== BOOKING DATA RECEIVED FROM FRONTEND ===');
+    console.log(JSON.stringify(body, null, 2));
+    console.log('==========================================\n');
+
     // Create booking via Taxi4U API
     const bookingResponse = await createBookingWithTaxi4U(body);
 
@@ -142,6 +147,11 @@ async function createBookingWithTaxi4U(data: BookingData) {
   try {
     // Get auth token
     const authToken = await getAuthToken();
+
+    // Log the exact payload being sent to Taxi4U
+    console.log('=== BOOKING PAYLOAD SENT TO TAXI4U ===');
+    console.log(JSON.stringify(taxi4uBookingData, null, 2));
+    console.log('====================================\n');
 
     // Make booking request with JWT token
     const response = await fetch(`${API_BASE}/api/book`, {
