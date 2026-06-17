@@ -105,7 +105,7 @@ async function createBookingWithTaxi4U(data: BookingData) {
     pickupTime: pickupTimeISO,
     customerName: data.name,
     tel: data.phone,
-    manualProcessing: false,  // Prevent manual processing - book directly to dispatch
+    ManualProcessing: false,  // Prevent manual processing - book directly to dispatch
   };
 
   // Add city information if available
