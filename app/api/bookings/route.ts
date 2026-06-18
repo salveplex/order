@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
 
     // Log what frontend sent to this API
     console.log('=== BOOKING DATA RECEIVED FROM FRONTEND ===');
+    console.log(`formData.carType = "${body.carType}"`);
     console.log(JSON.stringify(body, null, 2));
     console.log('==========================================\n');
 

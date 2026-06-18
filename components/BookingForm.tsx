@@ -294,6 +294,10 @@ export default function BookingForm() {
       if (response.success) {
         setSuccess(true);
         setBookingNumber(response.bookingNumber);
+        // Auto-fill status tab with booking number
+        setStatusBookingNumber(response.bookingNumber);
+        // Auto-switch to status tab
+        setActiveTab('status');
 
         // Reset form but keep today's date and current time
         const resetToday = new Date().toISOString().split('T')[0];
@@ -319,10 +323,10 @@ export default function BookingForm() {
           dropoffCity: undefined,
         });
 
-        // Hide success message after 4 seconds
-        setTimeout(() => {
-          setSuccess(false);
-        }, 4000);
+        // Don't hide success message - keep it visible
+        // setTimeout(() => {
+        //   setSuccess(false);
+        // }, 4000);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create booking';
@@ -728,16 +732,6 @@ export default function BookingForm() {
                   </p>
                 </div>
 
-                {/* Booking Tracking */}
-                {success && bookingNumber && (
-                  <BookingTracking
-                    bookingNumber={bookingNumber}
-                    language={language}
-                    pickupLocation={formData.pickupLocation}
-                    dropoffLocation={formData.dropoffLocation}
-                  />
-                )}
-
                 {/* Error Message */}
                 {error && (
                   <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -769,7 +763,18 @@ export default function BookingForm() {
               </p>
             </div>
 
+            {/* Show Booking Tracking if just booked */}
+            {success && bookingNumber && (
+              <BookingTracking
+                bookingNumber={bookingNumber}
+                language={language}
+                pickupLocation={formData.pickupLocation}
+                dropoffLocation={formData.dropoffLocation}
+              />
+            )}
+
             {/* Status Form Container */}
+            {!success && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
               <form onSubmit={handleCheckStatus} className="space-y-6">
                 {/* Booking Number Input */}
@@ -849,6 +854,7 @@ export default function BookingForm() {
                 )}
               </form>
             </div>
+            )}
           </div>
         )}
       </div>
