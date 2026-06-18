@@ -361,496 +361,361 @@ export default function BookingForm() {
   };
 
   return (
-    <div className="relative min-h-[100dvh] bg-[#050505] overflow-hidden">
-      {/* Radial mesh gradient background */}
-      <div className="fixed inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%)',
-      }} />
-
-      <div className="relative z-20 min-h-[100dvh] flex flex-col items-center justify-center px-4 py-12 md:py-20">
-        {/* Floating Language Selector */}
-        <div className="fixed top-6 right-6 md:top-8 md:right-8 z-50 flex gap-2 p-1.5 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10">
+    <div className="min-h-screen bg-white">
+      {/* Header with language selector */}
+      <div className="fixed top-0 right-0 z-50 p-6 md:p-8">
+        <div className="flex gap-2 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setLanguage('no')}
-            className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
               language === 'no'
-                ? 'bg-blue-500/80 text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             NO
           </button>
           <button
             onClick={() => setLanguage('en')}
-            className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
               language === 'en'
-                ? 'bg-blue-500/80 text-white'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             EN
           </button>
         </div>
+      </div>
 
-        {/* Premium Tab Selector */}
-        <div className="mb-16 flex gap-3 p-1.5 rounded-full backdrop-blur-2xl bg-white/5 border border-white/10">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 md:py-20">
+        {/* Tab Navigation */}
+        <div className="mb-12 flex gap-1 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setActiveTab('booking')}
-            className={`px-8 py-3 rounded-full font-medium tracking-wide transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            className={`px-6 py-2 rounded-md font-medium transition-colors ${
               activeTab === 'booking'
-                ? 'bg-gradient-to-r from-blue-500 to-blue-400 text-white shadow-lg shadow-blue-500/20'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             {language === 'no' ? 'Bestill' : 'Book'}
           </button>
           <button
             onClick={() => setActiveTab('status')}
-            className={`px-8 py-3 rounded-full font-medium tracking-wide transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+            className={`px-6 py-2 rounded-md font-medium transition-colors ${
               activeTab === 'status'
-                ? 'bg-gradient-to-r from-purple-500 to-purple-400 text-white shadow-lg shadow-purple-500/20'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             {t.checkStatus}
           </button>
         </div>
 
-      {/* Premium Booking Form Tab */}
-      {activeTab === 'booking' && (
-        <div className="w-full max-w-3xl animate-[fadeInUp_0.8s_ease-out_0.5s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-          {/* Eyebrow + Heading */}
-          <div className="mb-16 text-center">
-            <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 backdrop-blur-md">
-              <span className="text-xs font-medium tracking-[0.15em] text-blue-400 uppercase">Premium Experience</span>
+        {/* Booking Form Tab */}
+        {activeTab === 'booking' && (
+          <div className="w-full max-w-3xl">
+            {/* Header */}
+            <div className="mb-12 text-center">
+              <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+                {t.bookYourRide}
+              </h1>
+              <p className="text-gray-600 text-base max-w-2xl mx-auto">
+                {t.subtitle}
+              </p>
             </div>
-            <h1 className="text-5xl md:text-6xl font-light tracking-tight text-white mb-4 leading-[1.1]">
-              {t.bookYourRide}
-            </h1>
-            <p className="text-base text-slate-400 max-w-xl mx-auto font-light tracking-wide">
-              {t.subtitle}
-            </p>
-          </div>
 
-          {/* Double-Bezel Form Container */}
-          <div className="p-2 rounded-[2.5rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 shadow-2xl">
-            {/* Inner Core */}
-            <div className="p-8 md:p-12 rounded-[calc(2.5rem-0.375rem)] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
-              <form onSubmit={handleSubmit} className="space-y-8 overflow-visible">
-                {/* Pickup & Dropoff - Asymmetrical Bento Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
-                  {/* Pickup (larger - col-span-3 on md+) */}
-                  <div className="md:col-span-3 group relative animate-[slideInLeft_0.6s_ease-out_0.3s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <MapPin className="w-3.5 h-3.5 inline mr-2 text-emerald-400/70" />
+            {/* Form Container */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Pickup & Dropoff */}
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                  {/* Pickup Location */}
+                  <div className="md:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t.pickupLocation}
                     </label>
-                    {/* Double-Bezel Pattern: Outer shell */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl relative">
-                      {/* Inner core */}
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <div className="relative">
-                          <input
-                            type="text"
-                            value={formData.pickupLocation}
-                            onChange={(e) =>
-                              handleAddressInput('pickupLocation', e.target.value)
-                            }
-                            onFocus={() =>
-                              formData.pickupLocation.length >= 2 &&
-                              setShowPickupSuggestions(true)
-                            }
-                            placeholder={language === 'no' ? 'F.eks. Voss Stasjon' : 'e.g. Voss Station'}
-                            required
-                            className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                          />
-                          {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
-                            <div
-                              style={{
-                                position: 'absolute !important' as any,
-                                top: '100% !important' as any,
-                                left: '0 !important' as any,
-                                right: '0 !important' as any,
-                                marginTop: '12px !important' as any,
-                                backgroundColor: 'rgb(5, 5, 5) !important' as any,
-                                border: '2px solid rgba(59, 130, 246, 0.3) !important' as any,
-                                borderRadius: '1rem !important' as any,
-                                boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.08) !important' as any,
-                                backdropFilter: 'blur(16px) !important' as any,
-                                zIndex: 99999,
-                                maxHeight: '280px !important' as any,
-                                overflowY: 'auto !important' as any,
-                                opacity: '1 !important' as any,
-                                visibility: 'visible !important' as any,
-                              }}
-                            >
-                              {pickupSuggestions.length > 0 ? (
-                                pickupSuggestions.map((suggestion, idx) => (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.pickupLocation}
+                        onChange={(e) =>
+                          handleAddressInput('pickupLocation', e.target.value)
+                        }
+                        onFocus={() =>
+                          formData.pickupLocation.length >= 2 &&
+                          setShowPickupSuggestions(true)
+                        }
+                        placeholder={language === 'no' ? 'F.eks. Voss Stasjon' : 'e.g. Voss Station'}
+                        required
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                      />
+                      {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: '0',
+                            right: '0',
+                            marginTop: '8px',
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '0.5rem',
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                            zIndex: 99999,
+                            maxHeight: '280px',
+                            overflowY: 'auto',
+                          }}
+                        >
+                          {pickupSuggestions.length > 0 ? (
+                            pickupSuggestions.map((suggestion, idx) => (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() =>
+                                  selectAddressSuggestion('pickupLocation', suggestion)
+                                }
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-900 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                              >
+                                {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="px-4 py-2.5 text-sm text-gray-500">
+                              {language === 'no'
+                                ? 'Ingen forslag funnet, men du kan skrive adressen selv'
+                                : 'No suggestions found, but you can enter the address yourself'}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Dropoff Location */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t.dropoffLocation}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.dropoffLocation}
+                        onChange={(e) =>
+                          handleAddressInput('dropoffLocation', e.target.value)
+                        }
+                        onFocus={() =>
+                          formData.dropoffLocation.length >= 2 &&
+                          setShowDropoffSuggestions(true)
+                        }
+                        placeholder={language === 'no' ? 'F.eks. Voss Sjukehus' : 'e.g. Voss Hospital'}
+                        required
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                      />
+                      {showDropoffSuggestions &&
+                        (dropoffSuggestions.length > 0 || formData.dropoffLocation.length >= 2) && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '100%',
+                              left: '0',
+                              right: '0',
+                              marginTop: '8px',
+                              backgroundColor: 'white',
+                              border: '1px solid #e5e7eb',
+                              borderRadius: '0.5rem',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                              zIndex: 99999,
+                              maxHeight: '280px',
+                              overflowY: 'auto',
+                            }}
+                          >
+                            {dropoffSuggestions.length > 0 ? (
+                              dropoffSuggestions.map((suggestion, idx) => (
                                 <button
                                   key={idx}
                                   type="button"
                                   onClick={() =>
-                                    selectAddressSuggestion('pickupLocation', suggestion)
+                                    selectAddressSuggestion(
+                                      'dropoffLocation',
+                                      suggestion
+                                    )
                                   }
-                                  style={{
-                                    width: '100% !important' as any,
-                                    padding: '14px 18px !important' as any,
-                                    textAlign: 'left',
-                                    backgroundColor: 'transparent !important' as any,
-                                    color: 'white !important' as any,
-                                    borderBottom: idx === pickupSuggestions.length - 1 ? 'none !important' as any : '1px solid rgba(59, 130, 246, 0.1) !important' as any,
-                                    cursor: 'pointer',
-                                    transition: 'background-color 0.2s ease-[cubic-bezier(0.32,0.72,0,1)] !important' as any,
-                                    display: 'block !important' as any,
-                                    opacity: '1 !important' as any,
-                                    fontSize: '14px !important' as any,
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                  }}
+                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-900 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
                                 >
-                                  <div style={{ color: 'white', fontWeight: '500' }}>
-                                    {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
-                                  </div>
+                                  {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                                 </button>
-                                ))
-                              ) : (
-                                <div style={{ padding: '14px 18px', color: 'rgb(148, 163, 184)', fontSize: '13px', fontWeight: '400' }}>
-                                  {language === 'no'
-                                    ? 'Ingen forslag funnet, men du kan skrive adressen selv'
-                                    : 'No suggestions found, but you can enter the address yourself'}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Dropoff Location with Autocomplete (col-span-2 on md+) */}
-                  <div className="md:col-span-2 group relative animate-[slideInRight_0.6s_ease-out_0.3s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <MapPin className="w-3.5 h-3.5 inline mr-2 text-red-400/70" />
-                      {t.dropoffLocation}
-                    </label>
-                    {/* Double-Bezel Pattern: Outer shell */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl relative">
-                      {/* Inner core */}
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <div className="relative">
-                          <input
-                            type="text"
-                            value={formData.dropoffLocation}
-                            onChange={(e) =>
-                              handleAddressInput('dropoffLocation', e.target.value)
-                            }
-                            onFocus={() =>
-                              formData.dropoffLocation.length >= 2 &&
-                              setShowDropoffSuggestions(true)
-                            }
-                            placeholder={language === 'no' ? 'F.eks. Voss Sjukehus' : 'e.g. Voss Hospital'}
-                            required
-                            className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                          />
-                          {showDropoffSuggestions &&
-                            (dropoffSuggestions.length > 0 || formData.dropoffLocation.length >= 2) && (
-                              <div
-                                style={{
-                                  position: 'absolute !important' as any,
-                                  top: '100% !important' as any,
-                                  left: '0 !important' as any,
-                                  right: '0 !important' as any,
-                                  marginTop: '12px !important' as any,
-                                  backgroundColor: 'rgb(5, 5, 5) !important' as any,
-                                  border: '2px solid rgba(59, 130, 246, 0.3) !important' as any,
-                                  borderRadius: '1rem !important' as any,
-                                  boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.08) !important' as any,
-                                  backdropFilter: 'blur(16px) !important' as any,
-                                  zIndex: 99999,
-                                  maxHeight: '280px !important' as any,
-                                  overflowY: 'auto !important' as any,
-                                  opacity: '1 !important' as any,
-                                  visibility: 'visible !important' as any,
-                                }}
-                              >
-                                {dropoffSuggestions.length > 0 ? (
-                                  dropoffSuggestions.map((suggestion, idx) => (
-                                    <button
-                                      key={idx}
-                                      type="button"
-                                      onClick={() =>
-                                        selectAddressSuggestion(
-                                          'dropoffLocation',
-                                          suggestion
-                                        )
-                                      }
-                                      style={{
-                                        width: '100% !important' as any,
-                                        padding: '14px 18px !important' as any,
-                                        textAlign: 'left',
-                                        backgroundColor: 'transparent !important' as any,
-                                        color: 'white !important' as any,
-                                        borderBottom: idx === dropoffSuggestions.length - 1 ? 'none !important' as any : '1px solid rgba(59, 130, 246, 0.1) !important' as any,
-                                        cursor: 'pointer',
-                                        transition: 'background-color 0.2s ease-[cubic-bezier(0.32,0.72,0,1)] !important' as any,
-                                        display: 'block !important' as any,
-                                        opacity: '1 !important' as any,
-                                        fontSize: '14px !important' as any,
-                                      }}
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.15)';
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                      }}
-                                    >
-                                      <div style={{ color: 'white', fontWeight: '500' }}>
-                                        {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
-                                      </div>
-                                    </button>
-                                  ))
-                                ) : (
-                                  <div style={{ padding: '14px 18px', color: 'rgb(148, 163, 184)', fontSize: '13px', fontWeight: '400' }}>
-                                    {language === 'no'
-                                      ? 'Ingen forslag funnet, men du kan skrive adressen selv'
-                                      : 'No suggestions found, but you can enter the address yourself'}
-                                  </div>
-                                )}
+                              ))
+                            ) : (
+                              <div className="px-4 py-2.5 text-sm text-gray-500">
+                                {language === 'no'
+                                  ? 'Ingen forslag funnet, men du kan skrive adressen selv'
+                                  : 'No suggestions found, but you can enter the address yourself'}
                               </div>
                             )}
-                        </div>
-                      </div>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
 
-                {/* Date & Time - Asymmetrical Bento (date 2 cols, time 2 cols on md+) */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
-                  {/* Date (col-span-2 on md+) */}
-                  <div className="md:col-span-2 group animate-[slideInLeft_0.6s_ease-out_0.4s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <Clock className="w-3.5 h-3.5 inline mr-2 text-blue-400/70" />
+                {/* Date & Time */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Date */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t.date}
                     </label>
-                    {/* Double-Bezel Pattern */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <input
-                          type="date"
-                          name="date"
-                          value={formData.date}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                        />
-                      </div>
-                    </div>
+                    <input
+                      type="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    />
                   </div>
 
-                  {/* Time (col-span-2 on md+) */}
-                  <div className="md:col-span-2 group animate-[slideInRight_0.6s_ease-out_0.4s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <Clock className="w-3.5 h-3.5 inline mr-2 text-purple-400/70" />
+                  {/* Time */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t.time}
                     </label>
-                    {/* Double-Bezel Pattern */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <input
-                          type="time"
-                          name="time"
-                          value={formData.time}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                        />
-                      </div>
-                    </div>
+                    <input
+                      type="time"
+                      name="time"
+                      value={formData.time}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    />
                   </div>
                 </div>
 
-                {/* Passengers & Car Type - Asymmetrical Bento */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
-                  {/* Passengers (col-span-2 on md+) */}
-                  <div className="md:col-span-2 group animate-[slideInLeft_0.6s_ease-out_0.5s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <Users className="w-3.5 h-3.5 inline mr-2 text-amber-400/70" />
+                {/* Passengers & Car Type */}
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                  {/* Passengers */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t.passengers}
                     </label>
-                    {/* Double-Bezel Pattern */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <select
-                          name="passengers"
-                          value={formData.passengers}
-                          onChange={handleInputChange}
-                          className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm appearance-none cursor-pointer"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                            <option key={num} value={num}>
-                              {num} {language === 'no' ? (num === 1 ? 'Passasjer' : 'Passasjerer') : num === 1 ? 'Passenger' : 'Passengers'}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                    <select
+                      name="passengers"
+                      value={formData.passengers}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                        <option key={num} value={num}>
+                          {num} {language === 'no' ? (num === 1 ? 'Passasjer' : 'Passasjerer') : num === 1 ? 'Passenger' : 'Passengers'}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
-                  {/* Car Type Selection - Visual Pill Grid (col-span-3 on md+) */}
-                  <div className="md:col-span-3 animate-[slideInRight_0.6s_ease-out_0.5s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <Car className="w-3.5 h-3.5 inline mr-2 text-cyan-400/70" />
+                  {/* Car Type */}
+                  <div className="md:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t.vehicleType}
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       {CAR_TYPES.map((car) => (
                         <button
                           key={car.value}
                           type="button"
                           onClick={() => handleCarTypeChange(car.value)}
-                          className={`group/pill relative px-4 py-3 rounded-full text-xs font-semibold transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] overflow-hidden ${
+                          className={`px-3 py-2.5 rounded-lg text-xs font-medium text-center transition-colors ${
                             formData.carType === car.value
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/30 scale-105'
-                              : 'bg-white/5 border border-white/10 text-slate-300 hover:border-white/20 hover:bg-white/8'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
-                          <span className="flex items-center justify-center gap-1.5 relative z-10">
-                            <span className="text-sm">{car.icon}</span>
-                            <span className="hidden sm:inline">{language === 'no' ? car.label_no : car.label_en}</span>
-                          </span>
-                          {formData.carType === car.value && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-20 blur-xl" />
-                          )}
+                          <span className="text-base block mb-1">{car.icon}</span>
+                          <span className="hidden sm:inline">{language === 'no' ? car.label_no : car.label_en}</span>
                         </button>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Name & Phone - Asymmetrical Bento (name 3 cols, phone 2 cols on md+) */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
-                  {/* Name (col-span-3 on md+) */}
-                  <div className="md:col-span-3 group animate-[slideInLeft_0.6s_ease-out_0.6s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      {t.fullName} <span className="text-rose-400/80 ml-1">*</span>
+                {/* Name & Phone */}
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                  {/* Name */}
+                  <div className="md:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t.fullName} <span className="text-red-500">*</span>
                     </label>
-                    {/* Double-Bezel Pattern */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          placeholder={language === 'no' ? 'Ditt fulle navn' : 'Your full name'}
-                          required
-                          className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                        />
-                      </div>
-                    </div>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder={language === 'no' ? 'Ditt fulle navn' : 'Your full name'}
+                      required
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    />
                   </div>
 
-                  {/* Phone (col-span-2 on md+) */}
-                  <div className="md:col-span-2 group animate-[slideInRight_0.6s_ease-out_0.6s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                    <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                      <Phone className="w-3.5 h-3.5 inline mr-2 text-green-400/70" />
-                      {t.phone} <span className="text-rose-400/80 ml-1">*</span>
+                  {/* Phone */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t.phone} <span className="text-red-500">*</span>
                     </label>
-                    {/* Double-Bezel Pattern */}
-                    <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                      <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          placeholder={language === 'no' ? '+47 XXX XX XXX' : '+47 XXX XX XXX'}
-                          required
-                          className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                        />
-                      </div>
-                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder={language === 'no' ? '+47 XXX XX XXX' : '+47 XXX XX XXX'}
+                      required
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    />
                   </div>
                 </div>
 
-                {/* Email - Full width */}
-                <div className="group animate-[slideInLeft_0.6s_ease-out_0.65s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                  <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                    <Mail className="w-3.5 h-3.5 inline mr-2 text-indigo-400/70" />
-                    {t.email} <span className="text-slate-500 font-light ml-1">(optional)</span>
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.email} <span className="text-gray-400 font-normal">(optional)</span>
                   </label>
-                  {/* Double-Bezel Pattern */}
-                  <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                    <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder={language === 'no' ? 'Din epost (valgfritt)' : 'Your email (optional)'}
-                        className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                      />
-                    </div>
-                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder={language === 'no' ? 'Din epost (valgfritt)' : 'Your email (optional)'}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
                 </div>
 
-                {/* Additional Info - Full width */}
-                <div className="animate-[slideInUp_0.6s_ease-out_0.7s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                  <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                    <MessageSquare className="w-3.5 h-3.5 inline mr-2 text-pink-400/70" />
+                {/* Additional Info */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t.additionalInfo}
                   </label>
-                  {/* Double-Bezel Pattern */}
-                  <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                    <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                      <textarea
-                        name="additionalInfo"
-                        value={formData.additionalInfo}
-                        onChange={handleInputChange}
-                        placeholder={t.specialRequests}
-                        rows={3}
-                        className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] resize-none backdrop-blur-sm"
-                      />
-                    </div>
-                  </div>
+                  <textarea
+                    name="additionalInfo"
+                    value={formData.additionalInfo}
+                    onChange={handleInputChange}
+                    placeholder={t.specialRequests}
+                    rows={3}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none"
+                  />
                 </div>
 
-                {/* Submit Button - Button-in-Button with Trailing Icon Circle */}
-                <div className="animate-[slideInUp_0.6s_ease-out_0.8s_forwards] opacity-0 pt-8" style={{ animationFillMode: 'forwards' }}>
+                {/* Submit Button */}
+                <div className="pt-4">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="group relative w-full p-1.5 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-400/30 shadow-2xl shadow-blue-500/10 hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                    className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {/* Inner Button */}
-                    <div className="relative w-full px-8 py-4 rounded-full bg-gradient-to-r from-blue-500 via-blue-400 to-purple-500 text-white font-semibold uppercase tracking-wider transition-all duration-500 flex items-center justify-between overflow-hidden active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed group-hover:shadow-xl"
-                      style={{
-                        boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 20px 25px -5px rgba(59, 130, 246, 0.2)',
-                      }}
-                    >
-                      {/* Animated background shimmer */}
-                      <div className="absolute inset-0 overflow-hidden rounded-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" />
-                      </div>
-
-                      {/* Text content */}
-                      <span className="relative z-10 text-sm md:text-base leading-none">
-                        {loading ? t.booking : t.confirmBooking}
-                      </span>
-
-                      {/* Trailing Icon Circle */}
-                      <div className="relative z-10 w-10 h-10 rounded-full bg-white/20 border border-white/30 flex items-center justify-center group-hover:translate-x-1.5 group-hover:scale-110 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] shadow-lg shadow-white/10">
-                        <span className="text-white font-bold text-lg leading-none">→</span>
-                      </div>
-                    </div>
+                    {loading ? t.booking : t.confirmBooking}
                   </button>
                 </div>
 
-                {/* Booking Tracking - Show when successful */}
+                {/* Booking Tracking */}
                 {success && bookingNumber && (
                   <BookingTracking
                     bookingNumber={bookingNumber}
@@ -860,155 +725,119 @@ export default function BookingForm() {
                   />
                 )}
 
-                {/* Error Message - Premium Styling */}
+                {/* Error Message */}
                 {error && (
-                  <div className="animate-[slideInUp_0.4s_ease-out] p-2 rounded-[1.5rem] bg-gradient-to-br from-red-500/10 to-rose-500/5 border border-red-400/30 shadow-lg shadow-red-500/10">
-                    <div className="px-6 py-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-red-500/5 to-transparent border border-red-400/20 text-red-300 text-center font-semibold text-sm md:text-base">
-                      {error}
-                    </div>
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-800 text-sm">{error}</p>
                   </div>
                 )}
               </form>
             </div>
-          </div>
 
-          {/* Footer */}
-          <div className="mt-8 md:mt-12 text-center text-slate-400 text-xs md:text-sm animate-[fadeIn_1s_ease-out_1s_forwards]">
-            <p>{t.supportText}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Status Check Tab */}
-      {activeTab === 'status' && (
-        <div className="w-full max-w-2xl animate-[fadeInUp_0.8s_ease-out_0.2s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-          {/* Header */}
-          <div className="mb-16 text-center">
-            <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 backdrop-blur-md">
-              <span className="text-xs font-medium tracking-[0.15em] text-purple-400 uppercase">Booking Status</span>
+            {/* Footer */}
+            <div className="mt-8 text-center text-gray-600 text-sm">
+              <p>{t.supportText}</p>
             </div>
-            <h1 className="text-5xl md:text-6xl font-light tracking-tight text-white mb-4 leading-[1.1]">
-              {t.bookingStatusTitle}
-            </h1>
-            <p className="text-base text-slate-400 max-w-xl mx-auto font-light tracking-wide">
-              {language === 'no'
-                ? 'Skriv inn ditt bookingnummer for å sjekke status på turen.'
-                : 'Enter your booking number to check the status of your ride.'}
-            </p>
           </div>
+        )}
 
-          {/* Status Form Container - Double-Bezel */}
-          <div className="p-2 rounded-[2.5rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 shadow-2xl">
-            {/* Inner Core */}
-            <div className="p-8 md:p-12 rounded-[calc(2.5rem-0.375rem)] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]">
-              <form onSubmit={handleCheckStatus} className="space-y-8">
+        {/* Status Check Tab */}
+        {activeTab === 'status' && (
+          <div className="w-full max-w-2xl">
+            {/* Header */}
+            <div className="mb-12 text-center">
+              <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+                {t.bookingStatusTitle}
+              </h1>
+              <p className="text-gray-600 text-base max-w-2xl mx-auto">
+                {language === 'no'
+                  ? 'Skriv inn ditt bookingnummer for å sjekke status på turen.'
+                  : 'Enter your booking number to check the status of your ride.'}
+              </p>
+            </div>
+
+            {/* Status Form Container */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
+              <form onSubmit={handleCheckStatus} className="space-y-6">
                 {/* Booking Number Input */}
-                <div className="group animate-[slideInLeft_0.6s_ease-out_0.3s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                  <label className="block text-xs font-medium text-slate-300 mb-4 uppercase tracking-[0.15em]">
-                    <Search className="w-3.5 h-3.5 inline mr-2 text-blue-400/70" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t.bookingNumber}
                   </label>
-                  {/* Double-Bezel Pattern */}
-                  <div className="p-2 rounded-[1.5rem] bg-gradient-to-br from-white/5 to-white/[0.01] border border-white/10 shadow-xl">
-                    <div className="p-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-white/[0.02] to-transparent border border-white/5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-                      <input
-                        type="text"
-                        value={statusBookingNumber}
-                        onChange={(e) => setStatusBookingNumber(e.target.value)}
-                        placeholder={language === 'no' ? 'F.eks. BK-1234567' : 'e.g. BK-1234567'}
-                        required
-                        className="w-full px-5 py-3.5 rounded-xl bg-slate-900/40 border border-white/8 text-white placeholder-slate-500 text-sm md:text-base focus:outline-none focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] backdrop-blur-sm"
-                      />
-                    </div>
-                  </div>
+                  <input
+                    type="text"
+                    value={statusBookingNumber}
+                    onChange={(e) => setStatusBookingNumber(e.target.value)}
+                    placeholder={language === 'no' ? 'F.eks. BK-1234567' : 'e.g. BK-1234567'}
+                    required
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  />
                 </div>
 
                 {/* Search Button */}
-                <div className="animate-[slideInUp_0.6s_ease-out_0.4s_forwards] opacity-0" style={{ animationFillMode: 'forwards' }}>
-                  <button
-                    type="submit"
-                    disabled={statusLoading}
-                    className="group relative w-full p-1.5 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-400/30 shadow-2xl shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
-                  >
-                    {/* Inner Button */}
-                    <div className="relative w-full px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 via-purple-400 to-blue-500 text-white font-semibold uppercase tracking-wider transition-all duration-500 flex items-center justify-between overflow-hidden active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{
-                        boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 20px 25px -5px rgba(168, 85, 247, 0.2)',
-                      }}
-                    >
-                      {/* Animated background shimmer */}
-                      <div className="absolute inset-0 overflow-hidden rounded-full">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 group-hover:translate-x-full transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" />
-                      </div>
-
-                      <span className="relative z-10 text-sm md:text-base leading-none">
-                        {statusLoading ? language === 'no' ? 'Søker...' : 'Searching...' : t.searchBooking}
-                      </span>
-                      <Search className="w-5 h-5 relative z-10" />
-                    </div>
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={statusLoading}
+                  className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {statusLoading ? language === 'no' ? 'Søker...' : 'Searching...' : t.searchBooking}
+                </button>
 
                 {/* Status Display */}
                 {bookingStatus && (
-                  <div className="animate-[slideInUp_0.4s_ease-out] p-2 rounded-[1.5rem] bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-400/30 shadow-lg shadow-emerald-500/10">
-                    <div className="p-6 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-emerald-500/5 to-transparent border border-emerald-400/20 space-y-4">
-                      <h3 className="text-lg md:text-xl font-semibold text-emerald-300">{t.bookingFound}</h3>
-                      <div className="space-y-4 text-sm md:text-base">
-                        <div className="flex justify-between items-center pb-3 border-b border-emerald-400/10">
-                          <span className="text-slate-400">{t.bookingNumber}:</span>
-                          <span className="text-white font-semibold">{bookingStatus.bookingNumber}</span>
-                        </div>
-                        <div className="flex justify-between items-center pb-3 border-b border-emerald-400/10">
-                          <span className="text-slate-400">{t.status}:</span>
-                          <span className="text-emerald-300 font-semibold">
-                            {language === 'no'
-                              ? bookingStatus.status === 'pending'
-                                ? 'Venter på godkjenning'
-                                : bookingStatus.status === 'accepted'
-                                ? 'Godkjent av kjøretøy'
-                                : bookingStatus.status === 'inProgress'
-                                ? 'Underveis'
-                                : 'Fullført'
-                              : bookingStatus.status === 'pending'
-                              ? 'Awaiting Acceptance'
-                              : bookingStatus.status === 'accepted'
-                              ? 'Accepted by Vehicle'
-                              : bookingStatus.status === 'inProgress'
-                              ? 'In Progress'
-                              : 'Completed'}
-                          </span>
-                        </div>
-                        {bookingStatus.vehicle && (
-                          <div className="flex justify-between items-center pb-3 border-b border-emerald-400/10">
-                            <span className="text-slate-400">{t.assignedVehicle}:</span>
-                            <span className="text-white font-semibold">{bookingStatus.vehicle}</span>
-                          </div>
-                        )}
-                        {bookingStatus.driver && (
-                          <div className="flex justify-between items-center">
-                            <span className="text-slate-400">{t.driver}:</span>
-                            <span className="text-white font-semibold">{bookingStatus.driver}</span>
-                          </div>
-                        )}
+                  <div className="p-6 bg-green-50 border border-green-200 rounded-lg space-y-4">
+                    <h3 className="text-lg font-semibold text-green-900">{t.bookingFound}</h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between items-center pb-3 border-b border-green-200">
+                        <span className="text-gray-600">{t.bookingNumber}:</span>
+                        <span className="font-semibold text-gray-900">{bookingStatus.bookingNumber}</span>
                       </div>
+                      <div className="flex justify-between items-center pb-3 border-b border-green-200">
+                        <span className="text-gray-600">{t.status}:</span>
+                        <span className="font-semibold text-green-700">
+                          {language === 'no'
+                            ? bookingStatus.status === 'pending'
+                              ? 'Venter på godkjenning'
+                              : bookingStatus.status === 'accepted'
+                              ? 'Godkjent av kjøretøy'
+                              : bookingStatus.status === 'inProgress'
+                              ? 'Underveis'
+                              : 'Fullført'
+                            : bookingStatus.status === 'pending'
+                            ? 'Awaiting Acceptance'
+                            : bookingStatus.status === 'accepted'
+                            ? 'Accepted by Vehicle'
+                            : bookingStatus.status === 'inProgress'
+                            ? 'In Progress'
+                            : 'Completed'}
+                        </span>
+                      </div>
+                      {bookingStatus.vehicle && (
+                        <div className="flex justify-between items-center pb-3 border-b border-green-200">
+                          <span className="text-gray-600">{t.assignedVehicle}:</span>
+                          <span className="font-semibold text-gray-900">{bookingStatus.vehicle}</span>
+                        </div>
+                      )}
+                      {bookingStatus.driver && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">{t.driver}:</span>
+                          <span className="font-semibold text-gray-900">{bookingStatus.driver}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {/* Error Message - Premium Styling */}
+                {/* Error Message */}
                 {statusError && (
-                  <div className="animate-[slideInUp_0.4s_ease-out] p-2 rounded-[1.5rem] bg-gradient-to-br from-red-500/10 to-rose-500/5 border border-red-400/30 shadow-lg shadow-red-500/10">
-                    <div className="px-6 py-4 rounded-[calc(1.5rem-0.25rem)] bg-gradient-to-br from-red-500/5 to-transparent border border-red-400/20 text-red-300 text-center font-semibold text-sm md:text-base">
-                      {statusError}
-                    </div>
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-800 text-sm">{statusError}</p>
                   </div>
                 )}
               </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );
