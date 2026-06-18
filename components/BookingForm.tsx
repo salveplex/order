@@ -362,15 +362,15 @@ export default function BookingForm() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="flex flex-col items-center justify-center px-4 py-6 md:py-20 min-h-screen">
+      <div className="w-full px-4 py-4 md:py-6">
         {/* Language selector - inline, not fixed */}
-        <div className="mb-6 md:mb-8 flex justify-end w-full max-w-3xl">
+        <div className="mb-2 flex justify-end w-full max-w-3xl mx-auto">
           <div className="flex gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setLanguage('no')}
               className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                 language === 'no'
-                  ? 'bg-white text-blue-600 shadow-sm'
+                  ? 'bg-white text-amber-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -380,7 +380,7 @@ export default function BookingForm() {
               onClick={() => setLanguage('en')}
               className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                 language === 'en'
-                  ? 'bg-white text-blue-600 shadow-sm'
+                  ? 'bg-white text-amber-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -389,12 +389,13 @@ export default function BookingForm() {
           </div>
         </div>
         {/* Tab Navigation */}
-        <div className="mb-6 md:mb-12 flex gap-1 bg-gray-100 rounded-lg p-1">
+        <div className="flex justify-center">
+          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setActiveTab('booking')}
             className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
               activeTab === 'booking'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-white text-amber-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -404,14 +405,16 @@ export default function BookingForm() {
             onClick={() => setActiveTab('status')}
             className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
               activeTab === 'status'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-white text-amber-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             {t.checkStatus}
           </button>
+          </div>
         </div>
 
+        <div className="flex flex-col items-center justify-center py-8 md:py-12">
         {/* Booking Form Tab */}
         {activeTab === 'booking' && (
           <div className="w-full max-w-3xl">
@@ -837,6 +840,7 @@ export default function BookingForm() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
