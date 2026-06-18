@@ -452,7 +452,7 @@ export default function BookingForm() {
                         }
                         placeholder={language === 'no' ? 'F.eks. Voss Stasjon' : 'e.g. Voss Station'}
                         required
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                       {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
                         <div
@@ -514,7 +514,7 @@ export default function BookingForm() {
                         }
                         placeholder={language === 'no' ? 'F.eks. Voss Sjukehus' : 'e.g. Voss Hospital'}
                         required
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                       {showDropoffSuggestions &&
                         (dropoffSuggestions.length > 0 || formData.dropoffLocation.length >= 2) && (
@@ -576,7 +576,7 @@ export default function BookingForm() {
                       value={formData.date}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
@@ -591,7 +591,7 @@ export default function BookingForm() {
                       value={formData.time}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -607,7 +607,7 @@ export default function BookingForm() {
                       name="passengers"
                       value={formData.passengers}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors appearance-none"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                         <option key={num} value={num}>
@@ -628,17 +628,22 @@ export default function BookingForm() {
                           key={car.value}
                           type="button"
                           onClick={() => handleCarTypeChange(car.value)}
-                          className={`px-3 py-2.5 rounded-lg text-xs font-medium text-center transition-colors ${
+                          className={`px-2 md:px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-center transition-colors break-words ${
                             formData.carType === car.value
-                              ? 'bg-blue-600 text-white shadow-sm'
+                              ? 'bg-amber-600 text-white shadow-sm'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
                           <span className="text-base block mb-1">{car.icon}</span>
-                          <span className="hidden sm:inline">{language === 'no' ? car.label_no : car.label_en}</span>
+                          <span className="inline text-xs md:text-sm">{language === 'no' ? car.label_no : car.label_en}</span>
                         </button>
                       ))}
                     </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {language === 'no'
+                        ? 'For bestilling til flere enn 8, ring sentralen'
+                        : 'For bookings with more than 8 people, call the office'}
+                    </p>
                   </div>
                 </div>
 
@@ -656,7 +661,7 @@ export default function BookingForm() {
                       onChange={handleInputChange}
                       placeholder={language === 'no' ? 'Ditt fulle navn' : 'Your full name'}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
@@ -672,7 +677,7 @@ export default function BookingForm() {
                       onChange={handleInputChange}
                       placeholder={language === 'no' ? '+47 XXX XX XXX' : '+47 XXX XX XXX'}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -688,7 +693,7 @@ export default function BookingForm() {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder={language === 'no' ? 'Din epost (valgfritt)' : 'Your email (optional)'}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
 
@@ -703,7 +708,7 @@ export default function BookingForm() {
                     onChange={handleInputChange}
                     placeholder={t.specialRequests}
                     rows={3}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors resize-none"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
                   />
                 </div>
 
@@ -712,7 +717,7 @@ export default function BookingForm() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? t.booking : t.confirmBooking}
                   </button>
@@ -773,7 +778,7 @@ export default function BookingForm() {
                     onChange={(e) => setStatusBookingNumber(e.target.value)}
                     placeholder={language === 'no' ? 'F.eks. BK-1234567' : 'e.g. BK-1234567'}
                     required
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
 
@@ -781,7 +786,7 @@ export default function BookingForm() {
                 <button
                   type="submit"
                   disabled={statusLoading}
-                  className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {statusLoading ? language === 'no' ? 'Søker...' : 'Searching...' : t.searchBooking}
                 </button>
