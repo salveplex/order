@@ -363,11 +363,11 @@ export default function BookingForm() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header with language selector */}
-      <div className="fixed top-0 right-0 z-50 p-6 md:p-8">
-        <div className="flex gap-2 bg-gray-100 rounded-lg p-1">
+      <div className="fixed top-0 right-0 z-50 p-3 md:p-8">
+        <div className="flex gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setLanguage('no')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
               language === 'no'
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -377,7 +377,7 @@ export default function BookingForm() {
           </button>
           <button
             onClick={() => setLanguage('en')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
               language === 'en'
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -388,12 +388,12 @@ export default function BookingForm() {
         </div>
       </div>
 
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 md:py-20">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-6 md:py-20">
         {/* Tab Navigation */}
-        <div className="mb-12 flex gap-1 bg-gray-100 rounded-lg p-1">
+        <div className="mb-6 md:mb-12 flex gap-1 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setActiveTab('booking')}
-            className={`px-6 py-2 rounded-md font-medium transition-colors ${
+            className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
               activeTab === 'booking'
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -403,7 +403,7 @@ export default function BookingForm() {
           </button>
           <button
             onClick={() => setActiveTab('status')}
-            className={`px-6 py-2 rounded-md font-medium transition-colors ${
+            className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
               activeTab === 'status'
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
@@ -417,18 +417,18 @@ export default function BookingForm() {
         {activeTab === 'booking' && (
           <div className="w-full max-w-3xl">
             {/* Header */}
-            <div className="mb-12 text-center">
-              <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+            <div className="mb-6 md:mb-12 text-center">
+              <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 mb-2 md:mb-3 tracking-tight">
                 {t.bookYourRide}
               </h1>
-              <p className="text-gray-600 text-base max-w-2xl mx-auto">
+              <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
                 {t.subtitle}
               </p>
             </div>
 
             {/* Form Container */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
-              <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 md:p-12">
+              <form onSubmit={handleSubmit} className="space-y-5 md:space-y-8">
                 {/* Pickup & Dropoff */}
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Pickup Location */}
