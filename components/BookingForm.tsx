@@ -654,7 +654,7 @@ export default function BookingForm() {
                       value={formData.date}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
@@ -669,7 +669,7 @@ export default function BookingForm() {
                       value={formData.time}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -685,7 +685,7 @@ export default function BookingForm() {
                       name="passengers"
                       value={formData.passengers}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                         <option key={num} value={num}>
@@ -709,15 +709,15 @@ export default function BookingForm() {
                           className={`px-3 md:px-4 py-3 md:py-4 rounded-lg text-sm md:text-base font-medium text-center transition-colors break-words ${
                             formData.carType === car.value
                               ? 'bg-amber-600 text-white shadow-sm'
-                              : 'bg-gray-100 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                           }`}
                         >
-                          <span className="text-base block mb-1">{car.icon}</span>
+                          <span className="text-2xl block mb-1">{car.icon}</span>
                           <span className="inline text-xs md:text-sm">{language === 'no' ? car.label_no : car.label_en}</span>
                         </button>
                       ))}
                     </div>
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       {language === 'no'
                         ? 'For bestilling til flere enn 8, ring sentralen'
                         : 'For bookings with more than 8 people, call the office'}
@@ -786,7 +786,7 @@ export default function BookingForm() {
                     onChange={handleInputChange}
                     placeholder={t.specialRequests}
                     rows={3}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
                   />
                 </div>
 
