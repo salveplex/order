@@ -434,7 +434,6 @@ export default function BookingForm() {
                                 cursor: 'pointer',
                                 transition: 'background-color 0.2s !important' as any,
                                 display: 'block !important' as any,
-                                border: 'none',
                                 opacity: '1 !important' as any,
                               }}
                               onMouseEnter={(e) => {
@@ -523,7 +522,6 @@ export default function BookingForm() {
                                     cursor: 'pointer',
                                     transition: 'background-color 0.2s !important' as any,
                                     display: 'block !important' as any,
-                                    border: 'none',
                                     opacity: '1 !important' as any,
                                   }}
                                   onMouseEnter={(e) => {
