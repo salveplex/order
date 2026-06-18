@@ -11,43 +11,87 @@ export default function TrackingDemo() {
     speed: 0,
     direction: 0,
   });
+  const [routeCoordinates, setRouteCoordinates] = useState<Array<[number, number]>>([
+    [60.5627, 6.4227], // Grevlesvegen 22
+    [60.5637, 6.4189], // Uttrågata 19 (fallback)
+  ]);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
+  const polylineRef = useRef<any>(null);
+
+  // Fetch actual route from OSRM
+  useEffect(() => {
+    const fetchRoute = async () => {
+      try {
+        // Grevlesvegen 22 and Uttrågata 19 in Voss, Norway
+        const startLon = 6.4227;
+        const startLat = 60.5627;
+        const endLon = 6.4189;
+        const endLat = 60.5637;
+
+        const response = await fetch(
+          `https://router.project-osrm.org/route/v1/car/${startLon},${startLat};${endLon},${endLat}?geometries=geojson&overview=full`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.routes && data.routes[0]) {
+            const coords = data.routes[0].geometry.coordinates.map(
+              (coord: [number, number]) => [coord[1], coord[0]] // Convert from [lon, lat] to [lat, lon]
+            );
+            setRouteCoordinates(coords);
+          }
+        }
+      } catch (error) {
+        console.log('Route fetch failed, using fallback route');
+      }
+    };
+
+    fetchRoute();
+  }, []);
 
   // Simulate taxi movement along route
   useEffect(() => {
     let frame = 0;
     const interval = setInterval(() => {
       frame++;
-      // Simulate taxi moving from pickup to dropoff
-      const progress = (frame % 200) / 200; // 0 to 1
+      const cycleLength = 300; // Total frames for one complete journey
+      const progress = (frame % cycleLength) / cycleLength; // 0 to 1
 
-      // Interpolate between pickup and dropoff
-      const startLat = 60.5627;
-      const startLon = 6.4227;
-      const endLat = 60.5637;
-      const endLon = 6.4189;
+      // Interpolate along the entire route
+      const totalDistance = routeCoordinates.length - 1;
+      const distanceAlongRoute = progress * totalDistance;
+      const segmentIndex = Math.floor(distanceAlongRoute);
+      const segmentProgress = distanceAlongRoute - segmentIndex;
 
-      const currentLat = startLat + (endLat - startLat) * progress;
-      const currentLon = startLon + (endLon - startLon) * progress;
+      // Clamp to valid range
+      const currentSegmentIndex = Math.min(segmentIndex, routeCoordinates.length - 2);
+      const nextSegmentIndex = Math.min(currentSegmentIndex + 1, routeCoordinates.length - 1);
+
+      const [currentLat, currentLon] = routeCoordinates[currentSegmentIndex];
+      const [nextLat, nextLon] = routeCoordinates[nextSegmentIndex];
+
+      // Interpolate position
+      const interpolatedLat = currentLat + (nextLat - currentLat) * segmentProgress;
+      const interpolatedLon = currentLon + (nextLon - currentLon) * segmentProgress;
 
       // Calculate direction based on movement
-      const dLat = endLat - startLat;
-      const dLon = endLon - startLon;
+      const dLat = nextLat - currentLat;
+      const dLon = nextLon - currentLon;
       const direction = Math.atan2(dLon, dLat) * (180 / Math.PI);
 
       setLocation({
-        lat: currentLat,
-        lon: currentLon,
+        lat: interpolatedLat,
+        lon: interpolatedLon,
         speed: Math.sin(progress * Math.PI) * 40, // 0-40 km/h
-        direction: direction, // Direction of movement
+        direction: direction,
       });
     }, 500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [routeCoordinates]);
 
   // Initialize map via CDN
   useEffect(() => {
@@ -118,8 +162,21 @@ export default function TrackingDemo() {
       L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: dropoffMarker })
         .addTo(map)
         .bindPopup('<b>Voss Sjukehus</b><br/>Destinasjon');
+
+      // Draw route polyline
+      if (routeCoordinates.length > 1) {
+        if (polylineRef.current) {
+          map.removeLayer(polylineRef.current);
+        }
+        polylineRef.current = L.polyline(routeCoordinates, {
+          color: '#3b82f6',
+          weight: 3,
+          opacity: 0.5,
+          dashArray: '5, 5',
+        }).addTo(map);
+      }
     }
-  }, []);
+  }, [routeCoordinates]);
 
   // Update taxi marker
   useEffect(() => {
