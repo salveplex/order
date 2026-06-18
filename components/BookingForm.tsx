@@ -181,24 +181,78 @@ export default function BookingForm() {
     setSuccess(false);
 
     try {
-      // Validation 1: Check time restrictions (13:30-15:00 on weekdays)
+      // Helper function to check if date is a red day (Norwegian public holiday)
+      const isRedDay = (date: Date): boolean => {
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        // Fixed holidays
+        const fixedHolidays = [
+          [1, 1],    // New Year's Day
+          [5, 1],    // Labour Day
+          [5, 17],   // Constitution Day
+          [12, 25],  // Christmas Day
+          [12, 26],  // Boxing Day
+        ];
+
+        if (fixedHolidays.some(([m, d]) => m === month && d === day)) {
+          return true;
+        }
+
+        // Moveable holidays (simplified - would need proper Easter calculation for full accuracy)
+        // For now, approximate common dates for 2024-2026
+        const year = date.getFullYear();
+        const moveableHolidays: Array<[number, number, number]> = [
+          // Easter varies, approximate dates
+          ...(year === 2024 ? [[3, 28], [3, 29], [3, 31], [4, 1], [5, 9], [5, 10], [5, 19]] : []),
+          ...(year === 2025 ? [[4, 18], [4, 19], [4, 20], [4, 21], [5, 29], [5, 30], [6, 8]] : []),
+          ...(year === 2026 ? [[4, 3], [4, 4], [4, 5], [4, 6], [5, 14], [5, 15], [5, 24]] : []),
+        ] as any;
+
+        return moveableHolidays.some(([m, d]: any) => m === month && d === day);
+      };
+
+      // Helper function to check if date is between June 20 and August 20
+      const isSummerException = (date: Date): boolean => {
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        if (month > 6 && month < 8) return true; // July
+        if (month === 6 && day >= 20) return true; // June 20-30
+        if (month === 8 && day <= 20) return true; // August 1-20
+        return false;
+      };
+
       const bookingDate = new Date(formData.date);
       const dayOfWeek = bookingDate.getDay(); // 0 = Sunday, 1-5 = Monday-Friday, 6 = Saturday
       const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+      const isSummer = isSummerException(bookingDate);
+      const isHoliday = isRedDay(bookingDate);
 
-      const [hours, minutes] = formData.time.split(':').map(Number);
-      const totalMinutes = hours * 60 + minutes;
-      const restrictionStart = 13 * 60 + 30; // 13:30
-      const restrictionEnd = 15 * 60; // 15:00
+      // Time restrictions don't apply during summer or on red days
+      if (isWeekday && !isSummer && !isHoliday) {
+        const [hours, minutes] = formData.time.split(':').map(Number);
+        const totalMinutes = hours * 60 + minutes;
 
-      if (isWeekday && totalMinutes >= restrictionStart && totalMinutes < restrictionEnd) {
-        setError(
-          language === 'no'
-            ? 'Booking er ikke tillatt mellom 13:30 og 15:00 på hverdager'
-            : 'Booking not allowed between 13:30 and 15:00 on weekdays'
+        // Two restriction windows: 07:30-08:30 and 13:30-15:00
+        const restrictions = [
+          { start: 7 * 60 + 30, end: 8 * 60 + 30 },      // 07:30-08:30
+          { start: 13 * 60 + 30, end: 15 * 60 },         // 13:30-15:00
+        ];
+
+        const isInRestrictionWindow = restrictions.some(
+          (r) => totalMinutes >= r.start && totalMinutes < r.end
         );
-        setLoading(false);
-        return;
+
+        if (isInRestrictionWindow) {
+          setError(
+            language === 'no'
+              ? 'Ring for å bestille i dette tidsrommet'
+              : 'Call to book during this time'
+          );
+          setLoading(false);
+          return;
+        }
       }
 
       // Validation 2: Check distance from Uttrågata 19 (max 20 km)
