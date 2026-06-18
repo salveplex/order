@@ -55,6 +55,7 @@ export default function BookingForm() {
   const [isDark, setIsDark] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'booking' | 'status'>('booking');
+  const timeInputRef = React.useRef<HTMLInputElement>(null);
 
   // Request notification permission on mount
   React.useEffect(() => {
@@ -664,10 +665,17 @@ export default function BookingForm() {
                       {t.time}
                     </label>
                     <input
+                      ref={timeInputRef}
                       type="time"
                       name="time"
                       value={formData.time}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        handleInputChange(e);
+                        // Auto-blur after selection
+                        setTimeout(() => {
+                          timeInputRef.current?.blur();
+                        }, 100);
+                      }}
                       required
                       className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
