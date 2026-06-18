@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search } from 'lucide-react';
 import { useTranslation, type Language } from '@/lib/i18n';
 import BookingTracking from '@/components/BookingTracking';

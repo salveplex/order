@@ -1,9 +1,8 @@
-import { redirect } from 'next/navigation';
+'use client';
 
-export default function TrackPage() {
-  // Redirect to demo or home
-  redirect('/demo');
-}
+import { useState, useEffect, useRef } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft, MapPin, Phone, MessageSquare } from 'lucide-react';
 
 interface BookingStatus {
   status: 'pending' | 'accepted' | 'inProgress' | 'completed';
@@ -25,9 +24,9 @@ interface VehicleLocation {
 }
 
 export default function TrackingPage() {
-  const searchParams = useSearchParams();
+  const params = useParams();
   const router = useRouter();
-  const bookingNumber = searchParams.get('id');
+  const bookingNumber = params.id as string;
 
   const [status, setStatus] = useState<BookingStatus | null>(null);
   const [location, setLocation] = useState<VehicleLocation | null>(null);
