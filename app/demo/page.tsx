@@ -162,21 +162,25 @@ export default function TrackingDemo() {
       L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: dropoffMarker })
         .addTo(map)
         .bindPopup('<b>Voss Sjukehus</b><br/>Destinasjon');
-
-      // Draw route polyline
-      if (routeCoordinates.length > 1) {
-        if (polylineRef.current) {
-          map.removeLayer(polylineRef.current);
-        }
-        polylineRef.current = L.polyline(routeCoordinates, {
-          color: '#3b82f6',
-          weight: 3,
-          opacity: 0.5,
-          dashArray: '5, 5',
-        }).addTo(map);
-      }
     }
-  }, [routeCoordinates]);
+  }, []);
+
+  // Draw route polyline when route coordinates change
+  useEffect(() => {
+    const L = (window as any).L;
+    if (!mapRef.current || !L || routeCoordinates.length < 2) return;
+
+    if (polylineRef.current) {
+      mapRef.current.removeLayer(polylineRef.current);
+    }
+
+    polylineRef.current = L.polyline(routeCoordinates, {
+      color: '#3b82f6',
+      weight: 3,
+      opacity: 0.5,
+      dashArray: '5, 5',
+    }).addTo(mapRef.current);
+  }, [routeCoordinates.length]);
 
   // Update taxi marker
   useEffect(() => {
