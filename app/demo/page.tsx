@@ -88,14 +88,15 @@ export default function TrackingDemo() {
       // Custom pickup marker (house + "Henting")
       const pickupMarker = L.divIcon({
         html: `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-            <div style="font-size: 28px;">🏠</div>
-            <div style="background: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #10b981; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Henting</div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center;">
+            <div style="font-size: 28px; line-height: 1;">🏠</div>
+            <div style="background: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #10b981; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Henting</div>
           </div>
         `,
         iconSize: [50, 50],
-        iconAnchor: [25, 50],
-        popupAnchor: [0, -50],
+        iconAnchor: [25, 45],
+        popupAnchor: [0, -45],
+        className: '',
       });
       L.marker([60.5627, 6.4227], { title: 'Pickup Point', icon: pickupMarker })
         .addTo(map)
@@ -104,14 +105,15 @@ export default function TrackingDemo() {
       // Custom dropoff marker (house + "Levering")
       const dropoffMarker = L.divIcon({
         html: `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-            <div style="font-size: 28px;">🏠</div>
-            <div style="background: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #ef4444; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Levering</div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center;">
+            <div style="font-size: 28px; line-height: 1;">🏠</div>
+            <div style="background: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #ef4444; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Levering</div>
           </div>
         `,
         iconSize: [50, 50],
-        iconAnchor: [25, 50],
-        popupAnchor: [0, -50],
+        iconAnchor: [25, 45],
+        popupAnchor: [0, -45],
+        className: '',
       });
       L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: dropoffMarker })
         .addTo(map)
@@ -131,12 +133,11 @@ export default function TrackingDemo() {
 
     // Custom taxi marker with car emoji and rotation
     const taxiIcon = L.divIcon({
-      html: `
-        <div style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transform: rotate(${location.direction}deg); display: flex; align-items: center; justify-content: center;">🚕</div>
-      `,
-      iconSize: [40, 40],
-      iconAnchor: [20, 20],
-      popupAnchor: [0, -20],
+      html: `<div style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transform: rotate(${location.direction}deg);">🚕</div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -16],
+      className: '',
     });
 
     // Add taxi marker
