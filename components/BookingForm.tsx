@@ -622,13 +622,13 @@ export default function BookingForm() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t.vehicleType}
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 gap-3 md:gap-4">
                       {CAR_TYPES.map((car) => (
                         <button
                           key={car.value}
                           type="button"
                           onClick={() => handleCarTypeChange(car.value)}
-                          className={`px-2 md:px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium text-center transition-colors break-words ${
+                          className={`px-3 md:px-4 py-3 md:py-4 rounded-lg text-sm md:text-base font-medium text-center transition-colors break-words ${
                             formData.carType === car.value
                               ? 'bg-amber-600 text-white shadow-sm'
                               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
