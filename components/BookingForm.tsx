@@ -181,6 +181,60 @@ export default function BookingForm() {
     setSuccess(false);
 
     try {
+      // Validation 1: Check time restrictions (13:30-15:00 on weekdays)
+      const bookingDate = new Date(formData.date);
+      const dayOfWeek = bookingDate.getDay(); // 0 = Sunday, 1-5 = Monday-Friday, 6 = Saturday
+      const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+
+      const [hours, minutes] = formData.time.split(':').map(Number);
+      const totalMinutes = hours * 60 + minutes;
+      const restrictionStart = 13 * 60 + 30; // 13:30
+      const restrictionEnd = 15 * 60; // 15:00
+
+      if (isWeekday && totalMinutes >= restrictionStart && totalMinutes < restrictionEnd) {
+        setError(
+          language === 'no'
+            ? 'Booking er ikke tillatt mellom 13:30 og 15:00 på hverdager'
+            : 'Booking not allowed between 13:30 and 15:00 on weekdays'
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Validation 2: Check distance from Uttrågata 19 (max 20 km)
+      if (formData.pickupLat && formData.pickupLon) {
+        const uttraataLat = 60.6281914;
+        const uttraaataLon = 6.4222631;
+
+        // Use OSRM to calculate actual road distance
+        try {
+          const distanceResponse = await fetch(
+            `https://router.project-osrm.org/route/v1/car/${formData.pickupLon},${formData.pickupLat};${uttraaataLon},${uttraataLat}?overview=false`,
+            { method: 'GET' }
+          );
+
+          if (distanceResponse.ok) {
+            const distanceData = await distanceResponse.json();
+            if (distanceData.routes && distanceData.routes[0]) {
+              const distanceKm = distanceData.routes[0].distance / 1000;
+
+              if (distanceKm > 20) {
+                setError(
+                  language === 'no'
+                    ? `Hentested er for langt unna (${distanceKm.toFixed(1)} km). Maksimum 20 km fra Uttrågata 19.`
+                    : `Pickup location is too far away (${distanceKm.toFixed(1)} km). Maximum 20 km from Uttrågata 19.`
+                );
+                setLoading(false);
+                return;
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('Could not calculate distance:', err);
+          // Continue with booking anyway if distance calculation fails
+        }
+      }
+
       const response = await createBooking(formData);
 
       if (response.success) {
