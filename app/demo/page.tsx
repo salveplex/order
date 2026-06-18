@@ -41,13 +41,31 @@ export default function TrackingDemo() {
     return () => clearInterval(interval);
   }, []);
 
-  // Initialize map
+  // Initialize map via CDN
   useEffect(() => {
-    const initMap = async () => {
-      if (!mapContainerRef.current) return;
+    // Load Leaflet CSS
+    if (!document.querySelector('link[href*="leaflet.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+      document.head.appendChild(link);
+    }
 
-      // Dynamically load Leaflet
-      const L = await import('leaflet');
+    // Load Leaflet JS
+    if (!(window as any).L) {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+      script.onload = () => {
+        initMap();
+      };
+      document.head.appendChild(script);
+    } else {
+      initMap();
+    }
+
+    function initMap() {
+      const L = (window as any).L;
+      if (!mapContainerRef.current) return;
 
       // Create map
       const map = L.map(mapContainerRef.current).setView([60.5627, 6.4227], 15);
@@ -64,72 +82,40 @@ export default function TrackingDemo() {
         title: 'Pickup Point',
       })
         .addTo(map)
-        .bindPopup('<b>Voss Stasjon</b><br/>Pickup Point')
-        .setIcon(
-          L.icon({
-            iconUrl:
-              'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-          })
-        );
+        .bindPopup('<b>Voss Stasjon</b><br/>Pickup Point');
 
       // Add dropoff marker (red)
       L.marker([60.5637, 6.4189], {
         title: 'Dropoff Point',
       })
         .addTo(map)
-        .bindPopup('<b>Voss Sjukehus</b><br/>Dropoff Point')
-        .setIcon(
-          L.icon({
-            iconUrl:
-              'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-          })
-        );
-    };
-
-    initMap();
+        .bindPopup('<b>Voss Sjukehus</b><br/>Dropoff Point');
+    }
   }, []);
 
   // Update taxi marker
   useEffect(() => {
-    const updateMarker = async () => {
-      if (!mapRef.current) return;
+    const L = (window as any).L;
+    if (!mapRef.current || !L) return;
 
-      const L = await import('leaflet');
+    // Remove old marker
+    if (markerRef.current) {
+      mapRef.current.removeLayer(markerRef.current);
+    }
 
-      // Remove old marker
-      if (markerRef.current) {
-        mapRef.current.removeLayer(markerRef.current);
-      }
+    // Add taxi marker
+    const marker = L.marker([location.lat, location.lon], {
+      title: 'R166 - Taxi',
+    })
+      .addTo(mapRef.current)
+      .bindPopup(
+        `<b>R166</b><br/>Speed: ${Math.round(location.speed)} km/h<br/>Driver: Ole Hansen`
+      );
 
-      // Add taxi marker
-      const marker = L.marker([location.lat, location.lon], {
-        title: 'R166 - Taxi',
-        icon: L.icon({
-          iconUrl:
-            'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-        }),
-      })
-        .addTo(mapRef.current)
-        .bindPopup(
-          `<b>R166</b><br/>Speed: ${Math.round(location.speed)} km/h<br/>Driver: Ole Hansen`
-        );
+    markerRef.current = marker;
 
-      markerRef.current = marker;
-
-      // Center map on taxi
-      mapRef.current.setView([location.lat, location.lon], 15);
-    };
-
-    updateMarker();
+    // Center map on taxi
+    mapRef.current.setView([location.lat, location.lon], 15);
   }, [location]);
 
   return (

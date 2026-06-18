@@ -35,15 +35,35 @@ export default function TrackingPage() {
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
-  // Initialize map (using OpenStreetMap/Leaflet)
+  // Initialize map (using OpenStreetMap/Leaflet via CDN)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Dynamically import Leaflet
-    import('leaflet').then((L) => {
+    // Load Leaflet CSS
+    if (!document.querySelector('link[href*="leaflet.css"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+      document.head.appendChild(link);
+    }
+
+    // Load Leaflet JS
+    if (!(window as any).L) {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+      script.onload = () => {
+        initMap();
+      };
+      document.head.appendChild(script);
+    } else {
+      initMap();
+    }
+
+    function initMap() {
+      const L = (window as any).L;
       if (!mapContainerRef.current) return;
 
-      // Initialize map (Voss, Norway as default center)
+      // Initialize map
       const map = L.map(mapContainerRef.current).setView([60.5627, 6.4227], 13);
       mapRef.current = map;
 
@@ -52,13 +72,7 @@ export default function TrackingPage() {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19,
       }).addTo(map);
-
-      // Add custom CSS for map
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
-      document.head.appendChild(link);
-    });
+    }
   }, []);
 
   // Fetch booking status and vehicle location
@@ -104,11 +118,11 @@ export default function TrackingPage() {
     return () => clearInterval(interval);
   }, [bookingNumber]);
 
-  const updateMapMarker = async (lat: number, lon: number, direction: number, label: string) => {
+  const updateMapMarker = (lat: number, lon: number, direction: number, label: string) => {
     if (!mapRef.current) return;
 
-    // Dynamically import Leaflet
-    const L = await import('leaflet');
+    const L = (window as any).L;
+    if (!L) return;
 
     // Remove old marker
     if (markerRef.current) {
