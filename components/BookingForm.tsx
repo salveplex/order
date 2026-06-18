@@ -721,6 +721,11 @@ export default function BookingForm() {
                   >
                     {loading ? t.booking : t.confirmBooking}
                   </button>
+                  <p className="text-xs text-gray-600 mt-3 text-center">
+                    {language === 'no'
+                      ? 'Når en bil godkjenner turen, vil du få melding og mulighet for å spore bilen.'
+                      : 'When a vehicle accepts your ride, you will receive a notification and the ability to track the vehicle.'}
+                  </p>
                 </div>
 
                 {/* Booking Tracking */}
