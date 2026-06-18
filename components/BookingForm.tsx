@@ -42,7 +42,7 @@ interface BookingStatus {
 }
 
 const CAR_TYPES: { value: CarType; label_no: string; label_en: string; icon: string }[] = [
-  { value: 'estatecar', label_no: 'Stasjonsvogn', label_en: 'Estate Car', icon: '🚗' },
+  { value: 'estatecar', label_no: 'Personbil', label_en: 'Car', icon: '🚗' },
   { value: 'sixseater', label_no: '6-seter', label_en: '6-Seater', icon: '🚙' },
   { value: 'eightseater', label_no: '8-seter', label_en: '8-Seater', icon: '🚐' },
   { value: 'wheelchair', label_no: 'Rullestol', label_en: 'Wheelchair', icon: '♿' },
