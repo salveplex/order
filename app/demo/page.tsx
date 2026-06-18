@@ -85,27 +85,37 @@ export default function TrackingDemo() {
         maxZoom: 19,
       }).addTo(map);
 
-      // Add pickup marker (green)
-      const greenIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+      // Custom pickup marker (house + "Henting")
+      const pickupMarker = L.divIcon({
+        html: `
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="font-size: 28px;">🏠</div>
+            <div style="background: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #10b981; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Henting</div>
+          </div>
+        `,
+        iconSize: [50, 50],
+        iconAnchor: [25, 50],
+        popupAnchor: [0, -50],
       });
-      L.marker([60.5627, 6.4227], { title: 'Pickup Point', icon: greenIcon })
+      L.marker([60.5627, 6.4227], { title: 'Pickup Point', icon: pickupMarker })
         .addTo(map)
-        .bindPopup('<b>Voss Stasjon</b><br/>Pickup Point');
+        .bindPopup('<b>Voss Stasjon</b><br/>Hentested');
 
-      // Add dropoff marker (red)
-      const redIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+      // Custom dropoff marker (house + "Levering")
+      const dropoffMarker = L.divIcon({
+        html: `
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <div style="font-size: 28px;">🏠</div>
+            <div style="background: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #ef4444; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Levering</div>
+          </div>
+        `,
+        iconSize: [50, 50],
+        iconAnchor: [25, 50],
+        popupAnchor: [0, -50],
       });
-      L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: redIcon })
+      L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: dropoffMarker })
         .addTo(map)
-        .bindPopup('<b>Voss Sjukehus</b><br/>Dropoff Point');
+        .bindPopup('<b>Voss Sjukehus</b><br/>Destinasjon');
     }
   }, []);
 
@@ -119,18 +129,20 @@ export default function TrackingDemo() {
       mapRef.current.removeLayer(markerRef.current);
     }
 
-    // Blue marker icon for taxi
-    const blueIcon = L.icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
+    // Custom taxi marker with car emoji and rotation
+    const taxiIcon = L.divIcon({
+      html: `
+        <div style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transform: rotate(${location.direction}deg); display: flex; align-items: center; justify-content: center;">🚕</div>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+      popupAnchor: [0, -20],
     });
 
     // Add taxi marker
     const marker = L.marker([location.lat, location.lon], {
       title: 'R166 - Taxi',
-      icon: blueIcon,
+      icon: taxiIcon,
     })
       .addTo(mapRef.current)
       .bindPopup(
