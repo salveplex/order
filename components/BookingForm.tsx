@@ -362,9 +362,34 @@ export default function BookingForm() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="w-full px-4 py-4 md:py-6">
-        {/* Language selector - inline, not fixed */}
-        <div className="mb-2 flex justify-end w-full max-w-3xl mx-auto">
+      <div className="w-full px-4 py-3 md:py-4">
+        {/* Combined header with language selector and tabs */}
+        <div className="flex items-center justify-between gap-4 max-w-3xl mx-auto">
+          {/* Tab Navigation */}
+          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setActiveTab('booking')}
+              className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
+                activeTab === 'booking'
+                  ? 'bg-white text-amber-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {language === 'no' ? 'Bestill' : 'Book'}
+            </button>
+            <button
+              onClick={() => setActiveTab('status')}
+              className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
+                activeTab === 'status'
+                  ? 'bg-white text-amber-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              {t.checkStatus}
+            </button>
+          </div>
+
+          {/* Language selector */}
           <div className="flex gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setLanguage('no')}
@@ -388,33 +413,9 @@ export default function BookingForm() {
             </button>
           </div>
         </div>
-        {/* Tab Navigation */}
-        <div className="flex justify-center">
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setActiveTab('booking')}
-            className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
-              activeTab === 'booking'
-                ? 'bg-white text-amber-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {language === 'no' ? 'Bestill' : 'Book'}
-          </button>
-          <button
-            onClick={() => setActiveTab('status')}
-            className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
-              activeTab === 'status'
-                ? 'bg-white text-amber-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {t.checkStatus}
-          </button>
-          </div>
-        </div>
+      </div>
 
-        <div className="flex flex-col items-center justify-center py-8 md:py-12">
+      <div className="flex flex-col items-center justify-center px-4 py-8 md:py-12">
         {/* Booking Form Tab */}
         {activeTab === 'booking' && (
           <div className="w-full max-w-3xl">
