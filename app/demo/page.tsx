@@ -6,14 +6,14 @@ import Link from 'next/link';
 
 export default function TrackingDemo() {
   const [location, setLocation] = useState({
-    lat: 60.5627,
-    lon: 6.4227,
+    lat: 60.6591760,
+    lon: 6.4209200,
     speed: 0,
     direction: 0,
   });
   const [routeCoordinates, setRouteCoordinates] = useState<Array<[number, number]>>([
-    [60.5627, 6.4227], // Grevlesvegen 22
-    [60.5637, 6.4189], // Uttrågata 19 (fallback)
+    [60.6591760, 6.4209200], // Grevlesvegen 22
+    [60.6281914, 6.4222631], // Uttrågata 19 (fallback)
   ]);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -26,10 +26,10 @@ export default function TrackingDemo() {
     const fetchRoute = async () => {
       try {
         // Grevlesvegen 22 and Uttrågata 19 in Voss, Norway
-        const startLon = 6.4227;
-        const startLat = 60.5627;
-        const endLon = 6.4189;
-        const endLat = 60.5637;
+        const startLat = 60.6591760;
+        const startLon = 6.4209200;
+        const endLat = 60.6281914;
+        const endLon = 6.4222631;
 
         const response = await fetch(
           `https://router.project-osrm.org/route/v1/car/${startLon},${startLat};${endLon},${endLat}?geometries=geojson&overview=full`
@@ -119,8 +119,8 @@ export default function TrackingDemo() {
       const L = (window as any).L;
       if (!mapContainerRef.current) return;
 
-      // Create map
-      const map = L.map(mapContainerRef.current).setView([60.5627, 6.4227], 15);
+      // Create map centered between the two locations
+      const map = L.map(mapContainerRef.current).setView([60.6437, 6.4216], 13);
       mapRef.current = map;
 
       // Add OpenStreetMap tiles
@@ -142,9 +142,9 @@ export default function TrackingDemo() {
         popupAnchor: [0, -45],
         className: '',
       });
-      L.marker([60.5627, 6.4227], { title: 'Pickup Point', icon: pickupMarker })
+      L.marker([60.6591760, 6.4209200], { title: 'Pickup Point', icon: pickupMarker })
         .addTo(map)
-        .bindPopup('<b>Voss Stasjon</b><br/>Hentested');
+        .bindPopup('<b>Grevlesvegen 22</b><br/>Hentested');
 
       // Custom dropoff marker (house + "Levering")
       const dropoffMarker = L.divIcon({
@@ -159,9 +159,9 @@ export default function TrackingDemo() {
         popupAnchor: [0, -45],
         className: '',
       });
-      L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: dropoffMarker })
+      L.marker([60.6281914, 6.4222631], { title: 'Dropoff Point', icon: dropoffMarker })
         .addTo(map)
-        .bindPopup('<b>Voss Sjukehus</b><br/>Destinasjon');
+        .bindPopup('<b>Uttrågata 19</b><br/>Destinasjon');
     }
   }, []);
 
@@ -312,16 +312,16 @@ export default function TrackingDemo() {
                   <MapPin className="w-3 h-3 text-green-400" />
                   Pickup
                 </div>
-                <div className="text-sm text-slate-300">Voss Stasjon</div>
-                <div className="text-xs text-slate-500 mt-1">60.5627, 6.4227</div>
+                <div className="text-sm text-slate-300">Grevlesvegen 22</div>
+                <div className="text-xs text-slate-500 mt-1">60.6592, 6.4209</div>
               </div>
               <div className="border-t border-slate-700/50 pt-4">
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-red-400" />
                   Destination
                 </div>
-                <div className="text-sm text-slate-300">Voss Sjukehus</div>
-                <div className="text-xs text-slate-500 mt-1">60.5637, 6.4189</div>
+                <div className="text-sm text-slate-300">Uttrågata 19</div>
+                <div className="text-xs text-slate-500 mt-1">60.6282, 6.4223</div>
               </div>
             </div>
 
