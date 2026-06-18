@@ -16,7 +16,7 @@ export default function TrackingDemo() {
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
 
-  // Simulate taxi movement
+  // Simulate taxi movement along route
   useEffect(() => {
     let frame = 0;
     const interval = setInterval(() => {
@@ -30,11 +30,19 @@ export default function TrackingDemo() {
       const endLat = 60.5637;
       const endLon = 6.4189;
 
+      const currentLat = startLat + (endLat - startLat) * progress;
+      const currentLon = startLon + (endLon - startLon) * progress;
+
+      // Calculate direction based on movement
+      const dLat = endLat - startLat;
+      const dLon = endLon - startLon;
+      const direction = Math.atan2(dLon, dLat) * (180 / Math.PI);
+
       setLocation({
-        lat: startLat + (endLat - startLat) * progress,
-        lon: startLon + (endLon - startLon) * progress,
+        lat: currentLat,
+        lon: currentLon,
         speed: Math.sin(progress * Math.PI) * 40, // 0-40 km/h
-        direction: 45 + progress * 90, // Direction changes
+        direction: direction, // Direction of movement
       });
     }, 500);
 
@@ -78,16 +86,24 @@ export default function TrackingDemo() {
       }).addTo(map);
 
       // Add pickup marker (green)
-      L.marker([60.5627, 6.4227], {
-        title: 'Pickup Point',
-      })
+      const greenIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+      });
+      L.marker([60.5627, 6.4227], { title: 'Pickup Point', icon: greenIcon })
         .addTo(map)
         .bindPopup('<b>Voss Stasjon</b><br/>Pickup Point');
 
       // Add dropoff marker (red)
-      L.marker([60.5637, 6.4189], {
-        title: 'Dropoff Point',
-      })
+      const redIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+      });
+      L.marker([60.5637, 6.4189], { title: 'Dropoff Point', icon: redIcon })
         .addTo(map)
         .bindPopup('<b>Voss Sjukehus</b><br/>Dropoff Point');
     }
@@ -103,9 +119,18 @@ export default function TrackingDemo() {
       mapRef.current.removeLayer(markerRef.current);
     }
 
+    // Blue marker icon for taxi
+    const blueIcon = L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+    });
+
     // Add taxi marker
     const marker = L.marker([location.lat, location.lon], {
       title: 'R166 - Taxi',
+      icon: blueIcon,
     })
       .addTo(mapRef.current)
       .bindPopup(
