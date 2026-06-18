@@ -121,10 +121,22 @@ async function createBookingWithTaxi4U(data: BookingData) {
     taxi4uBookingData.toCity = data.dropoffCity;
   }
 
-  // Add message to driver if additional info provided
+  // Build message to driver with vehicle type and additional info
+  const carTypeLabels: Record<string, string> = {
+    'estatecar': 'Personbil',
+    'sixseater': '6-seter',
+    'eightseater': '8-seter',
+    'wheelchair': 'Rullestol'
+  };
+
+  const carTypeLabel = carTypeLabels[data.carType] || data.carType;
+  let messageText = `Biltype: ${carTypeLabel}`;
+
   if (data.additionalInfo && data.additionalInfo.trim()) {
-    taxi4uBookingData.messageToCar = data.additionalInfo;
+    messageText += `\nNotat: ${data.additionalInfo}`;
   }
+
+  taxi4uBookingData.messageToCar = messageText;
 
   // Add coordinates if provided (from address lookup)
   if (data.pickupLat && data.pickupLon) {
