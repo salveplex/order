@@ -362,33 +362,32 @@ export default function BookingForm() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header with language selector */}
-      <div className="fixed top-0 right-0 z-50 p-3 md:p-8">
-        <div className="flex gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setLanguage('no')}
-            className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
-              language === 'no'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            NO
-          </button>
-          <button
-            onClick={() => setLanguage('en')}
-            className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
-              language === 'en'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            EN
-          </button>
+      <div className="flex flex-col items-center justify-center px-4 py-6 md:py-20 min-h-screen">
+        {/* Language selector - inline, not fixed */}
+        <div className="mb-6 md:mb-8 flex justify-end w-full max-w-3xl">
+          <div className="flex gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setLanguage('no')}
+              className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                language === 'no'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              NO
+            </button>
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                language === 'en'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              EN
+            </button>
+          </div>
         </div>
-      </div>
-
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-6 md:py-20">
         {/* Tab Navigation */}
         <div className="mb-6 md:mb-12 flex gap-1 bg-gray-100 rounded-lg p-1">
           <button
