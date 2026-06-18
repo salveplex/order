@@ -91,6 +91,8 @@ export default function BookingForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [bookingNumber, setBookingNumber] = useState('');
+  const [lastBookingPickup, setLastBookingPickup] = useState('');
+  const [lastBookingDropoff, setLastBookingDropoff] = useState('');
 
   // Status check state
   const [statusBookingNumber, setStatusBookingNumber] = useState('');
@@ -294,6 +296,9 @@ export default function BookingForm() {
       if (response.success) {
         setSuccess(true);
         setBookingNumber(response.bookingNumber);
+        // Save booking locations before resetting form
+        setLastBookingPickup(formData.pickupLocation);
+        setLastBookingDropoff(formData.dropoffLocation);
         // Auto-fill status tab with booking number
         setStatusBookingNumber(response.bookingNumber);
         // Auto-switch to status tab
@@ -768,8 +773,8 @@ export default function BookingForm() {
               <BookingTracking
                 bookingNumber={bookingNumber}
                 language={language}
-                pickupLocation={formData.pickupLocation}
-                dropoffLocation={formData.dropoffLocation}
+                pickupLocation={lastBookingPickup}
+                dropoffLocation={lastBookingDropoff}
               />
             )}
 
