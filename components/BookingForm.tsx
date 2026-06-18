@@ -437,7 +437,7 @@ export default function BookingForm() {
                 className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                   language === 'no'
                     ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 NO
@@ -447,7 +447,7 @@ export default function BookingForm() {
                 className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                   language === 'en'
                     ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 EN
@@ -462,7 +462,7 @@ export default function BookingForm() {
                 className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                   theme === 'light'
                     ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 ☀️
@@ -473,7 +473,7 @@ export default function BookingForm() {
                 className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                   theme === 'system'
                     ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 ⚙️
@@ -484,7 +484,7 @@ export default function BookingForm() {
                 className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
                   theme === 'dark'
                     ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 🌙
