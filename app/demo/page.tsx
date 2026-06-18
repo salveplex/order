@@ -131,11 +131,16 @@ export default function TrackingDemo() {
       mapRef.current.removeLayer(markerRef.current);
     }
 
-    // Custom taxi marker with car emoji and rotation
+    // Custom taxi marker with car and direction arrow
     const taxiIcon = L.divIcon({
-      html: `<div style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); transform: rotate(${location.direction}deg);">🚕</div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
+      html: `
+        <div style="display: flex; align-items: center; gap: 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+          <div style="font-size: 28px;">🚕</div>
+          <div style="font-size: 20px; transform: rotate(${location.direction}deg);">→</div>
+        </div>
+      `,
+      iconSize: [60, 32],
+      iconAnchor: [30, 16],
       popupAnchor: [0, -16],
       className: '',
     });
