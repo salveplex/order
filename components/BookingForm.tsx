@@ -540,8 +540,8 @@ export default function BookingForm() {
                             left: '0',
                             right: '0',
                             marginTop: '8px',
-                            backgroundColor: 'white',
-                            border: '1px solid #e5e7eb',
+                            backgroundColor: isDark ? '#1f2937' : 'white',
+                            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
                             borderRadius: '0.5rem',
                             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                             zIndex: 99999,
@@ -603,8 +603,8 @@ export default function BookingForm() {
                               left: '0',
                               right: '0',
                               marginTop: '8px',
-                              backgroundColor: 'white',
-                              border: '1px solid #e5e7eb',
+                              backgroundColor: isDark ? '#1f2937' : 'white',
+                              border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
                               borderRadius: '0.5rem',
                               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                               zIndex: 99999,
@@ -629,7 +629,7 @@ export default function BookingForm() {
                                 </button>
                               ))
                             ) : (
-                              <div className="px-4 py-2.5 text-sm text-gray-500">
+                              <div className="px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400">
                                 {language === 'no'
                                   ? 'Ingen forslag funnet, men du kan skrive adressen selv'
                                   : 'No suggestions found, but you can enter the address yourself'}
