@@ -51,6 +51,8 @@ const CAR_TYPES: { value: CarType; label_no: string; label_en: string; icon: str
 export default function BookingForm() {
   const [language, setLanguage] = useState<Language>('no');
   const t = useTranslation(language);
+  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const [isDark, setIsDark] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'booking' | 'status'>('booking');
 
@@ -62,6 +64,33 @@ export default function BookingForm() {
       }
     }
   }, []);
+
+  // Handle theme changes
+  React.useEffect(() => {
+    const applyTheme = () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const shouldBeDark = theme === 'dark' || (theme === 'system' && prefersDark);
+      setIsDark(shouldBeDark);
+
+      if (shouldBeDark) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      applyTheme();
+
+      if (theme === 'system') {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', applyTheme);
+        return () => mediaQuery.removeEventListener('change', applyTheme);
+      }
+    }
+  }, [theme]);
 
   // Initialize date and time with current values
   const today = new Date().toISOString().split('T')[0];
@@ -370,18 +399,18 @@ export default function BookingForm() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950 dark:text-white transition-colors">
       <div className="w-full px-4 py-3 md:py-4">
         {/* Combined header with language selector and tabs */}
         <div className="flex items-center justify-between gap-4 max-w-3xl mx-auto">
           {/* Tab Navigation */}
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+          <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
             <button
               onClick={() => setActiveTab('booking')}
               className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
                 activeTab === 'booking'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white'
               }`}
             >
               {language === 'no' ? 'Bestill' : 'Book'}
@@ -390,36 +419,76 @@ export default function BookingForm() {
               onClick={() => setActiveTab('status')}
               className={`px-3 md:px-6 py-1.5 md:py-2 rounded-md text-sm md:text-base font-medium transition-colors ${
                 activeTab === 'status'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white'
               }`}
             >
               {t.checkStatus}
             </button>
           </div>
 
-          {/* Language selector */}
-          <div className="flex gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
-            <button
-              onClick={() => setLanguage('no')}
-              className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
-                language === 'no'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              NO
-            </button>
-            <button
-              onClick={() => setLanguage('en')}
-              className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
-                language === 'en'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              EN
-            </button>
+          {/* Language and Theme selectors */}
+          <div className="flex gap-2 flex-wrap">
+            {/* Language selector */}
+            <div className="flex gap-1 md:gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setLanguage('no')}
+                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                  language === 'no'
+                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                }`}
+              >
+                NO
+              </button>
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                  language === 'en'
+                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                }`}
+              >
+                EN
+              </button>
+            </div>
+
+            {/* Theme selector */}
+            <div className="flex gap-1 md:gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setTheme('light')}
+                title="Lys tema"
+                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                  theme === 'light'
+                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                }`}
+              >
+                ☀️
+              </button>
+              <button
+                onClick={() => setTheme('system')}
+                title="Systeminstilling"
+                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                  theme === 'system'
+                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                }`}
+              >
+                ⚙️
+              </button>
+              <button
+                onClick={() => setTheme('dark')}
+                title="Mørk tema"
+                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
+                  theme === 'dark'
+                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
+                    : 'text-gray-600 dark:text-gray-400 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white dark:hover:text-gray-200'
+                }`}
+              >
+                🌙
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -430,22 +499,22 @@ export default function BookingForm() {
           <div className="w-full max-w-3xl">
             {/* Header */}
             <div className="mb-6 md:mb-12 text-center">
-              <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 mb-2 md:mb-3 tracking-tight">
+              <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
                 {t.bookYourRide}
               </h1>
-              <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
                 {t.subtitle}
               </p>
             </div>
 
             {/* Form Container */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 md:p-12">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 dark:border-gray-700 p-5 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-5 md:space-y-8">
                 {/* Pickup & Dropoff */}
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Pickup Location */}
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.pickupLocation}
                     </label>
                     <div className="relative">
@@ -461,7 +530,7 @@ export default function BookingForm() {
                         }
                         placeholder={language === 'no' ? 'F.eks. Voss Stasjon' : 'e.g. Voss Station'}
                         required
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                       {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
                         <div
@@ -488,7 +557,7 @@ export default function BookingForm() {
                                 onClick={() =>
                                   selectAddressSuggestion('pickupLocation', suggestion)
                                 }
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-900 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
                               >
                                 {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                               </button>
@@ -507,7 +576,7 @@ export default function BookingForm() {
 
                   {/* Dropoff Location */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.dropoffLocation}
                     </label>
                     <div className="relative">
@@ -523,7 +592,7 @@ export default function BookingForm() {
                         }
                         placeholder={language === 'no' ? 'F.eks. Voss Sjukehus' : 'e.g. Voss Hospital'}
                         required
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                       {showDropoffSuggestions &&
                         (dropoffSuggestions.length > 0 || formData.dropoffLocation.length >= 2) && (
@@ -554,7 +623,7 @@ export default function BookingForm() {
                                       suggestion
                                     )
                                   }
-                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-900 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
                                 >
                                   {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                                 </button>
@@ -576,7 +645,7 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Date */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.date}
                     </label>
                     <input
@@ -585,13 +654,13 @@ export default function BookingForm() {
                       value={formData.date}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
                   {/* Time */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.time}
                     </label>
                     <input
@@ -600,7 +669,7 @@ export default function BookingForm() {
                       value={formData.time}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -609,14 +678,14 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Passengers */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.passengers}
                     </label>
                     <select
                       name="passengers"
                       value={formData.passengers}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                         <option key={num} value={num}>
@@ -628,7 +697,7 @@ export default function BookingForm() {
 
                   {/* Car Type */}
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.vehicleType}
                     </label>
                     <div className="grid grid-cols-2 gap-3 md:gap-4">
@@ -640,7 +709,7 @@ export default function BookingForm() {
                           className={`px-3 md:px-4 py-3 md:py-4 rounded-lg text-sm md:text-base font-medium text-center transition-colors break-words ${
                             formData.carType === car.value
                               ? 'bg-amber-600 text-white shadow-sm'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              : 'bg-gray-100 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
                           }`}
                         >
                           <span className="text-base block mb-1">{car.icon}</span>
@@ -660,7 +729,7 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Name */}
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.fullName} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -670,13 +739,13 @@ export default function BookingForm() {
                       onChange={handleInputChange}
                       placeholder={language === 'no' ? 'Ditt fulle navn' : 'Your full name'}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
                   {/* Phone */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.phone} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -686,14 +755,14 @@ export default function BookingForm() {
                       onChange={handleInputChange}
                       placeholder={language === 'no' ? '+47 XXX XX XXX' : '+47 XXX XX XXX'}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.email} <span className="text-gray-400 font-normal">(optional)</span>
                   </label>
                   <input
@@ -702,13 +771,13 @@ export default function BookingForm() {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder={language === 'no' ? 'Din epost (valgfritt)' : 'Your email (optional)'}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
 
                 {/* Additional Info */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.additionalInfo}
                   </label>
                   <textarea
@@ -717,7 +786,7 @@ export default function BookingForm() {
                     onChange={handleInputChange}
                     placeholder={t.specialRequests}
                     rows={3}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
                   />
                 </div>
 
@@ -730,7 +799,7 @@ export default function BookingForm() {
                   >
                     {loading ? t.booking : t.confirmBooking}
                   </button>
-                  <p className="text-xs text-gray-600 mt-3 text-center">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
                     {language === 'no'
                       ? 'Når en bil godkjenner turen, vil du få melding og mulighet for å spore bilen.'
                       : 'When a vehicle accepts your ride, you will receive a notification and the ability to track the vehicle.'}
@@ -747,7 +816,7 @@ export default function BookingForm() {
             </div>
 
             {/* Footer */}
-            <div className="mt-8 text-center text-gray-600 text-sm">
+            <div className="mt-8 text-center text-gray-600 dark:text-gray-400 text-sm">
               <p>{t.supportText}</p>
             </div>
           </div>
@@ -758,10 +827,10 @@ export default function BookingForm() {
           <div className="w-full max-w-2xl">
             {/* Header */}
             <div className="mb-12 text-center">
-              <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 mb-3 tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-3 tracking-tight">
                 {t.bookingStatusTitle}
               </h1>
-              <p className="text-gray-600 text-base max-w-2xl mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-base max-w-2xl mx-auto">
                 {language === 'no'
                   ? 'Skriv inn ditt bookingnummer for å sjekke status på turen.'
                   : 'Enter your booking number to check the status of your ride.'}
@@ -780,11 +849,11 @@ export default function BookingForm() {
 
             {/* Status Form Container */}
             {!success && (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 md:p-12">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 md:p-12">
               <form onSubmit={handleCheckStatus} className="space-y-6">
                 {/* Booking Number Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {t.bookingNumber}
                   </label>
                   <input
@@ -793,7 +862,7 @@ export default function BookingForm() {
                     onChange={(e) => setStatusBookingNumber(e.target.value)}
                     placeholder={language === 'no' ? 'F.eks. BK-1234567' : 'e.g. BK-1234567'}
                     required
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
 
@@ -812,11 +881,11 @@ export default function BookingForm() {
                     <h3 className="text-lg font-semibold text-green-900">{t.bookingFound}</h3>
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                        <span className="text-gray-600">{t.bookingNumber}:</span>
-                        <span className="font-semibold text-gray-900">{bookingStatus.bookingNumber}</span>
+                        <span className="text-gray-600 dark:text-gray-400">{t.bookingNumber}:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{bookingStatus.bookingNumber}</span>
                       </div>
                       <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                        <span className="text-gray-600">{t.status}:</span>
+                        <span className="text-gray-600 dark:text-gray-400">{t.status}:</span>
                         <span className="font-semibold text-green-700">
                           {language === 'no'
                             ? bookingStatus.status === 'pending'
@@ -837,14 +906,14 @@ export default function BookingForm() {
                       </div>
                       {bookingStatus.vehicle && (
                         <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                          <span className="text-gray-600">{t.assignedVehicle}:</span>
-                          <span className="font-semibold text-gray-900">{bookingStatus.vehicle}</span>
+                          <span className="text-gray-600 dark:text-gray-400">{t.assignedVehicle}:</span>
+                          <span className="font-semibold text-gray-900 dark:text-white">{bookingStatus.vehicle}</span>
                         </div>
                       )}
                       {bookingStatus.driver && (
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-600">{t.driver}:</span>
-                          <span className="font-semibold text-gray-900">{bookingStatus.driver}</span>
+                          <span className="text-gray-600 dark:text-gray-400">{t.driver}:</span>
+                          <span className="font-semibold text-gray-900 dark:text-white">{bookingStatus.driver}</span>
                         </div>
                       )}
                     </div>

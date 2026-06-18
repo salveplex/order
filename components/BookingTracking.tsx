@@ -127,10 +127,10 @@ export default function BookingTracking({
 
   return (
     <div className="w-full max-w-2xl mx-auto animate-[fadeInUp_0.8s_ease-out_0.2s_forwards]">
-      <div className="rounded-2xl bg-white border border-gray-200 p-6 md:p-8 shadow-sm">
+      <div className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 dark:border-gray-700 p-6 md:p-8 shadow-sm">
         {/* Booking Number */}
-        <div className="mb-6 pb-6 border-b border-gray-200">
-          <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
             {language === 'no' ? 'Bookingnummer' : 'Booking Number'}
           </div>
           <div className="flex items-center gap-3">
@@ -139,10 +139,10 @@ export default function BookingTracking({
             </div>
             <button
               onClick={copyToClipboard}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
               title={language === 'no' ? 'Kopier' : 'Copy'}
             >
-              <Copy className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+              <Copy className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400" />
             </button>
             {copied && (
               <span className="text-xs text-green-400">
@@ -153,14 +153,14 @@ export default function BookingTracking({
         </div>
 
         {/* Status */}
-        <div className="mb-6 pb-6 border-b border-gray-200">
+        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             {getStatusIcon()}
             <div className="flex-1">
-              <div className="text-sm text-gray-500 mb-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
                 {language === 'no' ? 'Status' : 'Status'}
               </div>
-              <div className="text-lg font-semibold text-gray-900">
+              <div className="text-lg font-semibold text-gray-900 dark:text-white">
                 {getStatusText()}
               </div>
             </div>
@@ -168,39 +168,39 @@ export default function BookingTracking({
         </div>
 
         {/* Trip Details */}
-        <div className="mb-6 pb-6 border-b border-gray-200 space-y-4">
+        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700 space-y-4">
           <div>
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+            <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               {language === 'no' ? 'Hentested' : 'Pickup'}
             </div>
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-gray-700">{pickupLocation}</div>
+              <div className="text-sm text-gray-700 dark:text-gray-300">{pickupLocation}</div>
             </div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+            <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               {language === 'no' ? 'Destinasjon' : 'Dropoff'}
             </div>
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-gray-700">{dropoffLocation}</div>
+              <div className="text-sm text-gray-700 dark:text-gray-300">{dropoffLocation}</div>
             </div>
           </div>
         </div>
 
         {/* Driver Info - Show when accepted */}
         {status?.status === 'accepted' && (
-          <div className="mb-6 pb-6 border-b border-gray-200">
-            <div className="text-xs text-gray-500 uppercase tracking-wider mb-3">
+          <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
               {language === 'no' ? 'Sjåfør' : 'Driver'}
             </div>
             <div className="space-y-2">
               {status.driver && (
-                <div className="text-sm text-gray-700">{status.driver}</div>
+                <div className="text-sm text-gray-700 dark:text-gray-300">{status.driver}</div>
               )}
               {status.vehicle && (
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
                   🚗 {status.vehicle}
                 </div>
               )}
@@ -213,7 +213,7 @@ export default function BookingTracking({
           {status?.status === 'accepted' && (
             <Link
               href={`/track/${bookingNumber}`}
-              className="block w-full px-6 py-3 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 text-gray-900 font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/50 text-center text-sm md:text-base"
+              className="block w-full px-6 py-3 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 text-gray-900 dark:text-white font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/50 text-center text-sm md:text-base"
             >
               {language === 'no' ? '🗺️ Følg på kart' : '🗺️ Track on Map'}
             </Link>
@@ -221,14 +221,14 @@ export default function BookingTracking({
 
           <button
             onClick={() => window.location.href = '/'}
-            className="w-full px-6 py-3 rounded-full border border-gray-300 text-gray-700 font-semibold uppercase tracking-wider transition-all duration-300 hover:bg-gray-100 text-sm md:text-base"
+            className="w-full px-6 py-3 rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold uppercase tracking-wider transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm md:text-base"
           >
             {language === 'no' ? 'Ny bestilling' : 'New Booking'}
           </button>
         </div>
 
         {/* Help Text */}
-        <div className="mt-6 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 text-center">
           {language === 'no'
             ? 'Hvis du ikke får oppdateringer, vent litt eller sjekk bookingnummeret'
             : 'If you don\'t get updates, wait a moment or check your booking number'}
