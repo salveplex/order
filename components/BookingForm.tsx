@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search } from 'lucide-react';
 import { useTranslation, type Language } from '@/lib/i18n';
+import BookingTracking from '@/components/BookingTracking';
 import {
   createBooking,
   getAddressSuggestions,
@@ -52,6 +53,15 @@ export default function BookingForm() {
   const t = useTranslation(language);
 
   const [activeTab, setActiveTab] = useState<'booking' | 'status'>('booking');
+
+  // Request notification permission on mount
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+  }, []);
 
   // Initialize date and time with current values
   const today = new Date().toISOString().split('T')[0];
@@ -648,16 +658,14 @@ export default function BookingForm() {
                   </button>
                 </div>
 
-                {/* Success Message */}
-                {success && (
-                  <div className="animate-[slideInUp_0.4s_ease-out] p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-center font-semibold text-sm md:text-base">
-                    <div>{t.bookingConfirmed}</div>
-                    {bookingNumber && (
-                      <div className="text-xs md:text-sm mt-2">
-                        {language === 'no' ? 'Bookingnummer' : 'Booking Number'}: <span className="font-mono">{bookingNumber}</span>
-                      </div>
-                    )}
-                  </div>
+                {/* Booking Tracking - Show when successful */}
+                {success && bookingNumber && (
+                  <BookingTracking
+                    bookingNumber={bookingNumber}
+                    language={language}
+                    pickupLocation={formData.pickupLocation}
+                    dropoffLocation={formData.dropoffLocation}
+                  />
                 )}
 
                 {/* Error Message */}
