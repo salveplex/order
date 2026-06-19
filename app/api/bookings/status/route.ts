@@ -75,6 +75,7 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
     bookingId: booking.id || booking.bookingId,
     bookingNumber: booking.bookingNumber,
     status: statusMap[booking.status?.toLowerCase()] || booking.status,
+    statusCode: booking.status, // Raw Taxi4U status code (e.g., 'D', 'G', 'I', 'J', 'K', etc.)
     vehicle: booking.vehicle?.name || booking.assignedVehicle,
     driver: booking.driver?.name || booking.driverName,
     pickupAddress: booking.pickupAddress,

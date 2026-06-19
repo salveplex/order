@@ -15,6 +15,7 @@ interface BookingTrackingProps {
 
 interface BookingStatus {
   status: 'pending' | 'accepted' | 'inProgress' | 'completed';
+  statusCode?: string; // Raw Taxi4U status code
   vehicle?: string;
   driver?: string;
   found: boolean;
@@ -107,10 +108,38 @@ export default function BookingTracking({
     }
   };
 
+  const getTaxi4UStatusText = (taxi4uStatus?: string) => {
+    if (!taxi4uStatus) return null;
+
+    // Map Taxi4U status codes to user-friendly text
+    const statusMap: Record<string, { no: string; en: string }> = {
+      'D': { no: 'Ble akseptert av system', en: 'Accepted by system' },
+      'G': { no: 'Sendt til sjåfører', en: 'Sent to drivers' },
+      'I': { no: '✅ Sjåfør akseptert!', en: '✅ Driver accepted!' },
+      'K': { no: 'Venter på svar fra sjåfør...', en: 'Waiting for driver response...' },
+      'H': { no: 'Prøver å kontakte sjåfør...', en: 'Trying to reach driver...' },
+      'X': { no: 'Tur gikk - bestilling kansellert', en: 'Trip departed - booking cancelled' },
+      'N': { no: 'Klar for fakturering', en: 'Ready for invoicing' },
+      'n': { no: 'Bestilling ble ikke brukt', en: 'Booking was not used' },
+      'l': { no: '✅ Levert og fullført', en: '✅ Delivered and completed' },
+      'J': { no: 'Venter på svar...', en: 'Waiting for response...' }, // NEI-SVAR hidden as generic waiting
+    };
+
+    return statusMap[taxi4uStatus] ? statusMap[taxi4uStatus][language] : null;
+  };
+
   const getStatusText = () => {
     if (!status) {
       return language === 'no' ? 'Venter på sjåfør...' : 'Waiting for driver...';
     }
+
+    // Use detailed Taxi4U status if available
+    const taxi4uText = getTaxi4UStatusText(status.statusCode);
+    if (taxi4uText) {
+      return taxi4uText;
+    }
+
+    // Fallback to generic status
     switch (status.status) {
       case 'accepted':
         return language === 'no'
@@ -121,7 +150,7 @@ export default function BookingTracking({
       case 'completed':
         return language === 'no' ? 'Tur fullført' : 'Trip completed';
       default:
-        return language === 'no' ? 'Pending' : 'Pending';
+        return language === 'no' ? 'Venter på sjåfør...' : 'Waiting for driver...';
     }
   };
 
