@@ -111,6 +111,7 @@ async function createBookingWithTaxi4U(data: BookingData) {
   // Use /api/v2/book/general endpoint for auto-dispatch support
   // This endpoint supports manualProcessing: false to enable auto-dispatch
   const taxi4uBookingData: Record<string, any> = {
+    req: 1,  // Required field for API
     centralCode: 'VS',  // Voss/Sogn central code
     manualProcessing: false,  // Enable auto-dispatch (lowercase!)
     passengers: [
@@ -127,10 +128,9 @@ async function createBookingWithTaxi4U(data: BookingData) {
         toLat: data.dropoffLat,
         toLon: data.dropoffLon,
         pickupTime: pickupTimeISO,
-        clientNoteToCar: messageText,  // Send car type info to driver via passenger note
       }
     ],
-    messageToCar: messageText,  // Also send at top level for redundancy
+    messageToCar: messageText,  // Send car type info to driver
   };
 
   // Add email notification if provided
