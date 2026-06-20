@@ -802,33 +802,47 @@ export default function BookingForm() {
                       {language === 'no' ? 'Kjøretøy og behov' : 'Vehicle and Needs'}
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {ATTRIBUTE_GROUPS.map((group) => (
-                        <div key={group.id} className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                          <h3 className="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                            <span>{group.icon}</span>
-                            {language === 'no' ? group.label_no : group.label_en}
-                          </h3>
-                          <div className="flex flex-wrap gap-2">
-                            {group.options.map((opt) => {
-                              const isSelected = opt.id === -1 ? formData.hasBike : formData.attributes.includes(opt.id);
-                              return (
-                                <button
-                                  key={opt.id}
-                                  type="button"
-                                  onClick={() => toggleAttribute(opt.id)}
-                                  className={`px-3 py-2 rounded-lg text-sm transition-colors border ${
-                                    isSelected
-                                      ? 'bg-amber-600 border-amber-600 text-white shadow-sm'
-                                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-amber-400 dark:hover:border-amber-500'
-                                  }`}
-                                >
-                                  {language === 'no' ? opt.label_no : opt.label_en}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
+                      {ATTRIBUTE_GROUPS.map((group) => {
+                        const selectedCount = group.options.filter(opt => 
+                          opt.id === -1 ? formData.hasBike : formData.attributes.includes(opt.id)
+                        ).length;
+
+                        return (
+                          <details key={group.id} className="bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 group overflow-hidden">
+                            <summary className="p-3.5 font-medium text-gray-900 dark:text-white flex items-center justify-between cursor-pointer list-none select-none">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xl">{group.icon}</span>
+                                <span className="text-sm">{language === 'no' ? group.label_no : group.label_en}</span>
+                                {selectedCount > 0 && (
+                                  <span className="bg-amber-600 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
+                                    {selectedCount}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-gray-400 transition-transform group-open:rotate-180 text-xs">▼</span>
+                            </summary>
+                            <div className="p-3.5 pt-0 flex flex-wrap gap-2 border-t border-gray-200 dark:border-gray-700 mt-1">
+                              {group.options.map((opt) => {
+                                const isSelected = opt.id === -1 ? formData.hasBike : formData.attributes.includes(opt.id);
+                                return (
+                                  <button
+                                    key={opt.id}
+                                    type="button"
+                                    onClick={() => toggleAttribute(opt.id)}
+                                    className={`px-3 py-1.5 rounded-lg text-sm transition-colors border ${
+                                      isSelected
+                                        ? 'bg-amber-600 border-amber-600 text-white shadow-sm'
+                                        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-amber-400 dark:hover:border-amber-500'
+                                    }`}
+                                  >
+                                    {language === 'no' ? opt.label_no : opt.label_en}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </details>
+                        );
+                      })}
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       {language === 'no'
