@@ -58,6 +58,8 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
 
   const booking = await response.json();
 
+  console.log(`📋 Booking ${bookingId} status response:`, JSON.stringify(booking, null, 2));
+
   // Map Taxi4U status to our status
   const statusMap: Record<string, string> = {
     'pending': 'pending',
@@ -68,6 +70,8 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
     'completed': 'completed',
     'cancelled': 'cancelled',
   };
+
+  console.log(`📍 Status code: ${booking.status}, Type: ${typeof booking.status}`);
 
   return {
     success: true,

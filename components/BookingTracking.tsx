@@ -144,6 +144,10 @@ export default function BookingTracking({
   // Cannot cancel: I (driver accepted), X (departed), N (ready for billing), l (completed), etc.
   const canCancel = status && !cancelled && status.statusCode && ['D', 'G', 'K', 'H'].includes(status.statusCode);
 
+  if (status && pollCount % 10 === 0) {
+    console.log(`🔍 Status check #${pollCount}: statusCode="${status.statusCode}", status="${status.status}", canCancel=${canCancel}`);
+  }
+
   const getStatusIcon = () => {
     if (!status) return <Clock className="w-5 h-5" />;
     switch (status.status) {
