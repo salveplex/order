@@ -34,6 +34,8 @@ export default function BookingTracking({
   const [copied, setCopied] = useState(false);
   const [pollCount, setPollCount] = useState(0);
   const [notificationShown, setNotificationShown] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
 
   // Poll for booking status
   useEffect(() => {
@@ -93,6 +95,54 @@ export default function BookingTracking({
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const handleCancel = async () => {
+    if (!window.confirm(
+      language === 'no'
+        ? 'Er du sikker på at du vil avbestille turen?'
+        : 'Are you sure you want to cancel this booking?'
+    )) {
+      return;
+    }
+
+    setCancelling(true);
+    try {
+      const response = await fetch('/api/bookings/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: bookingNumber }),
+      });
+
+      if (response.ok) {
+        setCancelled(true);
+        // Refresh status to confirm cancellation
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else {
+        alert(
+          language === 'no'
+            ? 'Kunne ikke avbestille turen. Prøv igjen.'
+            : 'Failed to cancel booking. Please try again.'
+        );
+      }
+    } catch (error) {
+      console.error('Cancel error:', error);
+      alert(
+        language === 'no'
+          ? 'Feil ved avbestilling. Prøv igjen.'
+          : 'Error cancelling booking. Please try again.'
+      );
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  // Can cancel if booking is still pending (before driver accepts)
+  // Taxi4U status codes that allow cancellation: D, G, K, H
+  // D = Accepted by system, G = Sent to drivers, K = Waiting for driver, H = Trying to reach driver
+  // Cannot cancel: I (driver accepted), X (departed), N (ready for billing), l (completed), etc.
+  const canCancel = status && !cancelled && status.statusCode && ['D', 'G', 'K', 'H'].includes(status.statusCode);
 
   const getStatusIcon = () => {
     if (!status) return <Clock className="w-5 h-5" />;
@@ -246,6 +296,24 @@ export default function BookingTracking({
             >
               {language === 'no' ? '🗺️ Følg på kart' : '🗺️ Track on Map'}
             </Link>
+          )}
+
+          {cancelled && (
+            <div className="w-full px-6 py-3 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold uppercase tracking-wider text-center text-sm md:text-base">
+              {language === 'no' ? '❌ Bestilling avbestilt' : '❌ Booking cancelled'}
+            </div>
+          )}
+
+          {canCancel && (
+            <button
+              onClick={handleCancel}
+              disabled={cancelling}
+              className="w-full px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold uppercase tracking-wider transition-all duration-300 text-sm md:text-base"
+            >
+              {cancelling
+                ? (language === 'no' ? '⏳ Avbestiller...' : '⏳ Cancelling...')
+                : (language === 'no' ? '❌ Avbestill tur' : '❌ Cancel Booking')}
+            </button>
           )}
 
           <button
