@@ -93,35 +93,6 @@ async function createBookingWithTaxi4U(data: BookingData) {
   // Output format: "2026-06-16T14:30:00Z"
   const pickupTimeISO = `${data.date}T${data.time}:00Z`;
 
-  // Taxi4U AppBook API expects:
-  // - centralCode: "VS" for Voss/Sogn
-  // - fromStreet: pickup address (required)
-  // - fromCity: pickup city (helps avoid manual processing)
-  // - toStreet: dropoff address
-  // - toCity: dropoff city (helps avoid manual processing)
-  // - pickupTime: UTC datetime (required)
-  // - fromLat/fromLon: coordinates (required for auto-zone resolution)
-  // - toLat/toLon: coordinates
-  // - customerName, tel, messageToCar
-
-  const taxi4uBookingData: Record<string, any> = {
-    centralCode: 'VS',  // Voss/Sogn central code
-    fromStreet: data.pickupLocation,
-    toStreet: data.dropoffLocation,
-    pickupTime: pickupTimeISO,
-    customerName: data.name,
-    tel: data.phone,
-    ManualProcessing: false,  // Prevent manual processing - book directly to dispatch
-  };
-
-  // Add city information if available
-  if (data.pickupCity) {
-    taxi4uBookingData.fromCity = data.pickupCity;
-  }
-  if (data.dropoffCity) {
-    taxi4uBookingData.toCity = data.dropoffCity;
-  }
-
   // Build message to driver with vehicle type and additional info
   const carTypeLabels: Record<string, string> = {
     'estatecar': 'Personbil',
@@ -137,23 +108,32 @@ async function createBookingWithTaxi4U(data: BookingData) {
     messageText += `\nNotat: ${data.additionalInfo}`;
   }
 
-  taxi4uBookingData.messageToCar = messageText;
+  // Use /api/v2/book/general endpoint for auto-dispatch support
+  // This endpoint supports manualProcessing: false to enable auto-dispatch
+  const taxi4uBookingData: Record<string, any> = {
+    centralCode: 'VS',  // Voss/Sogn central code
+    manualProcessing: false,  // Enable auto-dispatch (lowercase!)
+    passengers: [
+      {
+        seqNo: 0,
+        toName: data.name,
+        toTel: data.phone,
+        fromStreet: data.pickupLocation,
+        fromCity: data.pickupCity || 'Voss',
+        fromLat: data.pickupLat,
+        fromLon: data.pickupLon,
+        toStreet: data.dropoffLocation,
+        toCity: data.dropoffCity || 'Voss',
+        toLat: data.dropoffLat,
+        toLon: data.dropoffLon,
+        pickupTime: pickupTimeISO,
+      }
+    ],
+    messageToCar: messageText,
+  };
 
-  // Add coordinates if provided (from address lookup)
-  if (data.pickupLat && data.pickupLon) {
-    taxi4uBookingData.fromLat = data.pickupLat;
-    taxi4uBookingData.fromLon = data.pickupLon;
-  }
-
-  if (data.dropoffLat && data.dropoffLon) {
-    taxi4uBookingData.toLat = data.dropoffLat;
-    taxi4uBookingData.toLon = data.dropoffLon;
-  }
-
-  // Note: Email is not a standard field in Taxi4U API
-  // In production, you might handle email notifications separately
+  // Add email notification if provided
   if (data.email && data.email.trim()) {
-    // Email could be stored in a separate notification service
     console.log(`Booking email for receipt: ${data.email}`);
   }
 
@@ -166,8 +146,8 @@ async function createBookingWithTaxi4U(data: BookingData) {
     console.log(JSON.stringify(taxi4uBookingData, null, 2));
     console.log('====================================\n');
 
-    // Make booking request with JWT token
-    const response = await fetch(`${API_BASE}/api/book`, {
+    // Make booking request with JWT token using /api/v2/book/general endpoint
+    const response = await fetch(`${API_BASE}/api/v2/book/general`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
