@@ -274,22 +274,13 @@ export default function BookingForm() {
     }
     
     setFormData(prev => {
-      // Radio behavior for Biltype (remove other biltype attributes if selecting one)
-      const biltypeIds = ATTRIBUTE_GROUPS[0].options.map(o => o.id);
-      
       let newAttributes = [...prev.attributes];
       
-      if (biltypeIds.includes(attrId)) {
-        // Remove existing biltype selections
-        newAttributes = newAttributes.filter(id => !biltypeIds.includes(id));
-        newAttributes.push(attrId);
+      // Toggle attributes (allow multiple selections everywhere)
+      if (newAttributes.includes(attrId)) {
+        newAttributes = newAttributes.filter(id => id !== attrId);
       } else {
-        // Toggle other attributes
-        if (newAttributes.includes(attrId)) {
-          newAttributes = newAttributes.filter(id => id !== attrId);
-        } else {
-          newAttributes.push(attrId);
-        }
+        newAttributes.push(attrId);
       }
       
       return { ...prev, attributes: newAttributes };
