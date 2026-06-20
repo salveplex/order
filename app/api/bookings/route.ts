@@ -111,7 +111,7 @@ async function createBookingWithTaxi4U(data: BookingData) {
   // Use /api/v2/book/general endpoint for auto-dispatch support
   // This endpoint supports manualProcessing: false to enable auto-dispatch
   const taxi4uBookingData: Record<string, any> = {
-    req: 1,  // Required field for API
+    req: {},  // Required field for API (must be an object)
     centralCode: 'VS',  // Voss/Sogn central code
     manualProcessing: false,  // Enable auto-dispatch (lowercase!)
     attributes: attributeString ? attributeString : undefined, // Set vehicle type attribute (string)
@@ -124,14 +124,14 @@ async function createBookingWithTaxi4U(data: BookingData) {
         tel: data.phone,
         fromName: data.name, // Keep as fallback
         mobile: data.phone, // Keep as fallback
-        fromStreet: data.pickupLocation,
+        fromStreet: data.pickupLocation || 'Voss',
         fromCity: data.pickupCity || 'Voss',
-        fromLat: data.pickupLat,
-        fromLon: data.pickupLon,
-        toStreet: data.dropoffLocation,
+        fromLat: data.pickupLat ?? 60.6288,
+        fromLon: data.pickupLon ?? 6.4251,
+        toStreet: data.dropoffLocation || 'Voss',
         toCity: data.dropoffCity || 'Voss',
-        toLat: data.dropoffLat,
-        toLon: data.dropoffLon,
+        toLat: data.dropoffLat ?? 60.6288,
+        toLon: data.dropoffLon ?? 6.4251,
         pickupTime: pickupTimeISO,
       }
     ],
