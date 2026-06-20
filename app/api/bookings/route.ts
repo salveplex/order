@@ -127,9 +127,10 @@ async function createBookingWithTaxi4U(data: BookingData) {
         toLat: data.dropoffLat,
         toLon: data.dropoffLon,
         pickupTime: pickupTimeISO,
+        clientNoteToCar: messageText,  // Send car type info to driver via passenger note
       }
     ],
-    messageToCar: messageText,
+    messageToCar: messageText,  // Also send at top level for redundancy
   };
 
   // Add email notification if provided
