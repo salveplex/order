@@ -115,8 +115,8 @@ async function createBookingWithTaxi4U(data: BookingData) {
     centralCode: 'VS',  // Voss/Sogn central code
     manualProcessing: false,  // Enable auto-dispatch (lowercase!)
     attributes: attributeString ? attributeString : undefined, // Set vehicle type attribute (string)
-    orderedBy: data.name,
-    bookedBy: data.name,
+    orderedBy: 'order',
+    bookedBy: 'order',
     passengers: [
       {
         seqNo: 0,
