@@ -794,6 +794,11 @@ export default function BookingForm() {
                         </option>
                       ))}
                     </select>
+                    <p className="text-sm font-bold text-amber-700 dark:text-amber-500 mt-2.5 bg-amber-50 dark:bg-amber-900/20 p-2 rounded-lg inline-block border border-amber-200 dark:border-amber-800">
+                      {language === 'no'
+                        ? 'For bestilling til flere enn 8, ring sentralen'
+                        : 'For bookings with more than 8 people, call the office'}
+                    </p>
                   </div>
 
                   {/* Vehicle Attributes */}
@@ -844,11 +849,6 @@ export default function BookingForm() {
                         );
                       })}
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      {language === 'no'
-                        ? 'For bestilling til flere enn 8, ring sentralen'
-                        : 'For bookings with more than 8 people, call the office'}
-                    </p>
                   </div>
                 </div>
 
