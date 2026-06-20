@@ -26,6 +26,7 @@ export const translations = {
     // Vehicle types
     estatecar: 'Stasjonsvogn',
     sixseater: '6-seter',
+    sevenseater: '7-seter',
     eightseater: '8-seter',
     wheelchair: 'Rullestol',
 
@@ -86,6 +87,7 @@ export const translations = {
     // Vehicle types
     estatecar: 'Estate Car',
     sixseater: '6-Seater',
+    sevenseater: '7-Seater',
     eightseater: '8-Seater',
     wheelchair: 'Wheelchair Accessible',
 

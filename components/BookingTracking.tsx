@@ -295,7 +295,7 @@ export default function BookingTracking({
         <div className="space-y-3">
           {status?.status === 'accepted' && (
             <Link
-              href={`/track/${bookingNumber}`}
+              href={`/track/${bookingNumber}?lang=${language}`}
               className="block w-full px-6 py-3 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 text-gray-900 dark:text-white font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/50 text-center text-sm md:text-base"
             >
               {language === 'no' ? '🗺️ Følg på kart' : '🗺️ Track on Map'}

@@ -259,34 +259,26 @@ export default function TrackingDemo() {
               </div>
               <div className="space-y-3">
                 <div>
-                  <div className="text-sm text-slate-400 mb-1">Vehicle</div>
+                  <div className="text-sm text-slate-400 mb-1">Number Plate</div>
                   <div className="text-lg font-semibold text-white">R166</div>
                 </div>
                 <div>
+                  <div className="text-sm text-slate-400 mb-1">Vehicle Type</div>
+                  <div className="text-lg font-semibold text-white">VW Crafter</div>
+                </div>
+                <div>
                   <div className="text-sm text-slate-400 mb-1">Speed</div>
-                  <div className="text-2xl font-bold text-green-400">
+                  <div className="text-lg font-semibold text-white">
                     {Math.round(location.speed)} km/h
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-slate-400 mb-1">Direction</div>
-                  <div className="text-lg text-slate-300">
-                    {Math.round(location.direction)}°
-                  </div>
+                  <div className="text-sm text-slate-400 mb-1">ETA</div>
+                  <div className="text-2xl font-bold text-green-400">3 min</div>
                 </div>
               </div>
             </div>
 
-            {/* Driver Info */}
-            <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl shadow-xl">
-              <div className="text-xs text-slate-400 uppercase tracking-wider mb-4">
-                Driver
-              </div>
-              <div>
-                <div className="text-lg font-semibold text-white mb-1">Ole Hansen</div>
-                <div className="text-sm text-slate-400">Experience: 12 years</div>
-              </div>
-            </div>
 
             {/* Locations */}
             <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl shadow-xl space-y-4">

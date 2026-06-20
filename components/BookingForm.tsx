@@ -11,15 +11,9 @@ import {
   type AddressSuggestion
 } from '@/lib/taxi4u-api';
 
-type CarType = 'estatecar' | 'sixseater' | 'eightseater' | 'wheelchair';
-
-interface FormData {
-  pickupLocation: string;
-  dropoffLocation: string;
-  date: string;
-  time: string;
   passengers: number;
-  carType: CarType;
+  attributes: number[];
+  hasBike: boolean;
   name: string;
   phone: string;
   email: string;
@@ -41,12 +35,81 @@ interface BookingStatus {
   found: boolean;
 }
 
-const CAR_TYPES: { value: CarType; label_no: string; label_en: string; icon: string }[] = [
-  { value: 'estatecar', label_no: 'Personbil', label_en: 'Car', icon: '🚗' },
-  { value: 'sixseater', label_no: '6-seter', label_en: '6-Seater', icon: '🚙' },
-  { value: 'eightseater', label_no: '8-seter', label_en: '8-Seater', icon: '🚐' },
-  { value: 'wheelchair', label_no: 'Rullestol', label_en: 'Wheelchair', icon: '♿' },
+const ATTRIBUTE_GROUPS = [
+  {
+    id: 'biltype',
+    label_no: 'Biltype',
+    label_en: 'Vehicle Type',
+    icon: '🚗',
+    options: [
+      { id: 20, label_no: 'Liten bil', label_en: 'Small Car' },
+      { id: 3, label_no: 'Lav bil / Personbil', label_en: 'Low Car / Standard' },
+      { id: 0, label_no: '6 seter', label_en: '6 Seater' },
+      { id: 1, label_no: '7 seter', label_en: '7 Seater' },
+      { id: 89, label_no: '8 seter', label_en: '8 Seater' },
+      { id: 4, label_no: 'Rullestol', label_en: 'Wheelchair' }
+    ]
+  },
+  {
+    id: 'bagasje',
+    label_no: 'Bagasje/utstyr',
+    label_en: 'Luggage/Equipment',
+    icon: '🧳',
+    options: [
+      { id: 23, label_no: 'Mykje bagasje', label_en: 'Lots of luggage' },
+      { id: 99, label_no: 'Ekstra bagasjeplass', label_en: 'Extra luggage space' },
+      { id: 21, label_no: 'Har med ski', label_en: 'Bringing skis' },
+      { id: 22, label_no: 'Har med snowboard', label_en: 'Bringing snowboard' },
+      { id: 24, label_no: 'Har med hund', label_en: 'Bringing dog' },
+      { id: -1, label_no: 'Har med sykkel', label_en: 'Bringing bicycle' }
+    ]
+  },
+  {
+    id: 'barneseter',
+    label_no: 'Barneseter',
+    label_en: 'Child Seats',
+    icon: '👶',
+    options: [
+      { id: 29, label_no: 'Barnestol 0-1 år/0-13 kg', label_en: 'Child seat 0-1 yrs' },
+      { id: 30, label_no: 'Barnestol 1-4 år/9-18 kg', label_en: 'Child seat 1-4 yrs' },
+      { id: 31, label_no: 'Barnestol 4-10 år/15-25 kg', label_en: 'Child seat 4-10 yrs' },
+      { id: 25, label_no: 'Barnepute', label_en: 'Booster seat' },
+      { id: 27, label_no: 'Spedbarnstol', label_en: 'Infant seat' }
+    ]
+  },
+  {
+    id: 'helse',
+    label_no: 'Helse/Behov',
+    label_en: 'Health/Needs',
+    icon: '♿',
+    options: [
+      { id: 16, label_no: 'Trenger assistanse', label_en: 'Needs assistance' },
+      { id: 19, label_no: 'Har rullator', label_en: 'Has rollator' },
+      { id: 39, label_no: 'Høg innstiging', label_en: 'High boarding' },
+      { id: 40, label_no: 'Allergi', label_en: 'Allergies' },
+      { id: 41, label_no: 'Røykfri', label_en: 'Smoke-free' },
+      { id: 9, label_no: 'Sammenleggbar rullestol', label_en: 'Foldable wheelchair' }
+    ]
+  },
+  {
+    id: 'anna',
+    label_no: 'Anna nyttig',
+    label_en: 'Other',
+    icon: '⭐',
+    options: [
+      { id: 63, label_no: 'Må ha 4WD', label_en: 'Needs 4WD' },
+      { id: 62, label_no: 'Må ha piggdekk', label_en: 'Needs studded tires' },
+      { id: 75, label_no: 'Engelskspråkleg sjåfør', label_en: 'English-speaking driver' },
+      { id: 73, label_no: 'Kvinnleg sjåfør', label_en: 'Female driver' }
+    ]
+  }
 ];
+
+const TIME_OPTIONS = Array.from({ length: 24 * 4 }).map((_, i) => {
+  const h = Math.floor(i / 4).toString().padStart(2, '0');
+  const m = ((i % 4) * 15).toString().padStart(2, '0');
+  return `${h}:${m}`;
+});
 
 export default function BookingForm() {
   const [language, setLanguage] = useState<Language>('no');
@@ -105,7 +168,8 @@ export default function BookingForm() {
     date: today,
     time: currentTime,
     passengers: 1,
-    carType: 'estatecar',
+    attributes: [],
+    hasBike: false,
     name: '',
     phone: '',
     email: '',
@@ -199,11 +263,33 @@ export default function BookingForm() {
     }));
   };
 
-  const handleCarTypeChange = (carType: CarType) => {
-    setFormData((prev) => ({
-      ...prev,
-      carType,
-    }));
+  const toggleAttribute = (attrId: number) => {
+    if (attrId === -1) {
+      setFormData(prev => ({ ...prev, hasBike: !prev.hasBike }));
+      return;
+    }
+    
+    setFormData(prev => {
+      // Radio behavior for Biltype (remove other biltype attributes if selecting one)
+      const biltypeIds = ATTRIBUTE_GROUPS[0].options.map(o => o.id);
+      
+      let newAttributes = [...prev.attributes];
+      
+      if (biltypeIds.includes(attrId)) {
+        // Remove existing biltype selections
+        newAttributes = newAttributes.filter(id => !biltypeIds.includes(id));
+        newAttributes.push(attrId);
+      } else {
+        // Toggle other attributes
+        if (newAttributes.includes(attrId)) {
+          newAttributes = newAttributes.filter(id => id !== attrId);
+        } else {
+          newAttributes.push(attrId);
+        }
+      }
+      
+      return { ...prev, attributes: newAttributes };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -345,7 +431,8 @@ export default function BookingForm() {
           date: resetToday,
           time: resetTime,
           passengers: 1,
-          carType: 'estatecar',
+          attributes: [],
+          hasBike: false,
           name: '',
           phone: '',
           email: '',
@@ -660,25 +747,36 @@ export default function BookingForm() {
                   </div>
 
                   {/* Time */}
-                  <div>
+                  <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {t.time}
                     </label>
-                    <input
-                      ref={timeInputRef}
-                      type="time"
-                      name="time"
-                      value={formData.time}
-                      onChange={(e) => {
-                        handleInputChange(e);
-                        // Auto-blur after selection
-                        setTimeout(() => {
-                          timeInputRef.current?.blur();
-                        }, 100);
-                      }}
-                      required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Clock className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <select
+                        name="time"
+                        value={formData.time}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full pl-10 pr-10 py-2.5 appearance-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      >
+                        {!TIME_OPTIONS.includes(formData.time) && (
+                          <option value={formData.time}>{formData.time}</option>
+                        )}
+                        {TIME_OPTIONS.map((time) => (
+                          <option key={time} value={time}>
+                            {time}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -703,26 +801,38 @@ export default function BookingForm() {
                     </select>
                   </div>
 
-                  {/* Car Type */}
-                  <div className="md:col-span-3">
+                  {/* Vehicle Attributes */}
+                  <div className="md:col-span-5 space-y-4 mt-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {t.vehicleType}
+                      {language === 'no' ? 'Kjøretøy og behov' : 'Vehicle and Needs'}
                     </label>
-                    <div className="grid grid-cols-2 gap-3 md:gap-4">
-                      {CAR_TYPES.map((car) => (
-                        <button
-                          key={car.value}
-                          type="button"
-                          onClick={() => handleCarTypeChange(car.value)}
-                          className={`px-3 md:px-4 py-3 md:py-4 rounded-lg text-sm md:text-base font-medium text-center transition-colors break-words ${
-                            formData.carType === car.value
-                              ? 'bg-amber-600 text-white shadow-sm'
-                              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
-                          }`}
-                        >
-                          <span className="text-2xl block mb-1">{car.icon}</span>
-                          <span className="inline text-xs md:text-sm">{language === 'no' ? car.label_no : car.label_en}</span>
-                        </button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {ATTRIBUTE_GROUPS.map((group) => (
+                        <div key={group.id} className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                          <h3 className="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                            <span>{group.icon}</span>
+                            {language === 'no' ? group.label_no : group.label_en}
+                          </h3>
+                          <div className="flex flex-wrap gap-2">
+                            {group.options.map((opt) => {
+                              const isSelected = opt.id === -1 ? formData.hasBike : formData.attributes.includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => toggleAttribute(opt.id)}
+                                  className={`px-3 py-2 rounded-lg text-sm transition-colors border ${
+                                    isSelected
+                                      ? 'bg-amber-600 border-amber-600 text-white shadow-sm'
+                                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-amber-400 dark:hover:border-amber-500'
+                                  }`}
+                                >
+                                  {language === 'no' ? opt.label_no : opt.label_en}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       ))}
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">

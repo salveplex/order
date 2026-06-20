@@ -6,7 +6,8 @@ export interface BookingRequest {
   date: string;
   time: string;
   passengers: number;
-  carType: 'estatecar' | 'sixseater' | 'eightseater' | 'wheelchair';
+  attributes: number[];
+  hasBike?: boolean;
   name: string;
   phone: string;
   email: string;

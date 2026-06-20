@@ -13,7 +13,8 @@ interface BookingData {
   date: string;
   time: string;
   passengers: number;
-  carType: string;
+  attributes: number[];
+  hasBike?: boolean;
   name: string;
   phone: string;
   email: string;
@@ -32,7 +33,8 @@ export async function POST(request: NextRequest) {
 
     // Log what frontend sent to this API
     console.log('=== BOOKING DATA RECEIVED FROM FRONTEND ===');
-    console.log(`formData.carType = "${body.carType}"`);
+    console.log(`formData.attributes = ${JSON.stringify(body.attributes)}`);
+    console.log(`formData.hasBike = ${body.hasBike}`);
     console.log(JSON.stringify(body, null, 2));
     console.log('==========================================\n');
 
@@ -93,20 +95,18 @@ async function createBookingWithTaxi4U(data: BookingData) {
   // Output format: "2026-06-16T14:30:00Z"
   const pickupTimeISO = `${data.date}T${data.time}:00Z`;
 
-  // Build message to driver with vehicle type and additional info
-  const carTypeLabels: Record<string, string> = {
-    'estatecar': 'Personbil',
-    'sixseater': '6-seter',
-    'eightseater': '8-seter',
-    'wheelchair': 'Rullestol'
-  };
+  // Build message to driver with additional info
+  let messageText = '';
 
-  const carTypeLabel = carTypeLabels[data.carType] || data.carType;
-  let messageText = `Biltype: ${carTypeLabel}`;
+  if (data.hasBike) {
+    messageText += 'Har med sykkel\n';
+  }
 
   if (data.additionalInfo && data.additionalInfo.trim()) {
-    messageText += `\nNotat: ${data.additionalInfo}`;
+    messageText += `Notat: ${data.additionalInfo}`;
   }
+
+  const attributeString = data.attributes && data.attributes.length > 0 ? data.attributes.join(',') : '';
 
   // Use /api/v2/book/general endpoint for auto-dispatch support
   // This endpoint supports manualProcessing: false to enable auto-dispatch
@@ -114,11 +114,14 @@ async function createBookingWithTaxi4U(data: BookingData) {
     req: 1,  // Required field for API
     centralCode: 'VS',  // Voss/Sogn central code
     manualProcessing: false,  // Enable auto-dispatch (lowercase!)
+    attributes: attributeString ? attributeString : undefined, // Set vehicle type attribute (string)
     passengers: [
       {
         seqNo: 0,
-        toName: data.name,
-        toTel: data.phone,
+        fromName: data.name,
+        fromTel: data.phone,
+        mobile: data.phone,           // Legg til mobile
+        customerPhone: data.phone,    // Legg til customerPhone for sikkerhets skyld
         fromStreet: data.pickupLocation,
         fromCity: data.pickupCity || 'Voss',
         fromLat: data.pickupLat,
@@ -159,11 +162,13 @@ async function createBookingWithTaxi4U(data: BookingData) {
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('Taxi4U booking API error:', response.status, errorData);
+      console.error('❌ TAXI4U BOOKING API ERROR:');
+      console.error('   Status:', response.status);
+      console.error('   Response:', errorData);
 
       // If 403 Forbidden, use fallback (likely permission issue or wrong central code)
       if (response.status === 403) {
-        console.warn('API returned 403 - likely missing permissions or wrong central code. Using fallback.');
+        console.warn('⚠️  API returned 403 - Missing permissions or wrong central code. Using fallback.');
         throw new Error('API_PERMISSION_ISSUE');
       }
 
@@ -174,10 +179,16 @@ async function createBookingWithTaxi4U(data: BookingData) {
 
     const result = await response.json();
 
+    console.log('📥 FULL RESPONSE FROM TAXI4U:');
+    console.log(JSON.stringify(result, null, 2));
+
     // Taxi4U returns the AppBook object with BookRef populated
     const bookingNumber = result.bookRef || result.id || `BK-${Date.now()}`;
 
-    console.log('Booking successful, BookRef:', bookingNumber);
+    console.log('📍 Extracted bookingNumber:', bookingNumber);
+    console.log('   - from bookRef:', result.bookRef);
+    console.log('   - from id:', result.id);
+    console.log('   - fallback used:', !result.bookRef && !result.id);
 
     return {
       success: true,
@@ -191,7 +202,8 @@ async function createBookingWithTaxi4U(data: BookingData) {
 
     // Fallback: Use demo mode if API is unavailable or has permission issues
     if (errorMsg.includes('API_PERMISSION_ISSUE') || errorMsg.includes('401') || errorMsg.includes('403')) {
-      console.warn('Using fallback booking (demo/permission issue)');
+      console.warn('⚠️  USING FALLBACK BOOKING (DEMO MODE)');
+      console.warn('   Reason:', errorMsg);
 
       const bookingNumber = `T4U-${Date.now()}`;
 
@@ -209,7 +221,7 @@ async function createBookingWithTaxi4U(data: BookingData) {
       };
     }
 
-    console.error('Booking creation failed:', errorMsg);
+    console.error('❌ BOOKING CREATION FAILED:', errorMsg);
     throw error;
   }
 }

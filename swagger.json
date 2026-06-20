@@ -1,0 +1,4211 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WebAPIBook API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/assessment/lookup/{reference}": {
+      "get": {
+        "tags": [
+          "Assessment"
+        ],
+        "summary": "Look up a contact by reference - Put on hold or replaced by a Windows Service, more suitable for the task.",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetContactByReferenceResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetContactByReferenceResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetContactByReferenceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticate a user and return a token",
+        "description": "Route: POST /api/auth/login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh-token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Exchange a refresh token for a new access token",
+        "description": "Route: POST /api/auth/refresh-token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/book": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Book a simple Trip with a single Passenger only, typically App Booking",
+        "description": "Required fields: CentralCode, FromStreet, PickupTime.\r\nPickupTime must be UTC and no more than 10 minutes in the past.\r\nFromZoneNo and ToZoneNo are resolved automatically from coordinates if set to 0.\r\nOn success the response body contains the same AppBook object with BookRef populated.\r\nOn failure (400/422) the response body contains an errors array.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppBook"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppBook"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppBook"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppBook"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppBook"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppBook"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Get Status Information about Trip(s) - single or multiple. In case of multiple use comma to separate bookrefs",
+        "description": "bookRefs accepts a single reference or a comma-separated list, e.g. \"ABC234\" or \"ABC234,CDJ678\".\r\nTripStatusCode values: 0=NotAssigned, 1=Assigned, 2=MissedTrip, 3=Done, 4=Manual, 5=Cancelled, 6=Unknown.",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bookRefs",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripStatus"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripStatus"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TripStatus"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Delete (cancel) a booked trip",
+        "description": "Returns 204 No Content if the trip was successfully cancelled.\r\nReturns 422 Unprocessable Entity if the cancellation request is valid, but the trip cannot be cancelled due to business rules.The response body contains the reason.\r\nCommon rejection reasons: trip is already dispatched to a vehicle, trip is completed, or trip is under manual processing.",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bookRef",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/book/b2b": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Book a corporate trip (AutoBook) - typically used by Hotels and Restaurants with a fixed pickup address",
+        "description": "centralCode is a required query parameter (e.g. \"HA\").\r\nAutoBookId identifies the corporate customer and determines the fixed pickup address stored in the system.\r\nToStreet, ToLat and ToLon define the destination - omit for one-way trips with no fixed destination.\r\nPickupTime must be UTC and no more than 10 minutes in the past.\r\nSet SMSConfirmationToCustomer to true to send an SMS to Tel on successful booking.\r\nOn success (200) the response contains BookRef.\r\nOn failure (422) the response contains ErrorMessage with the reason from the booking system.",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/B2BBookingRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/B2BBookingRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/B2BBookingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/B2BBookingResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/book/general": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Book a Trip of a more Detailed Type, with Access to more Fields and more than one Passenger",
+        "description": "Required fields: CentralCode, and at least one Passenger with FromStreet and PickupTime.\r\nPickupTime (on first passenger) must be UTC and no more than 10 minutes in the past.\r\nFromZoneNo and ToZoneNo are resolved automatically from coordinates.\r\nOn success the response body contains the same Trip object with BookRef populated.\r\nOn failure (422) the response body contains an errors array.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trip"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trip"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Trip"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/book/pickuptime": {
+      "put": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Change PickupTime on an existing Trip",
+        "description": "Required fields: CentralCode, BookRef, NewTime.\r\nNewTime must not be more than 2 minutes in the past (local server time).\r\nReturns 200 OK with no body on success.\r\nReturns 422 if the booking system rejects the change (e.g. trip already dispatched).",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePickupTimeRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePickupTimeRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePickupTimeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/book/vehicle": {
+      "put": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Assign a vehicle to a booking",
+        "description": "centralCode and bookRef are required query parameters.\r\nAt least one of LicenseNo or VehicleNo must be provided in the request body.\r\nReturns 200 OK with no body on success.\r\nReturns 422 if the booking system rejects the assignment (e.g. trip already dispatched).",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bookRef",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignVehicleBody"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignVehicleBody"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignVehicleBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/book/messagetocar": {
+      "put": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Send Message to Car",
+        "description": "Required fields: CentralCode, LicenseNo, Message.\r\nThe message is sent to the vehicle identified by LicenseNo.\r\nToStorage and ToPrinter are optional flags controlling message delivery.\r\nReturns 200 OK with \"Message sent successfully\" on success.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageToCarRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageToCarRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageToCarRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookingdetails": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Complete Trip Data on a Booked trip",
+        "description": "centralCode and bookRef are required query parameters.\r\nReturns the full Trip object including all passengers on success.\r\nReturns 400 with no body if centralCode or bookRef is missing or unrecognized.\r\nReturns 404 if no booking is found for the given bookRef.",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bookRef",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trip"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/receipt": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Key economic and traffic information on a trip: start, stop, km, price etc",
+        "description": "centralCode and bookRef are required query parameters.\r\nReturns 404 if no receipt is found for the given bookRef.\r\nReturns 422 with no body if the SP returns an unexpected number of rows (more than 1).\r\nNote: response field names contain typos (SceduledPickup, BookeDateTime) – corrected in v2.",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bookRef",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptInfo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/b2bbook": {
+      "get": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Retrieves a list of corporate bookings based on the specified parameters",
+        "parameters": [
+          {
+            "name": "CentralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "AutoBookId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "HoursBack",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "HoursForward",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CorporateBookListItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CorporateBookListItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CorporateBookListItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/triplists": {
+      "post": {
+        "tags": [
+          "Booking"
+        ],
+        "summary": "3 kind of TripLists based on mode: pending, finished or search based on values in TripSearch object",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripListRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripListRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TripListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trip"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trip"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trip"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/cardcontrol": {
+      "post": {
+        "tags": [
+          "CardControl"
+        ],
+        "summary": "Registers a TT-kort control request (inserts a row in KORTKONTROLL).",
+        "description": "The control itself is performed asynchronously by a separate service; this endpoint only\r\npersists the request. The result of the control is NOT returned here.\r\n            \r\n**Authorization:** Bearer JWT with role `2IZII` or `ALLE`, **and** a permission claim for the\r\ntarget central (the `centralCode` value, e.g. `MZ`) or `ALL`. Missing role/permission → `403`.\r\n            \r\n**centralCode** selects the central's database (e.g. `MZ`, `TZ`). An unknown code → `400`.\r\n            \r\n**tilleggsdata** must be a well-formed JSON string (max 100 chars) and is stored verbatim for\r\nthe control service. Invalid JSON → `400`.\r\n            \r\nOn success the endpoint returns **`201 Created` with an empty body** (no id is returned).\r\n            \r\nExample request body:\r\n```json\r\n{\r\n  \"centralCode\": \"MZ\",\r\n  \"bilnr2izii\": 12345,\r\n  \"sjafornr2izii\": 678,\r\n  \"kortnr\": \"1234567890\",\r\n  \"tilleggsdata\": \"{\\\"kilde\\\":\\\"2izii\\\"}\"\r\n}\r\n```",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardControlRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardControlRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardControlRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Card control registered; a row was inserted in KORTKONTROLL. Empty body."
+          },
+          "400": {
+            "description": "Validation failed: missing/invalid field, unknown centralCode, or tilleggsdata is not valid JSON.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token lacks the required role (2IZII/ALLE) or permission for the central.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request was well-formed but could not be processed — unknown vehicle (bilnr2izii) or driver (sjafornr2izii).",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/payment/callback/2izii/{centralCode}/payment-success": {
+      "post": {
+        "tags": [
+          "Payment"
+        ],
+        "summary": "Receives payment-success callback from 2izii and updates APPTRANS.",
+        "description": "Auth: role 2IZII (ALLE used during development).",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order_id",
+            "in": "query",
+            "description": "Order identifier (sendt til 2izii ved trip start, lagret som TRANSID2).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reference_id",
+            "in": "query",
+            "description": "Reference identifier fra 2izii (ny i revidert spec).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/payment/callback/2izii/{centralCode}/payment-cancelled": {
+      "post": {
+        "tags": [
+          "Payment"
+        ],
+        "summary": "Receives payment-cancelled callback from 2izii and updates APPTRANS.",
+        "description": "Auth: role 2IZII (ALLE used during development).",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order_id",
+            "in": "query",
+            "description": "Order identifier (sendt til 2izii ved trip start, lagret som TRANSID2).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reference_id",
+            "in": "query",
+            "description": "Reference identifier fra 2izii (ny i revidert spec).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/pricequote": {
+      "post": {
+        "tags": [
+          "PriceQuote"
+        ],
+        "summary": "Get a Price Quote based on pickup and delivery",
+        "description": "centralCode is a required query parameter.\r\nFromLat/FromLon and ToLat/ToLon must be valid WGS84 coordinates (not 0,0).\r\nPickupTime must not be more than 2 minutes in the past.\r\nOn success returns Tariff (formatted string) and Price.\r\nOn failure (422) returns the same PriceQuoteResponse with ErrorMessage populated.",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceQuoteRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceQuoteRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceQuoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pricequote/b2bbook": {
+      "post": {
+        "tags": [
+          "PriceQuote"
+        ],
+        "summary": "Get a Price Quote for B2B based on fixed pickup and delivery",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceQuoteB2BBookRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceQuoteB2BBookRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceQuoteB2BBookRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceQuoteB2BBookResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shifts/files/download": {
+      "get": {
+        "tags": [
+          "Shifts"
+        ],
+        "summary": "Download shift data file for a vehicle",
+        "parameters": [
+          {
+            "name": "CentralCode",
+            "in": "query",
+            "description": "2-letter taxi central code (e.g. \"HA\"). Required.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "LicenseNumbers",
+            "in": "query",
+            "description": "Vehicle license number. Required.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Year",
+            "in": "query",
+            "description": "Year of the shift data (e.g. 2025).",
+            "schema": {
+              "maximum": 2100,
+              "minimum": 2020,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Month",
+            "in": "query",
+            "description": "Month of the shift data (1-12).",
+            "schema": {
+              "maximum": 12,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "SortByDriver",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/assemblyinfo": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Get Version Number of the API",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/attribute": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Complete List of Trip Attributes available for a Trip - For example Wheelchair, Child Seat, English speaking etc",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttributeItem"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttributeItem"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AttributeItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/telephony/incoming": {
+      "put": {
+        "tags": [
+          "Telephony"
+        ],
+        "summary": "Registers an incoming phone call to the Booking system",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomingPhoneCallRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomingPhoneCallRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncomingPhoneCallRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicle": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "List Vehicles - parameter active: true will include all except logged out cars, active = false will include even logged out",
+        "parameters": [
+          {
+            "name": "CentralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveVehicle"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveVehicle"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActiveVehicle"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/vehicleno": {
+      "get": {
+        "tags": [
+          "Vehicle"
+        ],
+        "summary": "Get VehicleNo from LicenseNo - queries Central's VOGN table",
+        "parameters": [
+          {
+            "name": "centralCode",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseNo",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVehicleNoResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVehicleNoResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVehicleNoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ActiveVehicle": {
+        "type": "object",
+        "properties": {
+          "vehicleCommunicationNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "licenseNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "driverId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "driverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "zoneNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "zoneQueNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "destZone": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "activeTrip": {
+            "type": "string",
+            "nullable": true
+          },
+          "activeVehicleMobile": {
+            "type": "string",
+            "nullable": true
+          },
+          "driverEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "pickupAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "pickupLat": {
+            "type": "number",
+            "format": "double"
+          },
+          "pickupLon": {
+            "type": "number",
+            "format": "double"
+          },
+          "destAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "destLat": {
+            "type": "number",
+            "format": "double"
+          },
+          "destLon": {
+            "type": "number",
+            "format": "double"
+          },
+          "gpsVelocity": {
+            "type": "number",
+            "format": "double"
+          },
+          "gpsDirection": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gpsTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tariff3Code": {
+            "type": "string",
+            "nullable": true
+          },
+          "regNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "tripCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "One or more error messages describing what went wrong.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Standard error response returned on 400, 422 and 500."
+      },
+      "AppBook": {
+        "required": [
+          "centralCode",
+          "fromStreet"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string",
+            "description": "2-letter taxi central code (e.g. \"HA\"). Required."
+          },
+          "fromStreet": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Pickup street address. Required."
+          },
+          "fromCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromPostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromLat": {
+            "type": "number",
+            "format": "double"
+          },
+          "fromLon": {
+            "type": "number",
+            "format": "double"
+          },
+          "fromZoneNo": {
+            "type": "integer",
+            "description": "Pickup zone number. Optional - resolved automatically from FromLat/FromLon if 0.",
+            "format": "int32"
+          },
+          "toStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "toCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "toPostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "toLat": {
+            "type": "number",
+            "format": "double"
+          },
+          "toLon": {
+            "type": "number",
+            "format": "double"
+          },
+          "toZoneNo": {
+            "type": "integer",
+            "description": "Destination zone number. Optional - resolved automatically from ToLat/ToLon if 0.",
+            "format": "int32"
+          },
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "tel": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageToCar": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageToBooking": {
+            "type": "string",
+            "nullable": true
+          },
+          "pickupTime": {
+            "type": "string",
+            "description": "Required. Scheduled pickup time in UTC.\r\nMust be DateTime.UtcNow or later (max 10 minutes in the past allowed).\r\nExample: 2025-06-15T14:30:00Z",
+            "format": "date-time"
+          },
+          "orderedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "string",
+            "nullable": true
+          },
+          "fixedPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxiAccountNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "tollAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "vY_Order": {
+            "type": "boolean"
+          },
+          "prepaid": {
+            "type": "boolean"
+          },
+          "bookRef": {
+            "type": "string",
+            "description": "Response only. Booking reference assigned by the system on success.",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Response only. Error message if booking failed.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssignVehicleBody": {
+        "type": "object",
+        "properties": {
+          "licenseNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Body-only portion of AssignVehicle request (CentralCode and BookRef come from query string)"
+      },
+      "AttributeItem": {
+        "type": "object",
+        "properties": {
+          "attributeCode": {
+            "type": "integer",
+            "description": "Attribute code used when booking a trip.",
+            "format": "int32"
+          },
+          "attributeType": {
+            "type": "integer",
+            "description": "Attribute type: 0 = vehicle, 1 = driver, 2 = location.",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the attribute.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Trip attribute (vehicle equipment, driver skill or location property)"
+      },
+      "B2BBookingRequest": {
+        "type": "object",
+        "properties": {
+          "autoBookId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "description": "Required. Corporate customer ID (AutoBook). Determines the fixed pickup address.",
+            "format": "int32"
+          },
+          "pickupTime": {
+            "type": "string",
+            "description": "Required. Scheduled pickup time in UTC. Must not be more than 10 minutes in the past.",
+            "format": "date-time"
+          },
+          "orderedBy": {
+            "type": "string",
+            "description": "Name or identifier of who ordered the trip.",
+            "nullable": true
+          },
+          "messageToCar": {
+            "type": "string",
+            "description": "Free-text message sent to the driver.",
+            "nullable": true
+          },
+          "messageToBooking": {
+            "type": "string",
+            "description": "Internal note to the booking office.",
+            "nullable": true
+          },
+          "tel": {
+            "type": "string",
+            "description": "Customer phone number. Required if SMSConfirmationToCustomer is true.",
+            "nullable": true
+          },
+          "smsConfirmationToCustomer": {
+            "type": "boolean",
+            "description": "If true, an SMS confirmation is sent to Tel when booking succeeds."
+          },
+          "toStreet": {
+            "type": "string",
+            "description": "Destination street address.",
+            "nullable": true
+          },
+          "toLat": {
+            "type": "number",
+            "description": "Destination latitude (WGS84). Required together with ToLon if destination is used.",
+            "format": "double"
+          },
+          "toLon": {
+            "type": "number",
+            "description": "Destination longitude (WGS84). Required together with ToLat if destination is used.",
+            "format": "double"
+          },
+          "fixedPrice": {
+            "type": "number",
+            "description": "Fixed price for the trip. 0 means no fixed price.",
+            "format": "double"
+          },
+          "maxPrice": {
+            "type": "number",
+            "description": "Maximum price the customer accepts. 0 means no limit.",
+            "format": "double"
+          },
+          "prePaid": {
+            "type": "boolean",
+            "description": "Set to true if the trip is prepaid."
+          },
+          "attributes": {
+            "type": "string",
+            "description": "Vehicle attribute codes (e.g. wheelchair, child seat). Comma-separated.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "B2BBookingResponse": {
+        "type": "object",
+        "properties": {
+          "bookRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BookingStatus": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "CardControlRequest": {
+        "required": [
+          "bilnr2izii",
+          "centralCode",
+          "kortnr",
+          "sjafornr2izii",
+          "tilleggsdata"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string",
+            "description": "2-letter taxi central code, e.g. \"MZ\". Selects the central database and is stored on the row.\r\nRequired.",
+            "example": "MZ"
+          },
+          "bilnr2izii": {
+            "type": "integer",
+            "description": "Vehicle number from 2izii (vogn.vehicle_id_2izii). Required.",
+            "format": "int32",
+            "example": 12345
+          },
+          "sjafornr2izii": {
+            "type": "integer",
+            "description": "Driver number from 2izii (sjafor.driver_id_2izii). Required.",
+            "format": "int32",
+            "example": 678
+          },
+          "kortnr": {
+            "maxLength": 40,
+            "minLength": 0,
+            "type": "string",
+            "description": "TT-kort number. Required, max 40 chars.",
+            "example": "1234567890"
+          },
+          "tilleggsdata": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "Additional data as a JSON string. Must be well-formed JSON, max 100 chars. Stored verbatim\r\n(column TT_JSON_TILLEGG) and consumed by the control service.\r\nNOTE: the example below is illustrative — confirm the actual keys the control service expects.",
+            "example": "{\"kilde\":\"2izii\"}"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Request body for POST /api/cardcontrol (TT-kort kontroll)."
+      },
+      "CorporateBookListItem": {
+        "type": "object",
+        "properties": {
+          "bookRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageToCar": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageToBooking": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pickupTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dispatchTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tel": {
+            "type": "string",
+            "nullable": true
+          },
+          "toStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "driverTel": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetContactByReferenceResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetVehicleNoResponse": {
+        "type": "object",
+        "properties": {
+          "vehicleNo": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "IncomingPhoneCallRequest": {
+        "required": [
+          "calledNumber",
+          "callerId",
+          "centralCode",
+          "telephoneUser"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string"
+          },
+          "callerId": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          },
+          "calledNumber": {
+            "maxLength": 20,
+            "minLength": 0,
+            "type": "string"
+          },
+          "externalId": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "description": "Optional external reference ID.",
+            "nullable": true
+          },
+          "telephoneUser": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "required": [
+          "password",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MessageToCarRequest": {
+        "required": [
+          "centralCode",
+          "licenseNo",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "licenseNo": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "toStorage": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "toPrinter": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Passenger": {
+        "required": [
+          "fromLat",
+          "fromLon",
+          "fromStreet",
+          "pickupTime",
+          "seqNo"
+        ],
+        "type": "object",
+        "properties": {
+          "seqNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taxiAccountNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientName": {
+            "type": "string",
+            "nullable": true
+          },
+          "pickupTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fromStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromPostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromLat": {
+            "type": "number",
+            "format": "double"
+          },
+          "fromLon": {
+            "type": "number",
+            "format": "double"
+          },
+          "fromZoneNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "toStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "toCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "toPostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "toLat": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "toLon": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "toZoneNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tel": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "clientNoteToCar": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "fixedPricePassenger": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "requisitionNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "deductible": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "fromMapRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "toMapRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromMunicipalityNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "toMunicipalityNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "contractPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "pricePerHead": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "noShowFee": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "taxiAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "extraAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tT_TurtypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tT_TurtypeText": {
+            "type": "string",
+            "nullable": true
+          },
+          "tT_AssignmentCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PriceQuoteB2BBookRequest": {
+        "required": [
+          "attributes",
+          "autoBookId",
+          "centralCode",
+          "pickupTime",
+          "toLat",
+          "toLon",
+          "toStreet"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "autoBookId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "toStreet": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "toLat": {
+            "type": "number",
+            "format": "double"
+          },
+          "toLon": {
+            "type": "number",
+            "format": "double"
+          },
+          "pickupTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "attributes": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PriceQuoteB2BBookResponse": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "tariff": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PriceQuoteRequest": {
+        "type": "object",
+        "properties": {
+          "fromStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromPostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "fromLat": {
+            "type": "number",
+            "description": "Pickup latitude. Required - must be a valid WGS84 coordinate (not 0,0).",
+            "format": "double"
+          },
+          "fromLon": {
+            "type": "number",
+            "description": "Pickup longitude. Required - must be a valid WGS84 coordinate (not 0,0).",
+            "format": "double"
+          },
+          "toStreet": {
+            "type": "string",
+            "nullable": true
+          },
+          "toPostalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "toLat": {
+            "type": "number",
+            "description": "Destination latitude. Required - must be a valid WGS84 coordinate (not 0,0).",
+            "format": "double"
+          },
+          "toLon": {
+            "type": "number",
+            "description": "Destination longitude. Required - must be a valid WGS84 coordinate (not 0,0).",
+            "format": "double"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Optional vehicle attribute codes (e.g. wheelchair, child seat).",
+            "nullable": true
+          },
+          "pickupTime": {
+            "type": "string",
+            "description": "Scheduled pickup time. Must not be more than 2 minutes in the past.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PriceQuoteResponse": {
+        "type": "object",
+        "properties": {
+          "tariff": {
+            "type": "string",
+            "nullable": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
+      },
+      "ReceiptInfo": {
+        "type": "object",
+        "properties": {
+          "bookRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "receiptNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "licenseNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "driverId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taxiAccountNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "originalMaxPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "sceduledPickup": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookeDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "km": {
+            "type": "number",
+            "format": "double"
+          },
+          "fromAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "toAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "fixedPrice": {
+            "type": "string",
+            "nullable": true
+          },
+          "vatPercentage": {
+            "type": "number",
+            "format": "double"
+          },
+          "vat": {
+            "type": "number",
+            "format": "double"
+          },
+          "vatBasis": {
+            "type": "number",
+            "format": "double"
+          },
+          "vatRegistrationNo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RefreshTokenRequest": {
+        "required": [
+          "refreshToken",
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "accessToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "accessExpiry": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "refreshExpiry": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Trip": {
+        "required": [
+          "centralCode"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string",
+            "description": "2-letter taxi central code (e.g. \"HA\"). Required."
+          },
+          "internalNo": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "bookRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "secondaryOrderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageToCar": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookedTimeStamp": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "pickupTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dispatchTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "autoBookId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "licenseNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleNo": {
+            "maximum": 9999,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "driverNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "priority": {
+            "maximum": 9,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fixedPriceTrip": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maxPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "appPrePaid": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tripStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "additionalVehicles": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "manualProcessing": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "random": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "oneTimeAssignment": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "shortRide": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "longRide": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "agreementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "msgId": {
+            "type": "string",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "string",
+            "nullable": true
+          },
+          "passengers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Passenger"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TripListMode": {
+        "enum": [
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TripListRequest": {
+        "required": [
+          "centralCode",
+          "mode"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/TripListMode"
+          },
+          "objValues": {
+            "$ref": "#/components/schemas/TripSearch"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TripSearch": {
+        "required": [
+          "centralCode"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string",
+            "description": "2-letter taxi central code (e.g. \"HA\"). Required."
+          },
+          "internalNo": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "bookRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "secondaryOrderId": {
+            "type": "string",
+            "nullable": true
+          },
+          "messageToCar": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookedTimeStamp": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "pickupTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dispatchTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sentTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "autoBookId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "licenseNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleNo": {
+            "maximum": 9999,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "driverNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "priority": {
+            "maximum": 9,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "fixedPriceTrip": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "maxPrice": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "appPrePaid": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tripStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "additionalVehicles": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "manualProcessing": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "random": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "oneTimeAssignment": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "shortRide": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "longRide": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "agreementId": {
+            "type": "string",
+            "nullable": true
+          },
+          "msgId": {
+            "type": "string",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "string",
+            "nullable": true
+          },
+          "passengers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Passenger"
+            },
+            "nullable": true
+          },
+          "minBookedTimeStamp": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxBookedTimeStamp": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minPickupTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxPickupTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minDispatchTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxDispatchTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minSentTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxSentTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "minModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TripStatus": {
+        "type": "object",
+        "properties": {
+          "bookingRef": {
+            "type": "string",
+            "nullable": true
+          },
+          "vehicleNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msgOut": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "tripStatusCode": {
+            "$ref": "#/components/schemas/BookingStatus"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "returnValue": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdatePickupTimeRequest": {
+        "required": [
+          "bookRef",
+          "centralCode",
+          "newTime"
+        ],
+        "type": "object",
+        "properties": {
+          "centralCode": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "bookRef": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "newTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Enter JWT token",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}

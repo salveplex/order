@@ -4,6 +4,33 @@ const API_BASE = 'https://api.taxi4u.cab';
 const API_USERNAME = process.env.TAXI4U_USERNAME || '';
 const API_PASSWORD = process.env.TAXI4U_PASSWORD || '';
 
+// Token cache (same as status endpoint)
+let cachedToken: { token: string; expiry: number } | null = null;
+
+async function getAuthToken(): Promise<string> {
+  if (cachedToken && cachedToken.expiry > Date.now()) {
+    return cachedToken.token;
+  }
+
+  const loginResponse = await fetch(`${API_BASE}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: API_USERNAME,
+      password: API_PASSWORD,
+    }),
+  });
+
+  if (!loginResponse.ok) {
+    throw new Error(`Auth failed: ${loginResponse.status}`);
+  }
+
+  const result = await loginResponse.json();
+  const expiryTime = new Date(result.accessExpiry).getTime();
+  cachedToken = { token: result.accessToken, expiry: expiryTime };
+  return result.accessToken;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { bookingId } = await request.json();
@@ -17,30 +44,44 @@ export async function POST(request: NextRequest) {
 
     console.log(`📛 Attempting to cancel booking: ${bookingId}`);
 
-    // Use Basic auth for cancellation
-    const authHeader = `Basic ${Buffer.from(
-      `${API_USERNAME}:${API_PASSWORD}`
-    ).toString('base64')}`;
+    const authToken = await getAuthToken();
 
-    // Call Taxi4U DELETE endpoint to cancel booking
-    const response = await fetch(`${API_BASE}/api/v2/book?id=${encodeURIComponent(bookingId)}`, {
+    // Call Taxi4U DELETE endpoint with Bearer token and required parameters
+    const params = new URLSearchParams();
+    params.append('bookRef', bookingId);  // Note: singular 'bookRef' for DELETE
+    params.append('centralCode', 'VS');
+
+    const response = await fetch(`${API_BASE}/api/v2/book?${params.toString()}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': authHeader,
+        'Authorization': `Bearer ${authToken}`,
       },
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error(`Cancel failed for ${bookingId}:`, response.status, errorData);
+
+      // 422 = Already deleted/cancelled - treat as success
+      if (response.status === 422 && errorData.includes('ALLEREDE SLETTET')) {
+        console.log(`✅ Booking ${bookingId} already cancelled`);
+        return NextResponse.json(
+          { success: true, message: 'Booking was already cancelled' },
+          { status: 200 }
+        );
+      }
+
+      console.error(`❌ Cancel failed for ${bookingId}:`);
+      console.error('   Status:', response.status);
+      console.error('   Response:', errorData);
 
       return NextResponse.json(
-        { error: `Failed to cancel booking: ${response.status}` },
+        { error: `Failed to cancel booking: ${response.status}`, details: errorData },
         { status: response.status }
       );
     }
 
+    // Taxi4U DELETE returns empty response body on success
     console.log(`✅ Booking ${bookingId} cancelled successfully`);
 
     return NextResponse.json(
@@ -49,9 +90,9 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('Cancel booking error:', errorMessage);
+    console.error('❌ Cancel booking error:', errorMessage);
     return NextResponse.json(
-      { error: `Cancel failed: ${errorMessage}` },
+      { error: `Cancel failed: ${errorMessage}`, details: errorMessage },
       { status: 500 }
     );
   }

@@ -1,0 +1,16 @@
+{
+  "apps": [{
+    "name": "order_vps",
+    "script": "node_modules/next/dist/bin/next",
+    "args": "start",
+    "cwd": "/home/vosstaxi/sites/order_vps",
+    "instances": 1,
+    "exec_mode": "cluster",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "3300"
+    },
+    "error_file": "/var/log/order_vps/error.log",
+    "out_file": "/var/log/order_vps/out.log"
+  }]
+}

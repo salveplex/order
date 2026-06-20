@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, MapPin, Phone, MessageSquare } from 'lucide-react';
+import { getCarDetails } from '@/lib/cars';
 
 interface BookingStatus {
   status: 'pending' | 'accepted' | 'inProgress' | 'completed';
@@ -21,12 +22,64 @@ interface VehicleLocation {
   gpsVelocity?: number;
   gpsDirection?: number;
   activeTrip?: string;
+  vehicleType?: string;
+  regNo?: string;
+  eta?: number; // minutes
 }
 
 export default function TrackingPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const bookingNumber = params.id as string;
+  const lang = (searchParams?.get('lang') as 'no' | 'en') || 'no';
+
+  const t = {
+    no: {
+      back: 'Tilbake til bestilling',
+      tracking: 'Turoversikt',
+      status: 'Status',
+      driverAccepted: '🚗 Sjåfør akseptert! Kjøretøy er på vei',
+      inProgress: '⏳ Tur i gang',
+      completed: '✅ Tur fullført',
+      waiting: '⏰ Venter på sjåfør...',
+      loadingMap: 'Laster kart...',
+      vehicleInfo: 'Kjøretøyinfo',
+      numberPlate: 'Skiltnummer',
+      vehicleType: 'Biltype',
+      speed: 'Fart',
+      eta: 'Ankomst',
+      pickup: 'Hentested',
+      destination: 'Destinasjon',
+      callDriver: 'Ring sjåfør',
+      regNo: 'Reg.nr',
+      licenseNo: 'Løyvenr',
+      carModel: 'Bilmerke',
+      message: 'Melding'
+    },
+    en: {
+      back: 'Back to Booking',
+      tracking: 'Trip Tracking',
+      status: 'Status',
+      driverAccepted: '🚗 Driver accepted! Vehicle is on the way',
+      inProgress: '⏳ In progress',
+      completed: '✅ Completed',
+      waiting: '⏰ Waiting for driver...',
+      loadingMap: 'Loading map...',
+      vehicleInfo: 'Vehicle Info',
+      numberPlate: 'Number Plate',
+      vehicleType: 'Vehicle Type',
+      speed: 'Speed',
+      eta: 'ETA',
+      pickup: 'Pickup',
+      destination: 'Destination',
+      callDriver: 'Call Driver',
+      regNo: 'Reg. No',
+      licenseNo: 'License No',
+      carModel: 'Car Model',
+      message: 'Message'
+    }
+  }[lang];
 
   const [status, setStatus] = useState<BookingStatus | null>(null);
   const [location, setLocation] = useState<VehicleLocation | null>(null);
@@ -167,13 +220,16 @@ export default function TrackingPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => router.back()}
-                className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                onClick={() => router.push('/')}
+                className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
-                <ArrowLeft className="w-5 h-5 text-white" />
+                <div className="p-2 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                  <ArrowLeft className="w-4 h-4" />
+                </div>
+                <span className="font-medium">{t.back}</span>
               </button>
               <div>
-                <div className="text-xs text-slate-400 uppercase">Booking</div>
+                <div className="text-xs text-slate-400 uppercase">{t.tracking}</div>
                 <div className="text-lg font-mono text-blue-400">{bookingNumber}</div>
               </div>
             </div>
@@ -186,10 +242,10 @@ export default function TrackingPage() {
                 status.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
                 'bg-yellow-500/20 text-yellow-400'
               }`}>
-                {status.status === 'accepted' && '🚗 On the way'}
-                {status.status === 'inProgress' && '⏳ In progress'}
-                {status.status === 'completed' && '✅ Completed'}
-                {status.status === 'pending' && '⏰ Waiting'}
+                {status.status === 'accepted' && t.driverAccepted}
+                {status.status === 'inProgress' && t.inProgress}
+                {status.status === 'completed' && t.completed}
+                {status.status === 'pending' && t.waiting}
               </div>
             )}
           </div>
@@ -207,7 +263,7 @@ export default function TrackingPage() {
             >
               {loading && (
                 <div className="w-full h-full flex items-center justify-center bg-slate-900/50">
-                  <div className="text-slate-400">Loading map...</div>
+                  <div className="text-slate-400">{t.loadingMap}</div>
                 </div>
               )}
             </div>
@@ -219,22 +275,54 @@ export default function TrackingPage() {
             {location && status?.status === 'accepted' && (
               <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl">
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-4">
-                  Vehicle Info
+                  {t.vehicleInfo}
                 </div>
                 <div className="space-y-3">
                   {location.licenseNo && (
                     <div>
-                      <div className="text-sm text-slate-400 mb-1">Vehicle</div>
+                      <div className="text-sm text-slate-400 mb-1">{t.licenseNo}</div>
                       <div className="text-lg font-semibold text-white">
                         {location.licenseNo}
                       </div>
                     </div>
                   )}
+                  {location.regNo && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.regNo}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {location.regNo}
+                      </div>
+                    </div>
+                  )}
+                  {location.licenseNo && getCarDetails(location.licenseNo) && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.carModel}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {getCarDetails(location.licenseNo)?.model} ({getCarDetails(location.licenseNo)?.color})
+                      </div>
+                    </div>
+                  )}
+                  {location.vehicleType && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.vehicleType}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {location.vehicleType}
+                      </div>
+                    </div>
+                  )}
                   {location.gpsVelocity !== undefined && (
                     <div>
-                      <div className="text-sm text-slate-400 mb-1">Speed</div>
+                      <div className="text-sm text-slate-400 mb-1">{t.speed}</div>
                       <div className="text-lg font-semibold text-white">
                         {Math.round(location.gpsVelocity)} km/h
+                      </div>
+                    </div>
+                  )}
+                  {location.eta !== undefined && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.eta}</div>
+                      <div className="text-2xl font-bold text-green-400">
+                        {location.eta} min
                       </div>
                     </div>
                   )}
@@ -242,26 +330,13 @@ export default function TrackingPage() {
               </div>
             )}
 
-            {/* Driver Info */}
-            {location && location.driverName && (
-              <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl">
-                <div className="text-xs text-slate-400 uppercase tracking-wider mb-4">
-                  Driver
-                </div>
-                <div className="space-y-2">
-                  <div className="text-lg font-semibold text-white">
-                    {location.driverName}
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Pickup/Dropoff */}
             <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl space-y-4">
               <div>
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-green-400" />
-                  Pickup
+                  {t.pickup}
                 </div>
                 {location?.pickupLat && location?.pickupLon && (
                   <div className="text-sm text-slate-300">
@@ -272,7 +347,7 @@ export default function TrackingPage() {
               <div>
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-red-400" />
-                  Destination
+                  {t.destination}
                 </div>
                 {location?.destLat && location?.destLon && (
                   <div className="text-sm text-slate-300">
@@ -286,11 +361,11 @@ export default function TrackingPage() {
             <div className="space-y-2">
               <button className="w-full px-4 py-3 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/50 font-semibold hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2">
                 <Phone className="w-4 h-4" />
-                Call Driver
+                {t.callDriver}
               </button>
               <button className="w-full px-4 py-3 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/50 font-semibold hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2">
                 <MessageSquare className="w-4 h-4" />
-                Message
+                {t.message}
               </button>
             </div>
           </div>
