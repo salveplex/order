@@ -10,7 +10,11 @@ import {
   getBookingStatus,
   type AddressSuggestion
 } from '@/lib/taxi4u-api';
-
+interface FormData {
+  pickupLocation: string;
+  dropoffLocation: string;
+  date: string;
+  time: string;
   passengers: number;
   attributes: number[];
   hasBike: boolean;
