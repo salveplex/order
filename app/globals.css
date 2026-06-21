@@ -20,7 +20,9 @@
   --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Handel Go", "Handel Gothic", "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  
+}
+
+:root {
   --color-taxi: #d8ae3d;
   --color-taxi-soft: #efd06f;
   --background: #f8f9fa;
@@ -36,9 +38,7 @@
   --accent-strong: #ca8a04;
   --accent-ink: #111111;
   --shadow: rgba(0, 0, 0, 0.06);
-}
 
-:root {
   color: var(--foreground);
   background: var(--background);
   font-synthesis: none;
