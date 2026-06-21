@@ -404,7 +404,7 @@ export default function BookingForm() {
               onClick={() => setActiveTab('booking')}
               className={`px-3 md:px-6 py-1.5 md:py-2.5 rounded-md text-sm md:text-base font-medium transition-colors ${
                 activeTab === 'booking'
-                  ? 'bg-white  text-amber-600 shadow-sm'
+                  ? 'bg-[var(--accent)] text-[#111] shadow-sm'
                   : 'text-gray-600  hover:text-gray-900 :text-gray-200 '
               }`}
             >
@@ -414,7 +414,7 @@ export default function BookingForm() {
               onClick={() => setActiveTab('status')}
               className={`px-3 md:px-6 py-1.5 md:py-2.5 rounded-md text-sm md:text-base font-medium transition-colors ${
                 activeTab === 'status'
-                  ? 'bg-white  text-amber-600 shadow-sm'
+                  ? 'bg-[var(--accent)] text-[#111] shadow-sm'
                   : 'text-gray-600  hover:text-gray-900 :text-gray-200 '
               }`}
             >
@@ -452,7 +452,7 @@ export default function BookingForm() {
             <div className="mb-6 md:mb-12 text-center">
 
               <h1 className="text-xl md:text-3xl font-semibold text-gray-900  mb-2 md:mb-3 tracking-tight">
-                TEST VOSS TAXI 123 - {t.bookYourRide}
+                {t.bookYourRide}
               </h1>
               <p className="text-gray-600  text-sm md:text-base max-w-2xl mx-auto">
                 {t.subtitle}
