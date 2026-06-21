@@ -432,9 +432,11 @@ export default function BookingForm() {
                 onClick={() => setLangOpen(!langOpen)}
                 className="flex items-center gap-2 bg-transparent text-zinc-300 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
               >
-                <span className="text-base leading-none">
-                  {language === 'nn' ? '🇳🇴' : language === 'en' ? '🇬🇧' : language === 'de' ? '🇩🇪' : language === 'fr' ? '🇫🇷' : '🇪🇸'}
-                </span>
+                <img 
+                  src={`https://flagcdn.com/w20/${language === 'nn' ? 'no' : language === 'en' ? 'gb' : language === 'de' ? 'de' : language === 'fr' ? 'fr' : 'es'}.png`}
+                  alt={language}
+                  className="w-5 h-auto rounded-[2px]"
+                />
                 <span>
                   {language === 'nn' ? 'Nynorsk' : language === 'en' ? 'English' : language === 'de' ? 'Deutsch' : language === 'fr' ? 'Français' : 'Español'}
                 </span>
@@ -449,11 +451,11 @@ export default function BookingForm() {
                   />
                   <div className="absolute right-0 top-full mt-2 w-36 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl overflow-hidden z-50">
                     {[
-                      { code: 'nn', name: 'Nynorsk', flag: '🇳🇴' },
-                      { code: 'en', name: 'English', flag: '🇬🇧' },
-                      { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-                      { code: 'fr', name: 'Français', flag: '🇫🇷' },
-                      { code: 'es', name: 'Español', flag: '🇪🇸' },
+                      { code: 'nn', name: 'Nynorsk', flag: 'no' },
+                      { code: 'en', name: 'English', flag: 'gb' },
+                      { code: 'de', name: 'Deutsch', flag: 'de' },
+                      { code: 'fr', name: 'Français', flag: 'fr' },
+                      { code: 'es', name: 'Español', flag: 'es' },
                     ].map((lang) => (
                       <button
                         key={lang.code}
@@ -466,7 +468,11 @@ export default function BookingForm() {
                           language === lang.code ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
                         }`}
                       >
-                        <span className="text-base leading-none">{lang.flag}</span>
+                        <img 
+                          src={`https://flagcdn.com/w20/${lang.flag}.png`} 
+                          alt={lang.name}
+                          className="w-5 h-auto rounded-[2px]"
+                        />
                         <span>{lang.name}</span>
                       </button>
                     ))}
