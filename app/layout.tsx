@@ -8,6 +8,8 @@ const outfit = Outfit({
   variable: "--font-sans",
 });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "VossTaxi Booking",
   description: "Bestill taxi i Voss og omegn",
