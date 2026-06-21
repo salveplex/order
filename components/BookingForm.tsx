@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search } from 'lucide-react';
+import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search, ChevronDown } from 'lucide-react';
 import { useTranslation, type Language } from '@/lib/i18n';
 import { ATTRIBUTE_GROUPS } from '@/lib/attributes';
 import BookingTracking from '@/components/BookingTracking';
@@ -426,17 +426,20 @@ export default function BookingForm() {
           <div className="flex gap-2 flex-wrap">
             {/* Language selector */}
             <div className="flex bg-black/40 rounded-lg p-1">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-transparent text-zinc-300 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
-              >
-                <option value="nn">Nynorsk</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-                <option value="fr">Français</option>
-                <option value="es">Español</option>
-              </select>
+              <div className="relative flex items-center">
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as Language)}
+                  className="bg-transparent text-zinc-300 text-xs md:text-sm font-medium pl-2 pr-6 py-1 md:py-1.5 focus:outline-none cursor-pointer appearance-none"
+                >
+                  <option value="nn" className="bg-zinc-800 text-white">Nynorsk</option>
+                  <option value="en" className="bg-zinc-800 text-white">English</option>
+                  <option value="de" className="bg-zinc-800 text-white">Deutsch</option>
+                  <option value="fr" className="bg-zinc-800 text-white">Français</option>
+                  <option value="es" className="bg-zinc-800 text-white">Español</option>
+                </select>
+                <ChevronDown size={14} className="absolute right-2 text-zinc-400 pointer-events-none" />
+              </div>
             </div>
 
             </div>
@@ -638,18 +641,21 @@ export default function BookingForm() {
                     <label className="block text-sm font-medium text-zinc-300  mb-2">
                       {t.passengers}
                     </label>
-                    <select
-                      name="passengers"
-                      value={formData.passengers}
-                      onChange={handleInputChange}
-                      className="soft-input w-full px-4 py-2.5 appearance-none"
-                    >
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                        <option key={num} value={num}>
-                          {num} {num === 1 ? t.passenger : t.passengers_other}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      <select
+                        name="passengers"
+                        value={formData.passengers}
+                        onChange={handleInputChange}
+                        className="soft-input w-full pl-4 pr-10 py-2.5 appearance-none cursor-pointer"
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                          <option key={num} value={num} className="bg-zinc-800 text-white">
+                            {num} {num === 1 ? t.passenger : t.passengers_other}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
+                    </div>
                     <p className="text-xs md:text-sm font-medium text-amber-800  mt-3 bg-amber-100  p-2 md:p-3 rounded-lg block border border-amber-300  shadow-sm">
                       {language === 'en' ? 'For bookings with more than 8 people, call the office: +47 56 51 13 40' : language === 'de' ? 'Für Buchungen mit mehr als 8 Personen rufen Sie bitte das Büro an: +47 56 51 13 40' : language === 'fr' ? 'Pour les réservations de plus de 8 personnes, veuillez appeler le bureau: +47 56 51 13 40' : language === 'es' ? 'Para reservas con más de 8 personas, llame a la oficina: +47 56 51 13 40' : 'For bestilling til fleire enn 8, ring sentralen: +47 56 51 13 40'}
                     </p>

@@ -39,6 +39,7 @@
   --accent-ink: #111111;
   --shadow: rgba(0, 0, 0, 0.3);
 
+  color-scheme: dark;
   color: var(--foreground);
   background: var(--background);
   font-synthesis: none;
