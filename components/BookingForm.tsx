@@ -88,6 +88,7 @@ export default function BookingForm() {
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [error, setError] = useState('');
   const [bookingNumber, setBookingNumber] = useState('');
   const [lastBookingPickup, setLastBookingPickup] = useState('');
@@ -425,21 +426,53 @@ export default function BookingForm() {
           {/* Language and Theme selectors */}
           <div className="flex gap-2 flex-wrap">
             {/* Language selector */}
-            <div className="flex bg-black/40 rounded-lg p-1">
-              <div className="relative flex items-center">
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value as Language)}
-                  className="bg-transparent text-zinc-300 text-xs md:text-sm font-medium pl-2 pr-6 py-1 md:py-1.5 focus:outline-none cursor-pointer appearance-none"
-                >
-                  <option value="nn" className="bg-zinc-800 text-white">Nynorsk</option>
-                  <option value="en" className="bg-zinc-800 text-white">English</option>
-                  <option value="de" className="bg-zinc-800 text-white">Deutsch</option>
-                  <option value="fr" className="bg-zinc-800 text-white">Français</option>
-                  <option value="es" className="bg-zinc-800 text-white">Español</option>
-                </select>
-                <ChevronDown size={14} className="absolute right-2 text-zinc-400 pointer-events-none" />
-              </div>
+            <div className="flex bg-black/40 rounded-lg p-1 relative">
+              <button
+                type="button"
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-2 bg-transparent text-zinc-300 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
+              >
+                <span className="text-base leading-none">
+                  {language === 'nn' ? '🇳🇴' : language === 'en' ? '🇬🇧' : language === 'de' ? '🇩🇪' : language === 'fr' ? '🇫🇷' : '🇪🇸'}
+                </span>
+                <span>
+                  {language === 'nn' ? 'Nynorsk' : language === 'en' ? 'English' : language === 'de' ? 'Deutsch' : language === 'fr' ? 'Français' : 'Español'}
+                </span>
+                <ChevronDown size={14} className="text-zinc-400" />
+              </button>
+
+              {langOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setLangOpen(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-2 w-36 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl overflow-hidden z-50">
+                    {[
+                      { code: 'nn', name: 'Nynorsk', flag: '🇳🇴' },
+                      { code: 'en', name: 'English', flag: '🇬🇧' },
+                      { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+                      { code: 'fr', name: 'Français', flag: '🇫🇷' },
+                      { code: 'es', name: 'Español', flag: '🇪🇸' },
+                    ].map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => {
+                          setLanguage(lang.code as Language);
+                          setLangOpen(false);
+                        }}
+                        type="button"
+                        className={`flex items-center gap-2 w-full text-left px-3 py-2 text-sm transition-colors ${
+                          language === lang.code ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200'
+                        }`}
+                      >
+                        <span className="text-base leading-none">{lang.flag}</span>
+                        <span>{lang.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             </div>
