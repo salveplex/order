@@ -917,7 +917,7 @@ export default function BookingForm() {
                 <button
                   type="submit"
                   disabled={statusLoading}
-                  className="w-full px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-6 py-3.5 bg-[#ffcc00] text-gray-900 font-bold text-lg rounded-lg hover:bg-[#e6b800] focus:outline-none focus:ring-2 focus:ring-[#ffcc00] focus:ring-offset-2 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {statusLoading ? t.booking : t.searchBooking}
                 </button>
