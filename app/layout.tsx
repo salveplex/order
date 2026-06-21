@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   title: "VossTaxi Booking",
   description: "Bestill taxi i Voss og omegn",
   manifest: "/manifest.json",
-  themeColor: "#ffcc00",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -26,6 +25,10 @@ export const metadata: Metadata = {
   icons: {
     apple: "/icon-192x192.png",
   },
+};
+
+export const viewport = {
+  themeColor: "#ffcc00",
 };
 
 export default function RootLayout({
