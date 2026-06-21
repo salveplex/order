@@ -417,7 +417,7 @@ export default function BookingForm() {
             <img 
               src="/logo.png" 
               alt="Voss Taxi" 
-              className="h-10 md:h-12 w-auto object-contain dark:bg-white dark:p-1 dark:rounded"
+              className="h-10 md:h-12 w-auto object-contain"
             />
           </a>
 
