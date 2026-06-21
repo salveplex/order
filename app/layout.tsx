@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import PwaRegister from "../components/PwaRegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Taxi4U Booking",
-  description: "Premium taxi booking experience - Pickup and dropoff service",
+  title: "VossTaxi Booking",
+  description: "Bestill taxi i Voss og omegn",
+  manifest: "/manifest.json",
+  themeColor: "#ffcc00",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "VossTaxi Booking",
+  },
+  icons: {
+    apple: "/icon-192x192.png",
+  },
 };
 
 export default function RootLayout({
@@ -27,7 +38,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <PwaRegister />
+      </body>
     </html>
   );
 }
