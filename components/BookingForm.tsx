@@ -512,7 +512,7 @@ export default function BookingForm() {
             {/* Header */}
             <div className="mb-6 md:mb-12 text-center">
 
-              <h1 className="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
+              <h1 className="text-xl md:text-3xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
                 {t.bookYourRide}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
@@ -527,7 +527,7 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Pickup Location */}
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.pickupLocation}
                     </label>
                     <div className="relative">
@@ -543,7 +543,7 @@ export default function BookingForm() {
                         }
                         placeholder={language === 'en' ? 'e.g. Voss Station' : language === 'de' ? 'z.B. Voss Bahnhof' : language === 'fr' ? 'ex. Gare de Voss' : language === 'es' ? 'ej. Estación de Voss' : 'F.eks. Voss Stasjon'}
                         required
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                       {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
                         <div
@@ -570,13 +570,13 @@ export default function BookingForm() {
                                 onClick={() =>
                                   selectAddressSuggestion('pickupLocation', suggestion)
                                 }
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
+                                className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
                               >
                                 {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                               </button>
                             ))
                           ) : (
-                            <div className="px-4 py-2.5 text-sm text-gray-500">
+                            <div className="px-4 py-2 text-sm text-gray-500">
                               {language === 'nn'
                                 ? 'Ingen forslag funnet, men du kan skrive adressen selv'
                                 : 'No suggestions found, but you can enter the address yourself'}
@@ -589,7 +589,7 @@ export default function BookingForm() {
 
                   {/* Dropoff Location */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.dropoffLocation}
                     </label>
                     <div className="relative">
@@ -605,7 +605,7 @@ export default function BookingForm() {
                         }
                         placeholder={language === 'en' ? 'e.g. Voss Hospital' : language === 'de' ? 'z.B. Voss Krankenhaus' : language === 'fr' ? 'ex. Hôpital de Voss' : language === 'es' ? 'ej. Hospital de Voss' : 'F.eks. Voss Sjukehus'}
                         required
-                        className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                       {showDropoffSuggestions &&
                         (dropoffSuggestions.length > 0 || formData.dropoffLocation.length >= 2) && (
@@ -636,13 +636,13 @@ export default function BookingForm() {
                                       suggestion
                                     )
                                   }
-                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
+                                  className="w-full px-4 py-2 text-left text-sm text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
                                 >
                                   {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                                 </button>
                               ))
                             ) : (
-                              <div className="px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400">
+                              <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
                                 {language === 'nn'
                                   ? 'Ingen forslag funnet, men du kan skrive adressen selv'
                                   : 'No suggestions found, but you can enter the address yourself'}
@@ -658,7 +658,7 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Date */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.date}
                     </label>
                     <input
@@ -667,13 +667,13 @@ export default function BookingForm() {
                       value={formData.date}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
                   {/* Time */}
                   <div className="relative">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.time}
                     </label>
                     <div className="relative">
@@ -686,7 +686,7 @@ export default function BookingForm() {
                         value={formData.time}
                         onChange={handleInputChange}
                         required
-                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
                     </div>
                   </div>
@@ -696,14 +696,14 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Passengers */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.passengers}
                     </label>
                     <select
                       name="passengers"
                       value={formData.passengers}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors appearance-none"
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                         <option key={num} value={num}>
@@ -718,7 +718,7 @@ export default function BookingForm() {
 
                   {/* Vehicle Attributes */}
                   <div className="md:col-span-5 space-y-4 mt-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.vehicleType}
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -771,7 +771,7 @@ export default function BookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Name */}
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       {t.fullName} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -781,30 +781,35 @@ export default function BookingForm() {
                       onChange={handleInputChange}
                       placeholder={language === 'en' ? 'Your full name' : language === 'de' ? 'Ihr vollständiger Name' : language === 'fr' ? 'Votre nom complet' : language === 'es' ? 'Su nombre completo' : 'Ditt fulle namn'}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
                   </div>
 
                   {/* Phone */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
                       {t.phone} <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder={'+47 XXX XX XXX'}
-                      required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">+47</span>
+                      </div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone.replace(/^\+47\s*/, '')}
+                        onChange={(e) => setFormData({ ...formData, phone: '+47 ' + e.target.value.replace(/^\+47\s*/, '') })}
+                        placeholder="XXX XX XXX"
+                        required
+                        className="w-full pl-11 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      />
+                    </div>
                   </div>
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     {t.email} <span className="text-gray-400 font-normal">(optional)</span>
                   </label>
                   <input
@@ -813,13 +818,13 @@ export default function BookingForm() {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder={language === 'en' ? 'Your email (optional)' : language === 'de' ? 'Ihre E-Mail (optional)' : language === 'fr' ? 'Votre email (optionnel)' : language === 'es' ? 'Su correo electrónico (opcional)' : 'Din e-post (valgfritt)'}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
 
                 {/* Additional Info */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     {t.additionalInfo}
                   </label>
                   <textarea
@@ -828,7 +833,7 @@ export default function BookingForm() {
                     onChange={handleInputChange}
                     placeholder={t.specialRequests}
                     rows={3}
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors resize-none"
                   />
                 </div>
 
@@ -837,7 +842,7 @@ export default function BookingForm() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-3 bg-[#ffcc00] text-gray-900 font-semibold text-base rounded-lg hover:bg-[#e6b800] focus:outline-none focus:ring-2 focus:ring-[#ffcc00] focus:ring-offset-2 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-6 py-2 bg-[#ffcc00] text-gray-900 font-semibold text-sm rounded-lg hover:bg-[#e6b800] focus:outline-none focus:ring-2 focus:ring-[#ffcc00] focus:ring-offset-2 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? t.booking : t.confirmBooking}
                   </button>
@@ -895,7 +900,7 @@ export default function BookingForm() {
               <form onSubmit={handleCheckStatus} className="space-y-6">
                 {/* Booking Number Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     {t.bookingNumber}
                   </label>
                   <input
@@ -904,7 +909,7 @@ export default function BookingForm() {
                     onChange={(e) => setStatusBookingNumber(e.target.value)}
                     placeholder={language === 'en' ? 'e.g. BK-1234567' : language === 'de' ? 'z.B. BK-1234567' : language === 'fr' ? 'ex. BK-1234567' : language === 'es' ? 'ej. BK-1234567' : 'F.eks. BK-1234567'}
                     required
-                    className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
 
