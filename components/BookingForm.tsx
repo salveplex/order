@@ -41,12 +41,6 @@ interface BookingStatus {
 }
 
 
-const TIME_OPTIONS = Array.from({ length: 24 * 4 }).map((_, i) => {
-  const h = Math.floor(i / 4).toString().padStart(2, '0');
-  const m = ((i % 4) * 15).toString().padStart(2, '0');
-  return `${h}:${m}`;
-});
-
 export default function BookingForm() {
   const [language, setLanguage] = useState<Language>('nn');
   const t = useTranslation(language);
@@ -688,27 +682,14 @@ export default function BookingForm() {
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <Clock className="h-5 w-5 text-gray-400" />
                       </div>
-                      <select
+                      <input
+                        type="time"
                         name="time"
                         value={formData.time}
                         onChange={handleInputChange}
                         required
-                        className="w-full pl-10 pr-10 py-2.5 appearance-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
-                      >
-                        {!TIME_OPTIONS.includes(formData.time) && (
-                          <option value={formData.time}>{formData.time}</option>
-                        )}
-                        {TIME_OPTIONS.map((time) => (
-                          <option key={time} value={time}>
-                            {time}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
+                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      />
                     </div>
                   </div>
                 </div>
