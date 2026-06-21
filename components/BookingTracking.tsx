@@ -320,7 +320,7 @@ export default function BookingTracking({
 
         {/* Help Text */}
         <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 text-center">
-          {language === 'no'
+          {language === 'nn'
             ? 'Hvis du ikke får oppdateringer, vent litt eller sjekk bookingnummeret'
             : 'If you don\'t get updates, wait a moment or check your booking number'}
         </div>

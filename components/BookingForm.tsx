@@ -291,7 +291,7 @@ export default function BookingForm() {
 
         if (isInRestrictionWindow) {
           setError(
-            language === 'no'
+            language === 'nn'
               ? 'Ring for å bestille i dette tidsrommet'
               : 'Call to book during this time'
           );
@@ -319,7 +319,7 @@ export default function BookingForm() {
 
               if (distanceKm > 20) {
                 setError(
-                  language === 'no'
+                  language === 'nn'
                     ? `Hentested er for langt unna (${distanceKm.toFixed(1)} km). Maksimum 20 km fra Uttrågata 19.`
                     : `Pickup location is too far away (${distanceKm.toFixed(1)} km). Maximum 20 km from Uttrågata 19.`
                 );
@@ -399,7 +399,7 @@ export default function BookingForm() {
         setBookingStatus(status);
       } else {
         setStatusError(
-          language === 'no'
+          language === 'nn'
             ? 'Bookingnummer ikke funnet'
             : 'Booking not found'
         );
@@ -463,7 +463,6 @@ export default function BookingForm() {
                 className="bg-transparent text-gray-700 dark:text-gray-200 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
               >
                 <option value="nn">Nynorsk</option>
-                <option value="no">Bokmål</option>
                 <option value="en">English</option>
                 <option value="de">Deutsch</option>
                 <option value="fr">Français</option>
@@ -586,7 +585,7 @@ export default function BookingForm() {
                             ))
                           ) : (
                             <div className="px-4 py-2.5 text-sm text-gray-500">
-                              {language === 'no'
+                              {language === 'nn'
                                 ? 'Ingen forslag funnet, men du kan skrive adressen selv'
                                 : 'No suggestions found, but you can enter the address yourself'}
                             </div>
@@ -652,7 +651,7 @@ export default function BookingForm() {
                               ))
                             ) : (
                               <div className="px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400">
-                                {language === 'no'
+                                {language === 'nn'
                                   ? 'Ingen forslag funnet, men du kan skrive adressen selv'
                                   : 'No suggestions found, but you can enter the address yourself'}
                               </div>
@@ -864,7 +863,7 @@ export default function BookingForm() {
                     {loading ? t.booking : t.confirmBooking}
                   </button>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
-                    {language === 'no'
+                    {language === 'nn'
                       ? 'Når en bil godkjenner turen, vil du få melding og mulighet for å spore bilen.'
                       : 'When a vehicle accepts your ride, you will receive a notification and the ability to track the vehicle.'}
                   </p>
@@ -895,7 +894,7 @@ export default function BookingForm() {
                 {t.bookingStatusTitle}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-base max-w-2xl mx-auto">
-                {language === 'no'
+                {language === 'nn'
                   ? 'Skriv inn ditt bookingnummer for å sjekke status på turen.'
                   : 'Enter your booking number to check the status of your ride.'}
               </p>
@@ -951,7 +950,7 @@ export default function BookingForm() {
                       <div className="flex justify-between items-center pb-3 border-b border-green-200">
                         <span className="text-gray-600 dark:text-gray-400">{t.status}:</span>
                         <span className="font-semibold text-green-700">
-                          {language === 'no'
+                          {language === 'nn'
                             ? bookingStatus.status === 'pending'
                               ? 'Venter på godkjenning'
                               : bookingStatus.status === 'accepted'
