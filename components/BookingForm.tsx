@@ -101,7 +101,7 @@ export default function BookingForm() {
     attributes: [],
     hasBike: false,
     name: '',
-    phone: '',
+    phone: '+47 ',
     email: '',
     additionalInfo: '',
   });
@@ -355,7 +355,7 @@ export default function BookingForm() {
           attributes: [],
           hasBike: false,
           name: '',
-          phone: '',
+          phone: '+47 ',
           email: '',
           additionalInfo: '',
           pickupLat: undefined,
@@ -454,7 +454,7 @@ export default function BookingForm() {
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-transparent text-gray-700 dark:text-gray-200 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
+                className="bg-transparent dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
               >
                 <option value="nn">Nynorsk</option>
                 <option value="en">English</option>
@@ -512,7 +512,7 @@ export default function BookingForm() {
             {/* Header */}
             <div className="mb-6 md:mb-12 text-center">
 
-              <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
                 {t.bookYourRide}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
@@ -837,11 +837,11 @@ export default function BookingForm() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-3.5 bg-[#ffcc00] text-gray-900 font-bold text-lg rounded-lg hover:bg-[#e6b800] focus:outline-none focus:ring-2 focus:ring-[#ffcc00] focus:ring-offset-2 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-6 py-3 bg-[#ffcc00] text-gray-900 font-semibold text-base rounded-lg hover:bg-[#e6b800] focus:outline-none focus:ring-2 focus:ring-[#ffcc00] focus:ring-offset-2 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? t.booking : t.confirmBooking}
                   </button>
-                  <p className="text-sm md:text-base font-semibold text-amber-600 dark:text-amber-500 mt-4 text-center">
+                  <p className="text-xs md:text-sm font-medium text-amber-600 dark:text-amber-500 mt-4 text-center">
                     {language === 'nn'
                       ? 'Når ein bil godkjenner turen, vil du få melding og høve til å spore bilen.'
                       : 'When a vehicle accepts your ride, you will receive a notification and the ability to track the vehicle.'}
