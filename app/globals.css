@@ -25,19 +25,19 @@
 :root {
   --color-taxi: #d8ae3d;
   --color-taxi-soft: #efd06f;
-  --background: #f8f9fa;
-  --foreground: #1a1b1e;
-  --surface: #ffffff;
-  --surface-soft: #f1f3f5;
-  --muted: #6b7280;
-  --line: rgba(0, 0, 0, 0.08);
-  --line-strong: rgba(0, 0, 0, 0.16);
-  --glass: rgba(255, 255, 255, 0.8);
-  --glass-strong: rgba(255, 255, 255, 0.95);
+  --background: #0a0a0a;
+  --foreground: #f8f9fa;
+  --surface: rgba(24, 24, 27, 0.65);
+  --surface-soft: rgba(39, 39, 42, 0.75);
+  --muted: #a1a1aa;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.15);
+  --glass: rgba(0, 0, 0, 0.4);
+  --glass-strong: rgba(0, 0, 0, 0.7);
   --accent: #ebb305;
   --accent-strong: #ca8a04;
   --accent-ink: #111111;
-  --shadow: rgba(0, 0, 0, 0.06);
+  --shadow: rgba(0, 0, 0, 0.3);
 
   color: var(--foreground);
   background: var(--background);
