@@ -583,10 +583,7 @@ export default function BookingForm() {
             {/* Header */}
             <div className="mb-6 md:mb-12 text-center">
               <a href="https://vosstaxi.no" className="inline-block mb-4 transition-transform hover:scale-105 active:scale-95">
-                <div className="flex items-center justify-center gap-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-5 py-2.5 rounded-full font-bold text-lg border border-amber-200 dark:border-amber-800 shadow-sm">
-                  <span className="text-2xl">🚕</span>
-                  VossTaxi.no
-                </div>
+                <img src="/logo.png" alt="VossTaxi" className="h-16 md:h-20 w-auto object-contain drop-shadow-sm" />
               </a>
               <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
                 {t.bookYourRide}
