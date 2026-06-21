@@ -415,7 +415,7 @@ export default function BookingForm() {
           {/* Logo linking back to main site */}
           <a href="https://vosstaxi.no" className="shrink-0 block hover:opacity-80 transition-opacity self-start md:self-auto">
             <img 
-              src="/logo2.png" 
+              src="/logo.png" 
               alt="Voss Taxi" 
               className="h-10 md:h-12 w-auto object-contain"
             />

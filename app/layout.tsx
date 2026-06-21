@@ -23,7 +23,8 @@ export const metadata: Metadata = {
     title: "VossTaxi Booking",
   },
   icons: {
-    apple: "/icon-192x192.png",
+    icon: "/logo2.png",
+    apple: "/logo2.png",
   },
 };
 
