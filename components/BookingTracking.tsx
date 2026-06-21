@@ -76,9 +76,7 @@ export default function BookingTracking({
   }, [bookingNumber, notificationShown]);
 
   const showNotifications = (bookingStatus: BookingStatus) => {
-    const message = language === 'no'
-      ? `🚗 Sjåfør akseptert! ${bookingStatus.vehicle || 'Taxi'} er på vei`
-      : `🚗 Driver accepted! ${bookingStatus.vehicle || 'Taxi'} is on the way`;
+    const message = `🚗 ${language === 'en' ? 'Driver accepted! ' + (bookingStatus.vehicle || 'Taxi') + ' is on the way' : language === 'de' ? 'Fahrer akzeptiert! ' + (bookingStatus.vehicle || 'Taxi') + ' ist unterwegs' : language === 'fr' ? 'Chauffeur accepté! ' + (bookingStatus.vehicle || 'Taxi') + ' est en route' : language === 'es' ? '¡Conductor aceptado! ' + (bookingStatus.vehicle || 'Taxi') + ' está en camino' : 'Sjåfør akseptert! ' + (bookingStatus.vehicle || 'Taxi') + ' er på veg'}`;
 
     // Show browser push notification
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -98,9 +96,7 @@ export default function BookingTracking({
 
   const handleCancel = async () => {
     if (!window.confirm(
-      language === 'no'
-        ? 'Er du sikker på at du vil avbestille turen?'
-        : 'Are you sure you want to cancel this booking?'
+      language === 'en' ? 'Are you sure you want to cancel this booking?' : language === 'de' ? 'Möchten Sie diese Buchung wirklich stornieren?' : language === 'fr' ? 'Êtes-vous sûr de vouloir annuler cette réservation?' : language === 'es' ? '¿Está seguro de que desea cancelar esta reserva?' : 'Er du sikker på at du vil avbestille denne turen?'
     )) {
       return;
     }
@@ -121,17 +117,13 @@ export default function BookingTracking({
         }, 1500);
       } else {
         alert(
-          language === 'no'
-            ? 'Kunne ikke avbestille turen. Prøv igjen.'
-            : 'Failed to cancel booking. Please try again.'
+          language === 'en' ? 'Failed to cancel booking. Please try again.' : language === 'de' ? 'Stornierung fehlgeschlagen. Bitte versuchen Sie es später erneut.' : language === 'fr' ? 'Échec de l\'annulation. Veuillez réessayer plus tard.' : language === 'es' ? 'Fallo al cancelar. Por favor, inténtelo de nuevo más tarde.' : 'Kunne ikkje avbestille turen. Prøv igjen.'
         );
       }
     } catch (error) {
       console.error('Cancel error:', error);
       alert(
-        language === 'no'
-          ? 'Feil ved avbestilling. Prøv igjen.'
-          : 'Error cancelling booking. Please try again.'
+        language === 'en' ? 'Cancellation failed. Please try again.' : language === 'de' ? 'Stornierung fehlgeschlagen. Bitte versuchen Sie es später erneut.' : language === 'fr' ? 'Échec de l\'annulation. Veuillez réessayer plus tard.' : language === 'es' ? 'Fallo al cancelar. Por favor, inténtelo de nuevo más tarde.' : 'Avbestilling feila. Prøv igjen.'
       );
     } finally {
       setCancelling(false);
@@ -166,7 +158,7 @@ export default function BookingTracking({
     if (!taxi4uStatus) return null;
 
     // Map Taxi4U status codes to user-friendly text
-    const statusMap: Record<string, { no: string; en: string }> = {
+    const statusMap: Record<string, any> = {
       'D': { no: 'Ble akseptert av system', en: 'Accepted by system' },
       'G': { no: 'Sendt til sjåfører', en: 'Sent to drivers' },
       'I': { no: '✅ Sjåfør akseptert!', en: '✅ Driver accepted!' },
@@ -184,7 +176,7 @@ export default function BookingTracking({
 
   const getStatusText = () => {
     if (!status) {
-      return language === 'no' ? 'Venter på sjåfør...' : 'Waiting for driver...';
+      return language === 'en' ? 'Waiting for driver...' : language === 'de' ? 'Warten auf Fahrer...' : language === 'fr' ? 'En attente du chauffeur...' : language === 'es' ? 'Esperando al conductor...' : 'Ventar på sjåfør...';
     }
 
     // Use detailed Taxi4U status if available
@@ -196,15 +188,13 @@ export default function BookingTracking({
     // Fallback to generic status
     switch (status.status) {
       case 'accepted':
-        return language === 'no'
-          ? `🚗 Sjåfør akseptert! ${status.vehicle || 'Taxi'} er på vei`
-          : `🚗 Driver accepted! ${status.vehicle || 'Taxi'} is on the way`;
+        return `🚗 ${language === 'en' ? 'Driver accepted! ' + (status.vehicle || 'Taxi') + ' is on the way' : language === 'de' ? 'Fahrer akzeptiert! ' + (status.vehicle || 'Taxi') + ' ist unterwegs' : language === 'fr' ? 'Chauffeur accepté! ' + (status.vehicle || 'Taxi') + ' est en route' : language === 'es' ? '¡Conductor aceptado! ' + (status.vehicle || 'Taxi') + ' está en camino' : 'Sjåfør akseptert! ' + (status.vehicle || 'Taxi') + ' er på veg'}`;
       case 'inProgress':
-        return language === 'no' ? 'Tur i gang...' : 'Trip in progress...';
+        return language === 'en' ? 'Trip in progress...' : language === 'de' ? 'Fahrt läuft...' : language === 'fr' ? 'Trajet en cours...' : language === 'es' ? 'Viaje en curso...' : 'Tur i gang...';
       case 'completed':
-        return language === 'no' ? 'Tur fullført' : 'Trip completed';
+        return language === 'en' ? 'Trip completed' : language === 'de' ? 'Fahrt abgeschlossen' : language === 'fr' ? 'Trajet terminé' : language === 'es' ? 'Viaje completado' : 'Tur fullført';
       default:
-        return language === 'no' ? 'Venter på sjåfør...' : 'Waiting for driver...';
+        return language === 'en' ? 'Waiting for driver...' : language === 'de' ? 'Warten auf Fahrer...' : language === 'fr' ? 'En attente du chauffeur...' : language === 'es' ? 'Esperando al conductor...' : 'Ventar på sjåfør...';
     }
   };
 
@@ -214,7 +204,7 @@ export default function BookingTracking({
         {/* Booking Number */}
         <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
           <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-            {language === 'no' ? 'Bookingnummer' : 'Booking Number'}
+            {t.bookingNumber}
           </div>
           <div className="flex items-center gap-3">
             <div className="font-mono text-2xl font-bold text-amber-600">
@@ -223,13 +213,13 @@ export default function BookingTracking({
             <button
               onClick={copyToClipboard}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              title={language === 'no' ? 'Kopier' : 'Copy'}
+              title={language === 'en' ? 'Copy' : language === 'de' ? 'Kopieren' : language === 'fr' ? 'Copier' : language === 'es' ? 'Copiar' : 'Kopier'}
             >
               <Copy className="w-4 h-4 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400" />
             </button>
             {copied && (
               <span className="text-xs text-green-400">
-                {language === 'no' ? 'Kopiert!' : 'Copied!'}
+                {language === 'en' ? 'Copied!' : language === 'de' ? 'Kopiert!' : language === 'fr' ? 'Copié !' : language === 'es' ? '¡Copiado!' : 'Kopiert!'}
               </span>
             )}
           </div>
@@ -241,7 +231,7 @@ export default function BookingTracking({
             {getStatusIcon()}
             <div className="flex-1">
               <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                {language === 'no' ? 'Status' : 'Status'}
+                {t.bookingNumber}
               </div>
               <div className="text-lg font-semibold text-gray-900 dark:text-white">
                 {getStatusText()}
@@ -254,7 +244,7 @@ export default function BookingTracking({
         <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700 space-y-4">
           <div>
             <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-              {language === 'no' ? 'Hentested' : 'Pickup'}
+              {t.bookingNumber}
             </div>
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
@@ -263,7 +253,7 @@ export default function BookingTracking({
           </div>
           <div>
             <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-              {language === 'no' ? 'Destinasjon' : 'Dropoff'}
+              {t.bookingNumber}
             </div>
             <div className="flex items-start gap-2">
               <MapPin className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
@@ -276,7 +266,7 @@ export default function BookingTracking({
         {status?.status === 'accepted' && (
           <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
             <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-              {language === 'no' ? 'Sjåfør' : 'Driver'}
+              {t.bookingNumber}
             </div>
             <div className="space-y-2">
               {status.driver && (
@@ -298,13 +288,13 @@ export default function BookingTracking({
               href={`/track/${bookingNumber}?lang=${language}`}
               className="block w-full px-6 py-3 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 text-gray-900 dark:text-white font-semibold uppercase tracking-wider transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/50 text-center text-sm md:text-base"
             >
-              {language === 'no' ? '🗺️ Følg på kart' : '🗺️ Track on Map'}
+              {language === 'en' ? '🗺️ Track on Map' : language === 'de' ? '🗺️ Auf Karte verfolgen' : language === 'fr' ? '🗺️ Suivre sur la carte' : language === 'es' ? '🗺️ Rastrear en el mapa' : '🗺️ Følg på kart'}
             </Link>
           )}
 
           {cancelled && (
             <div className="w-full px-6 py-3 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold uppercase tracking-wider text-center text-sm md:text-base">
-              {language === 'no' ? '❌ Bestilling avbestilt' : '❌ Booking cancelled'}
+              {language === 'en' ? '❌ Booking cancelled' : language === 'de' ? '❌ Buchung storniert' : language === 'fr' ? '❌ Réservation annulée' : language === 'es' ? '❌ Reserva cancelada' : '❌ Tinging avbestilt'}
             </div>
           )}
 
@@ -315,8 +305,8 @@ export default function BookingTracking({
               className="w-full px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-semibold uppercase tracking-wider transition-all duration-300 text-sm md:text-base"
             >
               {cancelling
-                ? (language === 'no' ? '⏳ Avbestiller...' : '⏳ Cancelling...')
-                : (language === 'no' ? '❌ Avbestill tur' : '❌ Cancel Booking')}
+                ? (language === 'en' ? '⏳ Cancelling...' : language === 'de' ? '⏳ Storniere...' : language === 'fr' ? '⏳ Annulation...' : language === 'es' ? '⏳ Cancelando...' : '⏳ Avbestiller...')
+                : (language === 'en' ? '❌ Cancel Booking' : language === 'de' ? '❌ Fahrt stornieren' : language === 'fr' ? '❌ Annuler la réservation' : language === 'es' ? '❌ Cancelar Reserva' : '❌ Avbestill tur')}
             </button>
           )}
 
@@ -324,7 +314,7 @@ export default function BookingTracking({
             onClick={() => window.location.href = '/'}
             className="w-full px-6 py-3 rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold uppercase tracking-wider transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm md:text-base"
           >
-            {language === 'no' ? 'Ny bestilling' : 'New Booking'}
+            {language === 'en' ? 'New Booking' : language === 'de' ? 'Neue Buchung' : language === 'fr' ? 'Nouvelle réservation' : language === 'es' ? 'Nueva reserva' : 'Ny tinging'}
           </button>
         </div>
 

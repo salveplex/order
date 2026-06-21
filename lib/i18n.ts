@@ -1,17 +1,12 @@
-// Internationalization support for Norwegian and English
+// Internationalization support
 
-export type Language = 'no' | 'en';
+export type Language = 'no' | 'nn' | 'en' | 'de' | 'fr' | 'es';
 
 export const translations = {
   no: {
-    // Page title
     pageTitle: 'Bestill Taxi',
-
-    // Header
     bookYourRide: 'Bestill Din Tur',
     subtitle: 'Rask, pålitelig og profesjonell taxitjeneste når du trenger det',
-
-    // Form labels
     pickupLocation: 'Hentested',
     dropoffLocation: 'Destinasjon',
     date: 'Dato',
@@ -22,26 +17,18 @@ export const translations = {
     phone: 'Telefonnummer',
     email: 'Epostadresse',
     additionalInfo: 'Tilleggsinformasjon',
-
-    // Vehicle types
     estatecar: 'Stasjonsvogn',
     sixseater: '6-seter',
     sevenseater: '7-seter',
     eightseater: '8-seter',
     wheelchair: 'Rullestol',
-
-    // Buttons
     confirmBooking: 'Bekreft Bestilling',
     booking: 'Bestilling...',
     checkStatus: 'Sjekk Booking-Status',
-
-    // Status check
     bookingNumber: 'Bookingnummer',
     searchBooking: 'Søk Booking',
     bookingStatus: 'Booking-Status',
     bookingStatusTitle: 'Sjekk Status på Din Tur',
-
-    // Status responses
     bookingFound: 'Booking funnet',
     bookingNotFound: 'Booking ikke funnet',
     status: 'Status',
@@ -51,28 +38,57 @@ export const translations = {
     accepted: 'Godkjent av kjøretøy',
     inProgress: 'Underveis',
     completed: 'Fullført',
-
-    // Validation messages
     passenger: 'Passasjer',
     passengers_other: 'Passasjerer',
     specialRequests: 'Spesielle ønsker eller notat...',
-
-    // Success message
     bookingConfirmed: '✓ Bestilling bekreftet! Sjekk eposten din for detaljer.',
-
-    // Status footer
     supportText: '24/7 Kundeservice • Sikker Betaling • Profesjonelle Sjåfører',
   },
-
+  nn: {
+    pageTitle: 'Ting Taxi',
+    bookYourRide: 'Ting Turen Din',
+    subtitle: 'Rask, påliteleg og profesjonell taxiteneste når du treng det',
+    pickupLocation: 'Hentestad',
+    dropoffLocation: 'Destinasjon',
+    date: 'Dato',
+    time: 'Tid',
+    passengers: 'Passasjerar',
+    vehicleType: 'Biltype',
+    fullName: 'Fullt namn',
+    phone: 'Telefonnummer',
+    email: 'E-postadresse',
+    additionalInfo: 'Tilleggsinformasjon',
+    estatecar: 'Stasjonsvogn',
+    sixseater: '6-setar',
+    sevenseater: '7-setar',
+    eightseater: '8-setar',
+    wheelchair: 'Rullestol',
+    confirmBooking: 'Stadfest Tinging',
+    booking: 'Tingar...',
+    checkStatus: 'Sjekk Tingingsstatus',
+    bookingNumber: 'Tingingsnummer',
+    searchBooking: 'Søk Tinging',
+    bookingStatus: 'Tingingsstatus',
+    bookingStatusTitle: 'Sjekk Status på Turen Din',
+    bookingFound: 'Tinging funne',
+    bookingNotFound: 'Tinging ikkje funne',
+    status: 'Status',
+    assignedVehicle: 'Tildelt køyretøy',
+    driver: 'Sjåfør',
+    pending: 'Ventar på godkjenning',
+    accepted: 'Godkjent av køyretøy',
+    inProgress: 'Undervegs',
+    completed: 'Fullført',
+    passenger: 'Passasjer',
+    passengers_other: 'Passasjerar',
+    specialRequests: 'Spesielle ønske eller notat...',
+    bookingConfirmed: '✓ Tinging stadfesta! Sjekk e-posten din for detaljar.',
+    supportText: '24/7 Kundeservice • Sikker Betaling • Profesjonelle Sjåførar',
+  },
   en: {
-    // Page title
     pageTitle: 'Book Taxi',
-
-    // Header
     bookYourRide: 'Book Your Ride',
     subtitle: 'Fast, reliable, and professional taxi service at your fingertips',
-
-    // Form labels
     pickupLocation: 'Pickup Location',
     dropoffLocation: 'Dropoff Location',
     date: 'Date',
@@ -83,26 +99,18 @@ export const translations = {
     phone: 'Phone Number',
     email: 'Email Address',
     additionalInfo: 'Additional Information',
-
-    // Vehicle types
     estatecar: 'Estate Car',
     sixseater: '6-Seater',
     sevenseater: '7-Seater',
     eightseater: '8-Seater',
     wheelchair: 'Wheelchair Accessible',
-
-    // Buttons
     confirmBooking: 'Confirm Booking',
     booking: 'Booking...',
     checkStatus: 'Check Booking Status',
-
-    // Status check
     bookingNumber: 'Booking Number',
     searchBooking: 'Search Booking',
     bookingStatus: 'Booking Status',
     bookingStatusTitle: 'Check Your Booking Status',
-
-    // Status responses
     bookingFound: 'Booking found',
     bookingNotFound: 'Booking not found',
     status: 'Status',
@@ -112,18 +120,135 @@ export const translations = {
     accepted: 'Accepted by Vehicle',
     inProgress: 'In Progress',
     completed: 'Completed',
-
-    // Validation messages
     passenger: 'Passenger',
     passengers_other: 'Passengers',
     specialRequests: 'Any special requests or notes...',
-
-    // Success message
     bookingConfirmed: '✓ Booking confirmed! Check your email for details.',
-
-    // Status footer
     supportText: '24/7 Customer Support • Secure Payment • Professional Drivers',
   },
+  de: {
+    pageTitle: 'Taxi Buchen',
+    bookYourRide: 'Fahrt Buchen',
+    subtitle: 'Schneller, zuverlässiger und professioneller Taxiservice',
+    pickupLocation: 'Abholort',
+    dropoffLocation: 'Zielort',
+    date: 'Datum',
+    time: 'Uhrzeit',
+    passengers: 'Fahrgäste',
+    vehicleType: 'Fahrzeugtyp',
+    fullName: 'Vollständiger Name',
+    phone: 'Telefonnummer',
+    email: 'E-Mail-Adresse',
+    additionalInfo: 'Zusätzliche Informationen',
+    estatecar: 'Kombi',
+    sixseater: '6-Sitzer',
+    sevenseater: '7-Sitzer',
+    eightseater: '8-Sitzer',
+    wheelchair: 'Rollstuhlgerecht',
+    confirmBooking: 'Buchung Bestätigen',
+    booking: 'Buchen...',
+    checkStatus: 'Buchungsstatus prüfen',
+    bookingNumber: 'Buchungsnummer',
+    searchBooking: 'Buchung Suchen',
+    bookingStatus: 'Buchungsstatus',
+    bookingStatusTitle: 'Prüfen Sie den Status Ihrer Fahrt',
+    bookingFound: 'Buchung gefunden',
+    bookingNotFound: 'Buchung nicht gefunden',
+    status: 'Status',
+    assignedVehicle: 'Zugewiesenes Fahrzeug',
+    driver: 'Fahrer',
+    pending: 'Warten auf Bestätigung',
+    accepted: 'Vom Fahrzeug akzeptiert',
+    inProgress: 'In Bearbeitung',
+    completed: 'Abgeschlossen',
+    passenger: 'Fahrgast',
+    passengers_other: 'Fahrgäste',
+    specialRequests: 'Besondere Wünsche oder Notizen...',
+    bookingConfirmed: '✓ Buchung bestätigt! Überprüfen Sie Ihre E-Mail für Details.',
+    supportText: '24/7 Kundendienst • Sichere Zahlung • Professionelle Fahrer',
+  },
+  fr: {
+    pageTitle: 'Réserver un Taxi',
+    bookYourRide: 'Réservez Votre Trajet',
+    subtitle: 'Service de taxi rapide, fiable et professionnel à portée de main',
+    pickupLocation: 'Lieu de Prise en Charge',
+    dropoffLocation: 'Lieu de Dépôt',
+    date: 'Date',
+    time: 'Heure',
+    passengers: 'Passagers',
+    vehicleType: 'Type de Véhicule',
+    fullName: 'Nom Complet',
+    phone: 'Numéro de Téléphone',
+    email: 'Adresse E-mail',
+    additionalInfo: 'Informations Complémentaires',
+    estatecar: 'Break',
+    sixseater: '6 Places',
+    sevenseater: '7 Places',
+    eightseater: '8 Places',
+    wheelchair: 'Accès Fauteuil Roulant',
+    confirmBooking: 'Confirmer la Réservation',
+    booking: 'Réservation...',
+    checkStatus: 'Vérifier le Statut',
+    bookingNumber: 'Numéro de Réservation',
+    searchBooking: 'Rechercher la Réservation',
+    bookingStatus: 'Statut de la Réservation',
+    bookingStatusTitle: 'Vérifiez le Statut de Votre Trajet',
+    bookingFound: 'Réservation trouvée',
+    bookingNotFound: 'Réservation non trouvée',
+    status: 'Statut',
+    assignedVehicle: 'Véhicule Assigné',
+    driver: 'Chauffeur',
+    pending: 'En Attente D\'acceptation',
+    accepted: 'Accepté par le Véhicule',
+    inProgress: 'En Cours',
+    completed: 'Terminé',
+    passenger: 'Passager',
+    passengers_other: 'Passagers',
+    specialRequests: 'Demandes spéciales ou notes...',
+    bookingConfirmed: '✓ Réservation confirmée ! Consultez vos e-mails pour les détails.',
+    supportText: 'Service Client 24/7 • Paiement Sécurisé • Chauffeurs Professionnels',
+  },
+  es: {
+    pageTitle: 'Reservar Taxi',
+    bookYourRide: 'Reserva Tu Viaje',
+    subtitle: 'Servicio de taxi rápido, fiable y profesional a tu alcance',
+    pickupLocation: 'Lugar de Recogida',
+    dropoffLocation: 'Lugar de Destino',
+    date: 'Fecha',
+    time: 'Hora',
+    passengers: 'Pasajeros',
+    vehicleType: 'Tipo de Vehículo',
+    fullName: 'Nombre Completo',
+    phone: 'Número de Teléfono',
+    email: 'Correo Electrónico',
+    additionalInfo: 'Información Adicional',
+    estatecar: 'Ranchera',
+    sixseater: '6 Plazas',
+    sevenseater: '7 Plazas',
+    eightseater: '8 Plazas',
+    wheelchair: 'Acceso Silla de Ruedas',
+    confirmBooking: 'Confirmar Reserva',
+    booking: 'Reservando...',
+    checkStatus: 'Comprobar Estado',
+    bookingNumber: 'Número de Reserva',
+    searchBooking: 'Buscar Reserva',
+    bookingStatus: 'Estado de la Reserva',
+    bookingStatusTitle: 'Comprueba el Estado de tu Viaje',
+    bookingFound: 'Reserva encontrada',
+    bookingNotFound: 'Reserva no encontrada',
+    status: 'Estado',
+    assignedVehicle: 'Vehículo Asignado',
+    driver: 'Conductor',
+    pending: 'Pendiente de Aceptación',
+    accepted: 'Aceptado por el Vehículo',
+    inProgress: 'En Curso',
+    completed: 'Completado',
+    passenger: 'Pasajero',
+    passengers_other: 'Pasajeros',
+    specialRequests: 'Solicitudes especiales o notas...',
+    bookingConfirmed: '✓ ¡Reserva confirmada! Revisa tu correo electrónico para ver los detalles.',
+    supportText: 'Atención al Cliente 24/7 • Pago Seguro • Conductores Profesionales',
+  }
 };
 
 export function useTranslation(lang: Language) {

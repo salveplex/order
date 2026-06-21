@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search } from 'lucide-react';
 import { useTranslation, type Language } from '@/lib/i18n';
+import { ATTRIBUTE_GROUPS } from '@/lib/attributes';
 import BookingTracking from '@/components/BookingTracking';
 import {
   createBooking,
@@ -39,75 +40,6 @@ interface BookingStatus {
   found: boolean;
 }
 
-const ATTRIBUTE_GROUPS = [
-  {
-    id: 'biltype',
-    label_no: 'Biltype',
-    label_en: 'Vehicle Type',
-    icon: '🚗',
-    options: [
-      { id: 20, label_no: 'Liten bil', label_en: 'Small Car' },
-      { id: 3, label_no: 'Lav bil / Personbil', label_en: 'Low Car / Standard' },
-      { id: 0, label_no: '6 seter', label_en: '6 Seater' },
-      { id: 1, label_no: '7 seter', label_en: '7 Seater' },
-      { id: 89, label_no: '8 seter', label_en: '8 Seater' },
-      { id: 4, label_no: 'Rullestol', label_en: 'Wheelchair' }
-    ]
-  },
-  {
-    id: 'bagasje',
-    label_no: 'Bagasje/utstyr',
-    label_en: 'Luggage/Equipment',
-    icon: '🧳',
-    options: [
-      { id: 23, label_no: 'Mykje bagasje', label_en: 'Lots of luggage' },
-      { id: 99, label_no: 'Ekstra bagasjeplass', label_en: 'Extra luggage space' },
-      { id: 21, label_no: 'Har med ski', label_en: 'Bringing skis' },
-      { id: 22, label_no: 'Har med snowboard', label_en: 'Bringing snowboard' },
-      { id: 24, label_no: 'Har med hund', label_en: 'Bringing dog' },
-      { id: -1, label_no: 'Har med sykkel', label_en: 'Bringing bicycle' }
-    ]
-  },
-  {
-    id: 'barneseter',
-    label_no: 'Barneseter',
-    label_en: 'Child Seats',
-    icon: '👶',
-    options: [
-      { id: 29, label_no: 'Barnestol 0-1 år/0-13 kg', label_en: 'Child seat 0-1 yrs' },
-      { id: 30, label_no: 'Barnestol 1-4 år/9-18 kg', label_en: 'Child seat 1-4 yrs' },
-      { id: 31, label_no: 'Barnestol 4-10 år/15-25 kg', label_en: 'Child seat 4-10 yrs' },
-      { id: 25, label_no: 'Barnepute', label_en: 'Booster seat' },
-      { id: 27, label_no: 'Spedbarnstol', label_en: 'Infant seat' }
-    ]
-  },
-  {
-    id: 'helse',
-    label_no: 'Helse/Behov',
-    label_en: 'Health/Needs',
-    icon: '♿',
-    options: [
-      { id: 16, label_no: 'Trenger assistanse', label_en: 'Needs assistance' },
-      { id: 19, label_no: 'Har rullator', label_en: 'Has rollator' },
-      { id: 39, label_no: 'Høg innstiging', label_en: 'High boarding' },
-      { id: 40, label_no: 'Allergi', label_en: 'Allergies' },
-      { id: 41, label_no: 'Røykfri', label_en: 'Smoke-free' },
-      { id: 9, label_no: 'Sammenleggbar rullestol', label_en: 'Foldable wheelchair' }
-    ]
-  },
-  {
-    id: 'anna',
-    label_no: 'Anna nyttig',
-    label_en: 'Other',
-    icon: '⭐',
-    options: [
-      { id: 63, label_no: 'Må ha 4WD', label_en: 'Needs 4WD' },
-      { id: 62, label_no: 'Må ha piggdekk', label_en: 'Needs studded tires' },
-      { id: 75, label_no: 'Engelskspråkleg sjåfør', label_en: 'English-speaking driver' },
-      { id: 73, label_no: 'Kvinnleg sjåfør', label_en: 'Female driver' }
-    ]
-  }
-];
 
 const TIME_OPTIONS = Array.from({ length: 24 * 4 }).map((_, i) => {
   const h = Math.floor(i / 4).toString().padStart(2, '0');
@@ -116,7 +48,7 @@ const TIME_OPTIONS = Array.from({ length: 24 * 4 }).map((_, i) => {
 });
 
 export default function BookingForm() {
-  const [language, setLanguage] = useState<Language>('no');
+  const [language, setLanguage] = useState<Language>('nn');
   const t = useTranslation(language);
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
   const [isDark, setIsDark] = useState(false);
@@ -485,8 +417,19 @@ export default function BookingForm() {
     <div className="min-h-screen bg-white dark:bg-gray-950 dark:text-white transition-colors">
       <div className="w-full px-4 py-3 md:py-4">
         {/* Combined header with language selector and tabs */}
-        <div className="flex items-center justify-between gap-4 max-w-3xl mx-auto">
-          {/* Tab Navigation */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 max-w-3xl mx-auto mb-6 md:mb-0">
+          {/* Logo linking back to main site */}
+          <a href="https://vosstaxi.no" className="shrink-0 block hover:opacity-80 transition-opacity self-start md:self-auto">
+            <img 
+              src="https://vosstaxi.no/wp-content/uploads/2021/04/Voss-Taxi-Logo.png" 
+              alt="Voss Taxi" 
+              className="h-10 md:h-12 w-auto object-contain dark:bg-white dark:p-1 dark:rounded"
+            />
+          </a>
+
+          {/* Controls Container */}
+          <div className="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+            {/* Tab Navigation */}
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
             <button
               onClick={() => setActiveTab('booking')}
@@ -496,7 +439,7 @@ export default function BookingForm() {
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 dark:text-white'
               }`}
             >
-              {language === 'no' ? 'Bestill' : 'Book'}
+              {t.pageTitle}
             </button>
             <button
               onClick={() => setActiveTab('status')}
@@ -513,27 +456,19 @@ export default function BookingForm() {
           {/* Language and Theme selectors */}
           <div className="flex gap-2 flex-wrap">
             {/* Language selector */}
-            <div className="flex gap-1 md:gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-              <button
-                onClick={() => setLanguage('no')}
-                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
-                  language === 'no'
-                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                }`}
+            <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="bg-transparent text-gray-700 dark:text-gray-200 text-xs md:text-sm font-medium px-2 py-1 md:py-1.5 focus:outline-none cursor-pointer"
               >
-                NO
-              </button>
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-2.5 md:px-4 py-1.5 md:py-2 rounded-md text-xs md:text-sm font-medium transition-colors ${
-                  language === 'en'
-                    ? 'bg-white dark:bg-gray-700 text-amber-600 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-                }`}
-              >
-                EN
-              </button>
+                <option value="nn">Nynorsk</option>
+                <option value="no">Bokmål</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+              </select>
             </div>
 
             {/* Theme selector */}
@@ -571,6 +506,7 @@ export default function BookingForm() {
               >
                 🌙
               </button>
+              </div>
             </div>
           </div>
         </div>
@@ -614,7 +550,7 @@ export default function BookingForm() {
                           formData.pickupLocation.length >= 2 &&
                           setShowPickupSuggestions(true)
                         }
-                        placeholder={language === 'no' ? 'F.eks. Voss Stasjon' : 'e.g. Voss Station'}
+                        placeholder={language === 'en' ? 'e.g. Voss Station' : language === 'de' ? 'z.B. Voss Bahnhof' : language === 'fr' ? 'ex. Gare de Voss' : language === 'es' ? 'ej. Estación de Voss' : 'F.eks. Voss Stasjon'}
                         required
                         className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
@@ -676,7 +612,7 @@ export default function BookingForm() {
                           formData.dropoffLocation.length >= 2 &&
                           setShowDropoffSuggestions(true)
                         }
-                        placeholder={language === 'no' ? 'F.eks. Voss Sjukehus' : 'e.g. Voss Hospital'}
+                        placeholder={language === 'en' ? 'e.g. Voss Hospital' : language === 'de' ? 'z.B. Voss Krankenhaus' : language === 'fr' ? 'ex. Hôpital de Voss' : language === 'es' ? 'ej. Hospital de Voss' : 'F.eks. Voss Sjukehus'}
                         required
                         className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                       />
@@ -793,21 +729,19 @@ export default function BookingForm() {
                     >
                       {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                         <option key={num} value={num}>
-                          {num} {language === 'no' ? (num === 1 ? 'Passasjer' : 'Passasjerer') : num === 1 ? 'Passenger' : 'Passengers'}
+                          {num} {num === 1 ? t.passenger : t.passengers_other}
                         </option>
                       ))}
                     </select>
-                    <p className="text-sm font-bold text-amber-700 dark:text-amber-500 mt-2.5 bg-amber-50 dark:bg-amber-900/20 p-2 rounded-lg inline-block border border-amber-200 dark:border-amber-800">
-                      {language === 'no'
-                        ? 'For bestilling til flere enn 8, ring sentralen'
-                        : 'For bookings with more than 8 people, call the office'}
+                    <p className="text-base md:text-lg font-extrabold text-amber-800 dark:text-amber-400 mt-3 bg-amber-100 dark:bg-amber-900/40 p-3 rounded-lg block border-2 border-amber-300 dark:border-amber-600 shadow-sm">
+                      {language === 'en' ? 'For bookings with more than 8 people, call the office: 56 51 13 40' : language === 'de' ? 'Für Buchungen mit mehr als 8 Personen rufen Sie bitte das Büro an: 56 51 13 40' : language === 'fr' ? 'Pour les réservations de plus de 8 personnes, veuillez appeler le bureau: 56 51 13 40' : language === 'es' ? 'Para reservas con más de 8 personas, llame a la oficina: 56 51 13 40' : 'For bestilling til fleire enn 8, ring sentralen: 56 51 13 40'}
                     </p>
                   </div>
 
                   {/* Vehicle Attributes */}
                   <div className="md:col-span-5 space-y-4 mt-2">
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      {language === 'no' ? 'Kjøretøy og behov' : 'Vehicle and Needs'}
+                      {t.vehicleType}
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {ATTRIBUTE_GROUPS.map((group) => {
@@ -820,7 +754,7 @@ export default function BookingForm() {
                             <summary className="p-3.5 font-medium text-gray-900 dark:text-white flex items-center justify-between cursor-pointer list-none select-none">
                               <div className="flex items-center gap-2">
                                 <span className="text-xl">{group.icon}</span>
-                                <span className="text-sm">{language === 'no' ? group.label_no : group.label_en}</span>
+                                <span className="text-sm">{group.labels[language as keyof typeof group.labels]}</span>
                                 {selectedCount > 0 && (
                                   <span className="bg-amber-600 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">
                                     {selectedCount}
@@ -843,7 +777,7 @@ export default function BookingForm() {
                                         : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-amber-400 dark:hover:border-amber-500'
                                     }`}
                                   >
-                                    {language === 'no' ? opt.label_no : opt.label_en}
+                                    {opt.labels[language as keyof typeof opt.labels]}
                                   </button>
                                 );
                               })}
@@ -867,7 +801,7 @@ export default function BookingForm() {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder={language === 'no' ? 'Ditt fulle navn' : 'Your full name'}
+                      placeholder={language === 'en' ? 'Your full name' : language === 'de' ? 'Ihr vollständiger Name' : language === 'fr' ? 'Votre nom complet' : language === 'es' ? 'Su nombre completo' : 'Ditt fulle namn'}
                       required
                       className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
@@ -883,7 +817,7 @@ export default function BookingForm() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      placeholder={language === 'no' ? '+47 XXX XX XXX' : '+47 XXX XX XXX'}
+                      placeholder={'+47 XXX XX XXX'}
                       required
                       className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                     />
@@ -900,7 +834,7 @@ export default function BookingForm() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder={language === 'no' ? 'Din epost (valgfritt)' : 'Your email (optional)'}
+                    placeholder={language === 'en' ? 'Your email (optional)' : language === 'de' ? 'Ihre E-Mail (optional)' : language === 'fr' ? 'Votre email (optionnel)' : language === 'es' ? 'Su correo electrónico (opcional)' : 'Din e-post (valgfritt)'}
                     className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
                 </div>
@@ -990,7 +924,7 @@ export default function BookingForm() {
                     type="text"
                     value={statusBookingNumber}
                     onChange={(e) => setStatusBookingNumber(e.target.value)}
-                    placeholder={language === 'no' ? 'F.eks. BK-1234567' : 'e.g. BK-1234567'}
+                    placeholder={language === 'en' ? 'e.g. BK-1234567' : language === 'de' ? 'z.B. BK-1234567' : language === 'fr' ? 'ex. BK-1234567' : language === 'es' ? 'ej. BK-1234567' : 'F.eks. BK-1234567'}
                     required
                     className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
                   />
@@ -1002,7 +936,7 @@ export default function BookingForm() {
                   disabled={statusLoading}
                   className="w-full px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {statusLoading ? language === 'no' ? 'Søker...' : 'Searching...' : t.searchBooking}
+                  {statusLoading ? t.booking : t.searchBooking}
                 </button>
 
                 {/* Status Display */}

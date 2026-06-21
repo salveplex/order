@@ -53,7 +53,7 @@ export async function createBooking(data: BookingRequest): Promise<BookingRespon
 
 export async function getAddressSuggestions(
   query: string,
-  language: 'no' | 'en' = 'no'
+  language: string = 'no'
 ): Promise<AddressSuggestion[]> {
   if (!query || query.length < 2) {
     return [];
