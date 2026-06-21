@@ -415,7 +415,7 @@ export default function BookingForm() {
           {/* Logo linking back to main site */}
           <a href="https://vosstaxi.no" className="shrink-0 block hover:opacity-80 transition-opacity self-start md:self-auto">
             <img 
-              src="https://vosstaxi.no/wp-content/uploads/2021/04/Voss-Taxi-Logo.png" 
+              src="/logo.png" 
               alt="Voss Taxi" 
               className="h-10 md:h-12 w-auto object-contain dark:bg-white dark:p-1 dark:rounded"
             />
@@ -511,9 +511,7 @@ export default function BookingForm() {
           <div className="w-full max-w-3xl">
             {/* Header */}
             <div className="mb-6 md:mb-12 text-center">
-              <a href="https://vosstaxi.no" className="inline-block mb-4 transition-transform hover:scale-105 active:scale-95">
-                <img src="/logo.png" alt="VossTaxi" className="h-16 md:h-20 w-auto object-contain drop-shadow-sm" />
-              </a>
+
               <h1 className="text-3xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-2 md:mb-3 tracking-tight">
                 {t.bookYourRide}
               </h1>
