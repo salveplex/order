@@ -837,13 +837,13 @@ export default function BookingForm() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-6 py-3.5 bg-[#ffcc00] text-gray-900 font-bold text-lg rounded-lg hover:bg-[#e6b800] focus:outline-none focus:ring-2 focus:ring-[#ffcc00] focus:ring-offset-2 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? t.booking : t.confirmBooking}
                   </button>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-3 text-center">
+                  <p className="text-sm md:text-base font-semibold text-amber-600 dark:text-amber-500 mt-4 text-center">
                     {language === 'nn'
-                      ? 'Når en bil godkjenner turen, vil du få melding og mulighet for å spore bilen.'
+                      ? 'Når ein bil godkjenner turen, vil du få melding og høve til å spore bilen.'
                       : 'When a vehicle accepts your ride, you will receive a notification and the ability to track the vehicle.'}
                   </p>
                 </div>
