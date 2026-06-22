@@ -192,6 +192,7 @@ export default function TrackingPage() {
   const [status, setStatus] = useState<BookingStatus | null>(null);
   const [location, setLocation] = useState<VehicleLocation | null>(null);
   const [etaDropoff, setEtaDropoff] = useState<number | null>(null);
+  const [etaPickup, setEtaPickup] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -320,19 +321,30 @@ export default function TrackingPage() {
     return () => clearInterval(interval);
   }, [bookingNumber]);
 
-  // Fetch OSRM ETA to dropoff
+  // Fetch OSRM ETA
   useEffect(() => {
-    if (location?.vehicleLat && location?.vehicleLon && location?.destLat && location?.destLon) {
-      fetch(`https://router.project-osrm.org/route/v1/driving/${location.vehicleLon},${location.vehicleLat};${location.destLon},${location.destLat}?overview=false`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-            setEtaDropoff(Math.ceil(data.routes[0].duration / 60)); // duration in minutes
-          }
-        })
-        .catch(err => console.error("Failed to fetch OSRM ETA:", err));
+    if (location?.vehicleLat && location?.vehicleLon) {
+      if (status?.status === 'accepted' && location?.pickupLat && location?.pickupLon) {
+        fetch(`https://router.project-osrm.org/route/v1/driving/${location.vehicleLon},${location.vehicleLat};${location.pickupLon},${location.pickupLat}?overview=false`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+              setEtaPickup(Math.ceil(data.routes[0].duration / 60));
+            }
+          })
+          .catch(err => console.error("Failed to fetch OSRM ETA to pickup:", err));
+      } else if (location?.destLat && location?.destLon) {
+        fetch(`https://router.project-osrm.org/route/v1/driving/${location.vehicleLon},${location.vehicleLat};${location.destLon},${location.destLat}?overview=false`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+              setEtaDropoff(Math.ceil(data.routes[0].duration / 60)); // duration in minutes
+            }
+          })
+          .catch(err => console.error("Failed to fetch OSRM ETA:", err));
+      }
     }
-  }, [location?.vehicleLat, location?.vehicleLon, location?.destLat, location?.destLon]);
+  }, [location?.vehicleLat, location?.vehicleLon, location?.destLat, location?.destLon, location?.pickupLat, location?.pickupLon, status?.status]);
 
   const updatePickupMarker = (lat: number, lon: number) => {
     if (!mapRef.current) return;
@@ -341,11 +353,11 @@ export default function TrackingPage() {
 
     if (!pickupMarkerRef.current) {
       const greenIcon = L.divIcon({
-        html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #22c55e;">🟢</div>`,
+        html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#22c55e" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg>`,
         className: 'custom-pickup-icon',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-        popupAnchor: [0, -30],
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
       });
 
       pickupMarkerRef.current = L.marker([lat, lon], {
@@ -365,13 +377,12 @@ export default function TrackingPage() {
     if (!L) return;
 
     if (!destMarkerRef.current) {
-      // Create a red icon for destination using emoji
       const redIcon = L.divIcon({
-        html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #ef4444;">📍</div>`,
+        html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#ef4444" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg>`,
         className: 'custom-dest-icon',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-        popupAnchor: [0, -30],
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
       });
 
       destMarkerRef.current = L.marker([lat, lon], {
@@ -499,6 +510,22 @@ export default function TrackingPage() {
                 <Car className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
               </button>
             )}
+            
+            {/* Legend */}
+            <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-300">
+              <div className="flex items-center gap-2">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#22c55e" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3" fill="white"/></svg>
+                 <span>{t.pickup}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#ef4444" stroke="white" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3" fill="white"/></svg>
+                 <span>{t.destination}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                 <div style={{fontSize: '16px'}}>🚕</div>
+                 <span>{lang === 'en' ? 'Assigned Vehicle' : 'Tildelt køyretøy'}</span>
+              </div>
+            </div>
           </div>
 
           {/* Info Panel */}
@@ -595,6 +622,16 @@ export default function TrackingPage() {
                   </div>
                 ) : null}
               </div>
+              {status?.status === 'accepted' && etaPickup !== null && (
+                <div className="pt-2 border-t border-slate-700/50 mt-4">
+                  <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">
+                    {lang === 'en' ? 'Est. Time to Pickup' : 'Est. tid til henting'}
+                  </div>
+                  <div className="text-xl font-bold text-green-400">
+                    ~{etaPickup} min
+                  </div>
+                </div>
+              )}
               {etaDropoff !== null && (
                 <div className="pt-2 border-t border-slate-700/50 mt-4">
                   <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">
