@@ -128,10 +128,10 @@ async function createBookingWithTaxi4U(data: BookingData) {
         fromCity: data.pickupCity || 'Voss',
         fromLat: data.pickupLat ?? 60.6288,
         fromLon: data.pickupLon ?? 6.4251,
-        toStreet: data.dropoffLocation || 'Voss',
+        toStreet: data.dropoffLocation || 'Ikke oppgitt',
         toCity: data.dropoffCity || 'Voss',
-        toLat: data.dropoffLat ?? 60.6288,
-        toLon: data.dropoffLon ?? 6.4251,
+        toLat: data.dropoffLat ?? 0,
+        toLon: data.dropoffLon ?? 0,
         pickupTime: pickupTimeISO,
       }
     ],

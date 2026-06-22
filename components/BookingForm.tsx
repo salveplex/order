@@ -528,20 +528,20 @@ export default function BookingForm() {
                       />
                       {showPickupSuggestions && (pickupSuggestions.length > 0 || formData.pickupLocation.length >= 2) && (
                         <div
-                          style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: '0',
-                            right: '0',
-                            marginTop: '8px',
-                            backgroundColor: isDark ? '#1f2937' : 'white',
-                            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
-                            borderRadius: '0.5rem',
-                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                            zIndex: 99999,
-                            maxHeight: '280px',
-                            overflowY: 'auto',
-                          }}
+                            style={{
+                              position: 'absolute',
+                              top: '100%',
+                              left: '0',
+                              right: '0',
+                              marginTop: '8px',
+                              backgroundColor: '#18181b',
+                              border: '1px solid #27272a',
+                              borderRadius: '0.5rem',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.5)',
+                              zIndex: 99999,
+                              maxHeight: '280px',
+                              overflowY: 'auto',
+                            }}
                         >
                           {pickupSuggestions.length > 0 ? (
                             pickupSuggestions.map((suggestion, idx) => (
@@ -551,7 +551,7 @@ export default function BookingForm() {
                                 onClick={() =>
                                   selectAddressSuggestion('pickupLocation', suggestion)
                                 }
-                                className="w-full px-4 py-2.5 text-left text-sm text-zinc-100  hover:bg-zinc-800/50 :bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
+                                className="w-full px-4 py-2.5 text-left text-sm text-zinc-100 hover:bg-zinc-800/50 border-b border-zinc-800 last:border-b-0 transition-colors"
                               >
                                 {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                               </button>
@@ -584,8 +584,7 @@ export default function BookingForm() {
                           formData.dropoffLocation.length >= 2 &&
                           setShowDropoffSuggestions(true)
                         }
-                        placeholder={language === 'en' ? 'e.g. Voss Hospital' : language === 'de' ? 'z.B. Voss Krankenhaus' : language === 'fr' ? 'ex. Hôpital de Voss' : language === 'es' ? 'ej. Hospital de Voss' : 'F.eks. Voss Sjukehus'}
-                        required
+                        placeholder={language === 'en' ? 'e.g. Voss Hospital (optional)' : language === 'de' ? 'z.B. Voss Krankenhaus (optional)' : language === 'fr' ? 'ex. Hôpital de Voss (optionnel)' : language === 'es' ? 'ej. Hospital de Voss (opcional)' : 'F.eks. Voss Sjukehus (valgfritt)'}
                         className="soft-input w-full px-4 py-2.5"
                       />
                       {showDropoffSuggestions &&
@@ -597,10 +596,10 @@ export default function BookingForm() {
                               left: '0',
                               right: '0',
                               marginTop: '8px',
-                              backgroundColor: isDark ? '#1f2937' : 'white',
-                              border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`,
+                              backgroundColor: '#18181b',
+                              border: '1px solid #27272a',
                               borderRadius: '0.5rem',
-                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.5)',
                               zIndex: 99999,
                               maxHeight: '280px',
                               overflowY: 'auto',
@@ -617,7 +616,7 @@ export default function BookingForm() {
                                       suggestion
                                     )
                                   }
-                                  className="w-full px-4 py-2.5 text-left text-sm text-zinc-100  hover:bg-zinc-800/50 :bg-gray-700 border-b border-gray-100 last:border-b-0 transition-colors"
+                                  className="w-full px-4 py-2.5 text-left text-sm text-zinc-100 hover:bg-zinc-800/50 border-b border-zinc-800 last:border-b-0 transition-colors"
                                 >
                                   {suggestion.name}{suggestion.address && suggestion.address !== suggestion.name ? `, ${suggestion.address}` : ''}
                                 </button>
