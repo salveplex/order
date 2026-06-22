@@ -527,7 +527,7 @@ export default function TrackingPage() {
           {/* Info Panel */}
           <div className="space-y-4">
             {/* Vehicle Info */}
-            {location && status?.status === 'accepted' && (
+            {location && (status?.status === 'accepted' || status?.status === 'inProgress') && (
               <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl">
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-4">
                   {t.vehicleInfo}
