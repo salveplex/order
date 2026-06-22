@@ -124,19 +124,29 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
   let statusLetter = 'D'; // Default to 'D' (accepted by system)
 
   // Map message text to status code if available
-  if (booking.msgOut?.includes('AKSEPTERT')) statusLetter = 'I'; // Accepted
-  else if (booking.msgOut?.includes('SENDT')) statusLetter = 'G'; // Sent to drivers
-  else if (booking.msgOut?.includes('VENTER')) statusLetter = 'K'; // Waiting
-  else if (booking.msgOut?.includes('KONTAKT')) statusLetter = 'H'; // Trying to reach
+  const msgOut = (booking.msgOut || '').toUpperCase();
+  if (msgOut.includes('AKSEPTERT')) statusLetter = 'I'; // Accepted
+  else if (msgOut.includes('SENDT')) statusLetter = 'G'; // Sent to drivers
+  else if (msgOut.includes('VENTER')) statusLetter = 'K'; // Waiting
+  else if (msgOut.includes('KONTAKT')) statusLetter = 'H'; // Trying to reach
+  else if (msgOut.includes('LEVERT') || msgOut.includes('FULLFØRT')) statusLetter = 'l'; // Completed
+
+  let genericStatus = 'pending';
+  
+  if (statusLetter === 'l' || booking.tripStatusCode === 2) {
+    genericStatus = 'completed';
+  } else if (statusLetter === 'I' || booking.vehicleNo || booking.tripStatusCode === 1) {
+    genericStatus = 'accepted';
+  }
 
   return {
     success: true,
     found: true,
     bookingId: booking.bookingRef,
     bookingNumber: booking.bookingRef,
-    status: 'pending', // Generic status
+    status: genericStatus, // Dynamic status
     statusCode: statusLetter, // Letter code for cancellation check
-    vehicle: booking.vehicleNo ? `Vehicle ${booking.vehicleNo}` : undefined,
+    vehicle: booking.vehicleNo ? `${booking.vehicleNo}` : undefined,
     driver: undefined,
     tripStatusCode: tripStatus, // Numeric code from Taxi4U
     message: booking.msgOut,
