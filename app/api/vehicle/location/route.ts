@@ -112,8 +112,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         pickupLat: pickupLat,
         pickupLon: pickupLon,
+        pickupAddress: null,
         destLat: destLat,
         destLon: destLon,
+        destAddress: null,
         vehicleLat: vehicleLat,
         vehicleLon: vehicleLon,
         driverName: null,
@@ -130,8 +132,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       pickupLat: vehicle.pickupLat || pickupLat || null,
       pickupLon: vehicle.pickupLon || pickupLon || null,
+      pickupAddress: vehicle.pickupAddress || null,
       destLat: vehicle.destLat || destLat || null,
       destLon: vehicle.destLon || destLon || null,
+      destAddress: vehicle.destAddress || null,
       vehicleLat: vehicle.vehicleLat || vehicleLat || null,
       vehicleLon: vehicle.vehicleLon || vehicleLon || null,
       driverName: vehicle.driverName,

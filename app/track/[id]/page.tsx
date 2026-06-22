@@ -15,8 +15,10 @@ interface BookingStatus {
 interface VehicleLocation {
   pickupLat?: number;
   pickupLon?: number;
+  pickupAddress?: string;
   destLat?: number;
   destLon?: number;
+  destAddress?: string;
   vehicleLat?: number;
   vehicleLon?: number;
   driverName?: string;
@@ -445,22 +447,30 @@ export default function TrackingPage() {
                   <MapPin className="w-3 h-3 text-green-400" />
                   {t.pickup}
                 </div>
-                {location?.pickupLat && location?.pickupLon && (
+                {location?.pickupAddress ? (
+                  <div className="text-sm font-medium text-white">
+                    {location.pickupAddress}
+                  </div>
+                ) : location?.pickupLat && location?.pickupLon ? (
                   <div className="text-sm text-slate-300">
                     {location.pickupLat.toFixed(4)}, {location.pickupLon.toFixed(4)}
                   </div>
-                )}
+                ) : null}
               </div>
               <div>
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-red-400" />
                   {t.destination}
                 </div>
-                {location?.destLat && location?.destLon && (
+                {location?.destAddress ? (
+                  <div className="text-sm font-medium text-white">
+                    {location.destAddress}
+                  </div>
+                ) : location?.destLat && location?.destLon ? (
                   <div className="text-sm text-slate-300">
                     {location.destLat.toFixed(4)}, {location.destLon.toFixed(4)}
                   </div>
-                )}
+                ) : null}
               </div>
               {etaDropoff !== null && (
                 <div className="pt-2 border-t border-slate-700/50 mt-4">
