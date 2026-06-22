@@ -1,99 +1,208 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, MapPin, Phone, MessageSquare, Navigation } from 'lucide-react';
-import Link from 'next/link';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { ArrowLeft, MapPin, Phone, MessageSquare, Car } from 'lucide-react';
+import { getCarDetails } from '@/lib/cars';
 
-export default function TrackingDemo() {
-  const [location, setLocation] = useState({
-    lat: 60.6591760,
-    lon: 6.4209200,
-    speed: 0,
-    direction: 0,
-  });
-  const [routeCoordinates, setRouteCoordinates] = useState<Array<[number, number]>>([
-    [60.6591760, 6.4209200], // Grevlesvegen 22
-    [60.6281914, 6.4222631], // Uttrågata 19 (fallback)
-  ]);
+interface BookingStatus {
+  status: 'pending' | 'accepted' | 'inProgress' | 'completed';
+  vehicle?: string;
+  driver?: string;
+  found: boolean;
+}
 
+interface VehicleLocation {
+  pickupLat?: number;
+  pickupLon?: number;
+  pickupAddress?: string;
+  destLat?: number;
+  destLon?: number;
+  destAddress?: string;
+  vehicleLat?: number;
+  vehicleLon?: number;
+  driverName?: string;
+  activeVehicleMobile?: string;
+  licenseNo?: string;
+  gpsVelocity?: number;
+  gpsDirection?: number;
+  activeTrip?: string;
+  vehicleType?: string;
+  regNo?: string;
+  eta?: number; // minutes
+}
+
+export default function TrackingPage() {
+  const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const bookingNumber = params.id as string;
+  const lang = (searchParams?.get('lang') as 'nn' | 'en' | 'de' | 'fr' | 'es') || 'nn';
+
+  const t = {
+    nn: {
+      back: 'Attende til bestilling',
+      tracking: 'SPORING',
+      status: 'Status',
+      driverAccepted: 'Sjåfør godkjend! Køyretøy er på veg',
+      inProgress: 'Passasjer i bil! Køyrer til destinasjon',
+      completed: 'Tur fullført',
+      waiting: 'Ventar på sjåfør',
+      loadingMap: 'Lastar kart...',
+      vehicleInfo: 'Køyretøyinfo',
+      numberPlate: 'Skiltnummer',
+      vehicleType: 'Biltype',
+      speed: 'Fart',
+      eta: 'Ankomst',
+      pickup: 'Hentestad',
+      destination: 'Destinasjon',
+      callDriver: 'Ring sjåfør',
+      regNo: 'Reg.nr',
+      licenseNo: 'Løyvenr',
+      carModel: 'Bilmerke',
+      message: 'Melding',
+      centerOnCar: 'Sentrer på bil',
+      pickupLocation: 'Hentestad',
+      dropoffLocation: 'Destinasjon'
+    },
+    en: {
+      back: 'Back to Booking',
+      tracking: 'Trip Tracking',
+      status: 'Status',
+      driverAccepted: '🚗 Driver accepted! Vehicle is on the way',
+      inProgress: '⏳ In progress',
+      completed: '✅ Completed',
+      waiting: '⏰ Waiting for driver...',
+      loadingMap: 'Loading map...',
+      vehicleInfo: 'Vehicle Info',
+      numberPlate: 'Number Plate',
+      vehicleType: 'Vehicle Type',
+      speed: 'Speed',
+      eta: 'ETA',
+      pickup: 'Pickup',
+      destination: 'Destination',
+      callDriver: 'Call Driver',
+      regNo: 'Reg. No',
+      licenseNo: 'License No',
+      carModel: 'Car Model',
+      message: 'Message',
+      centerOnCar: 'Center on car',
+      pickupLocation: 'Pickup Location',
+      dropoffLocation: 'Destination'
+    },
+    de: {
+      back: 'Zurück zur Buchung',
+      tracking: 'Fahrtübersicht',
+      status: 'Status',
+      driverAccepted: '🚗 Fahrer akzeptiert! Fahrzeug ist unterwegs',
+      inProgress: '⏳ Fahrt läuft',
+      completed: '✅ Fahrt beendet',
+      waiting: '⏰ Warten auf Fahrer...',
+      loadingMap: 'Karte wird geladen...',
+      vehicleInfo: 'Fahrzeuginfos',
+      numberPlate: 'Kennzeichen',
+      vehicleType: 'Fahrzeugtyp',
+      speed: 'Geschwindigkeit',
+      eta: 'Ankunft',
+      pickup: 'Abholung',
+      destination: 'Ziel',
+      callDriver: 'Fahrer anrufen',
+      regNo: 'Kennzeichen',
+      licenseNo: 'Konzessionsnummer',
+      carModel: 'Automarke',
+      message: 'Nachricht',
+      centerOnCar: 'Auf Auto zentrieren',
+      pickupLocation: 'Abholort',
+      dropoffLocation: 'Zielort'
+    },
+    fr: {
+      back: 'Retour à la réservation',
+      tracking: 'Suivi du trajet',
+      status: 'Statut',
+      driverAccepted: '🚗 Chauffeur accepté ! Le véhicule est en route',
+      inProgress: '⏳ En cours',
+      completed: '✅ Terminé',
+      waiting: '⏰ En attente du chauffeur...',
+      loadingMap: 'Chargement de la carte...',
+      vehicleInfo: 'Infos véhicule',
+      numberPlate: 'Plaque d\'immatriculation',
+      vehicleType: 'Type de véhicule',
+      speed: 'Vitesse',
+      eta: 'Heure d\'arrivée',
+      pickup: 'Prise en charge',
+      destination: 'Destination',
+      callDriver: 'Appeler le chauffeur',
+      regNo: 'No d\'immatriculation',
+      licenseNo: 'No de licence',
+      carModel: 'Marque de voiture',
+      message: 'Message',
+      centerOnCar: 'Centrer sur la voiture',
+      pickupLocation: 'Lieu de prise en charge',
+      dropoffLocation: 'Destination'
+    },
+    es: {
+      back: 'Volver a la reserva',
+      tracking: 'Seguimiento del viaje',
+      status: 'Estado',
+      driverAccepted: '🚗 ¡Conductor aceptado! El vehículo está en camino',
+      inProgress: '⏳ En curso',
+      completed: '✅ Completado',
+      waiting: '⏰ Esperando al conductor...',
+      loadingMap: 'Cargando mapa...',
+      vehicleInfo: 'Info del vehículo',
+      numberPlate: 'Matrícula',
+      vehicleType: 'Tipo de vehículo',
+      speed: 'Velocidad',
+      eta: 'Llegada',
+      pickup: 'Recogida',
+      destination: 'Destino',
+      callDriver: 'Llamar al conductor',
+      regNo: 'Matrícula',
+      licenseNo: 'No de licencia',
+      carModel: 'Marca de coche',
+      message: 'Mensaje',
+      centerOnCar: 'Centrar en el coche',
+      pickupLocation: 'Lugar de recogida',
+      dropoffLocation: 'Destino'
+    }
+  }[lang] || {
+    back: 'Attende til bestilling',
+    tracking: 'SPORING',
+    status: 'Status',
+    driverAccepted: 'Sjåfør godkjend! Køyretøy er på veg',
+    inProgress: 'Passasjer i bil! Køyrer til destinasjon',
+    completed: 'Tur fullført',
+    waiting: 'Ventar på sjåfør',
+    loadingMap: 'Lastar kart...',
+    vehicleInfo: 'Køyretøyinfo',
+    numberPlate: 'Skiltnummer',
+    vehicleType: 'Biltype',
+    speed: 'Fart',
+    eta: 'Ankomst',
+    pickup: 'Hentestad',
+    destination: 'Destinasjon',
+    callDriver: 'Ring sjåfør',
+    regNo: 'Reg.nr',
+    licenseNo: 'Løyvenr',
+    carModel: 'Bilmerke',
+    message: 'Melding',
+    centerOnCar: 'Sentrer på bil'
+  };
+
+  const [status, setStatus] = useState<BookingStatus | null>(null);
+  const [location, setLocation] = useState<VehicleLocation | null>(null);
+  const [etaDropoff, setEtaDropoff] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
+  const vehicleMarkerRef = useRef<any>(null);
+  const pickupMarkerRef = useRef<any>(null);
+  const destMarkerRef = useRef<any>(null);
 
-  // Fetch actual route from OSRM
+  // Initialize map (using OpenStreetMap/Leaflet via CDN)
   useEffect(() => {
-    const fetchRoute = async () => {
-      try {
-        // Grevlesvegen 22 and Uttrågata 19 in Voss, Norway
-        const startLat = 60.6591760;
-        const startLon = 6.4209200;
-        const endLat = 60.6281914;
-        const endLon = 6.4222631;
+    if (typeof window === 'undefined') return;
 
-        const response = await fetch(
-          `https://router.project-osrm.org/route/v1/car/${startLon},${startLat};${endLon},${endLat}?geometries=geojson&overview=full`
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.routes && data.routes[0]) {
-            const coords = data.routes[0].geometry.coordinates.map(
-              (coord: [number, number]) => [coord[1], coord[0]] // Convert from [lon, lat] to [lat, lon]
-            );
-            setRouteCoordinates(coords);
-          }
-        }
-      } catch (error) {
-        console.log('Route fetch failed, using fallback route');
-      }
-    };
-
-    fetchRoute();
-  }, []);
-
-  // Simulate taxi movement along route
-  useEffect(() => {
-    let frame = 0;
-    const interval = setInterval(() => {
-      frame++;
-      const cycleLength = 300; // Total frames for one complete journey
-      const progress = (frame % cycleLength) / cycleLength; // 0 to 1
-
-      // Interpolate along the entire route
-      const totalDistance = routeCoordinates.length - 1;
-      const distanceAlongRoute = progress * totalDistance;
-      const segmentIndex = Math.floor(distanceAlongRoute);
-      const segmentProgress = distanceAlongRoute - segmentIndex;
-
-      // Clamp to valid range
-      const currentSegmentIndex = Math.min(segmentIndex, routeCoordinates.length - 2);
-      const nextSegmentIndex = Math.min(currentSegmentIndex + 1, routeCoordinates.length - 1);
-
-      const [currentLat, currentLon] = routeCoordinates[currentSegmentIndex];
-      const [nextLat, nextLon] = routeCoordinates[nextSegmentIndex];
-
-      // Interpolate position
-      const interpolatedLat = currentLat + (nextLat - currentLat) * segmentProgress;
-      const interpolatedLon = currentLon + (nextLon - currentLon) * segmentProgress;
-
-      // Calculate direction based on movement
-      const dLat = nextLat - currentLat;
-      const dLon = nextLon - currentLon;
-      const direction = Math.atan2(dLon, dLat) * (180 / Math.PI);
-
-      setLocation({
-        lat: interpolatedLat,
-        lon: interpolatedLon,
-        speed: Math.sin(progress * Math.PI) * 40, // 0-40 km/h
-        direction: direction,
-      });
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [routeCoordinates]);
-
-  // Initialize map via CDN
-  useEffect(() => {
     // Load Leaflet CSS
     if (!document.querySelector('link[href*="leaflet.css"]')) {
       const link = document.createElement('link');
@@ -118,92 +227,141 @@ export default function TrackingDemo() {
       const L = (window as any).L;
       if (!mapContainerRef.current) return;
 
-      // Create map centered between the two locations
-      const map = L.map(mapContainerRef.current).setView([60.6437, 6.4216], 13);
+      // Initialize map
+      const map = L.map(mapContainerRef.current).setView([60.5627, 6.4227], 13);
       mapRef.current = map;
 
       // Add OpenStreetMap tiles
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
+        attribution: '© OpenStreetMap contributors',
         maxZoom: 19,
       }).addTo(map);
-
-      // Custom pickup marker (house + "Henting")
-      const pickupMarker = L.divIcon({
-        html: `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center;">
-            <div style="font-size: 28px; line-height: 1;">🏠</div>
-            <div style="background: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #10b981; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Henting</div>
-          </div>
-        `,
-        iconSize: [50, 50],
-        iconAnchor: [25, 45],
-        popupAnchor: [0, -45],
-        className: '',
-      });
-      L.marker([60.6591760, 6.4209200], { title: 'Pickup Point', icon: pickupMarker })
-        .addTo(map)
-        .bindPopup('<b>Grevlesvegen 22</b><br/>Hentested');
-
-      // Custom dropoff marker (house + "Levering")
-      const dropoffMarker = L.divIcon({
-        html: `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center;">
-            <div style="font-size: 28px; line-height: 1;">🏠</div>
-            <div style="background: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; color: #ef4444; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Levering</div>
-          </div>
-        `,
-        iconSize: [50, 50],
-        iconAnchor: [25, 45],
-        popupAnchor: [0, -45],
-        className: '',
-      });
-      L.marker([60.6281914, 6.4222631], { title: 'Dropoff Point', icon: dropoffMarker })
-        .addTo(map)
-        .bindPopup('<b>Uttrågata 19</b><br/>Destinasjon');
     }
   }, []);
 
-
-  // Update taxi marker
+  // Poll for updates
   useEffect(() => {
+    let frame = 0;
+    const interval = setInterval(() => {
+      frame++;
+      const cycleLength = 30; // Shorter cycle for demo
+      const progress = (frame % cycleLength) / cycleLength; // 0 to 1
+      
+      const startLat = 60.659176;
+      const startLon = 6.42092;
+      const endLat = 60.6281914;
+      const endLon = 6.4222631;
+      
+      const interpolatedLat = startLat + (endLat - startLat) * progress;
+      const interpolatedLon = startLon + (endLon - startLon) * progress;
+
+      const demoStatus = {
+        found: true,
+        status: 'accepted' as const,
+        statusText: 'Sjåfør godkjend! Køyretøy er på veg',
+        booking: {
+          fromStreet: 'Grevlesvegen 22',
+          toStreet: 'Uttrågata 19',
+          latitude: '60.659176',
+          longitude: '6.42092'
+        }
+      };
+      
+      const demoLocation = {
+        pickupLat: startLat,
+        pickupLon: startLon,
+        destLat: endLat,
+        destLon: endLon,
+        vehicleLat: interpolatedLat,
+        vehicleLon: interpolatedLon,
+        pickupAddress: 'Grevlesvegen 22',
+        destAddress: 'Uttrågata 19',
+        regNo: 'SV 12345',
+        licenseNo: '123',
+        vehicleType: 'Minibus',
+        gpsVelocity: 450,
+        eta: Math.max(1, Math.round((1 - progress) * 10))
+      };
+
+      setStatus(demoStatus);
+      setLocation(demoLocation);
+      setLoading(false);
+    }, 1000); // Update every 1 second
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const updateDestMarker = (lat: number, lon: number) => {
+    if (!mapRef.current) return;
     const L = (window as any).L;
-    if (!mapRef.current || !L) return;
+    if (!L) return;
 
-    // Remove old marker
-    if (markerRef.current) {
-      mapRef.current.removeLayer(markerRef.current);
+    if (!destMarkerRef.current) {
+      // Create a red icon for destination using emoji
+      const redIcon = L.divIcon({
+        html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #ef4444;">📍</div>`,
+        className: 'custom-dest-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30],
+      });
+
+      destMarkerRef.current = L.marker([lat, lon], {
+        icon: redIcon,
+        title: t.dropoffLocation,
+        opacity: 0.8,
+      }).addTo(mapRef.current).bindPopup(`<b>${t.dropoffLocation}</b>`);
+    } else {
+      destMarkerRef.current.setLatLng([lat, lon]);
     }
+  };
 
-    // Custom taxi marker with car and direction arrow
+  const updateVehicleMarker = (lat: number, lon: number, direction: number, label: string) => {
+    if (!mapRef.current) return;
+
+    const L = (window as any).L;
+    if (!L) return;
+
+    // Create custom taxi icon
     const taxiIcon = L.divIcon({
-      html: `
-        <div style="display: flex; align-items: center; gap: 4px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
-          <div style="font-size: 28px;">🚕</div>
-          <div style="font-size: 20px; transform: rotate(${location.direction}deg);">→</div>
-        </div>
-      `,
-      iconSize: [60, 32],
-      iconAnchor: [30, 16],
-      popupAnchor: [0, -16],
-      className: '',
+      html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #f59e0b;">🚕</div>`,
+      className: 'custom-taxi-icon',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
     });
 
-    // Add taxi marker
-    const marker = L.marker([location.lat, location.lon], {
-      title: 'R166 - Taxi',
-      icon: taxiIcon,
-    })
-      .addTo(mapRef.current)
-      .bindPopup(
-        `<b>R166</b><br/>Speed: ${Math.round(location.speed)} km/h<br/>Driver: Ole Hansen`
-      );
+    if (vehicleMarkerRef.current) {
+      // Update existing marker
+      vehicleMarkerRef.current.setLatLng([lat, lon]);
+      vehicleMarkerRef.current.setIcon(taxiIcon);
+    } else {
+      // Add new marker
+      vehicleMarkerRef.current = L.marker([lat, lon], {
+        icon: taxiIcon,
+        title: label,
+        opacity: 1,
+        zIndexOffset: 1000 // Ensure car is above pickup pin
+      })
+        .addTo(mapRef.current)
+        .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
+    }
+  };
 
-    markerRef.current = marker;
-
-    // Center map on taxi
-    mapRef.current.setView([location.lat, location.lon], 15);
-  }, [location]);
+  if (!bookingNumber) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-400 mb-4">Booking ID not found</div>
+          <button
+            onClick={() => router.push('/')}
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -212,22 +370,35 @@ export default function TrackingDemo() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link
-                href="/"
-                className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+              <button
+                onClick={() => router.push('/')}
+                className="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
-                <ArrowLeft className="w-5 h-5 text-white" />
-              </Link>
+                <div className="p-2 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                  <ArrowLeft className="w-4 h-4" />
+                </div>
+                <span className="font-medium">{t.back}</span>
+              </button>
               <div>
-                <div className="text-xs text-slate-400 uppercase">Demo Booking</div>
-                <div className="text-lg font-mono text-blue-400">BEM260</div>
+                <div className="text-xs text-slate-400 uppercase">{t.tracking}</div>
+                <div className="text-lg font-mono text-blue-400">{bookingNumber}</div>
               </div>
             </div>
 
             {/* Status Badge */}
-            <div className="px-4 py-2 rounded-full text-sm font-semibold bg-green-500/20 text-green-400">
-              🚗 On the way
-            </div>
+            {status && (
+              <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                status.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
+                status.status === 'inProgress' ? 'bg-blue-500/20 text-blue-400' :
+                status.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
+                'bg-yellow-500/20 text-yellow-400'
+              }`}>
+                {status.status === 'accepted' && t.driverAccepted}
+                {status.status === 'inProgress' && t.inProgress}
+                {status.status === 'completed' && t.completed}
+                {status.status === 'pending' && t.waiting}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -235,87 +406,148 @@ export default function TrackingDemo() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 relative">
             <div
               ref={mapContainerRef}
-              className="w-full h-[400px] md:h-[600px] rounded-2xl bg-slate-800 border border-slate-700/50 overflow-hidden shadow-2xl"
-            />
-            <div className="mt-4 p-4 bg-slate-900/50 rounded-xl border border-slate-700/50 text-sm text-slate-300">
-              <div className="text-xs text-slate-400 mb-2">🗺️ Live Tracking Demo</div>
-              <p>
-                🟢 Green = Pickup (Voss Stasjon) | 🔴 Red = Dropoff (Voss Sjukehus) | 🔵
-                Blue = Your Taxi (R166)
-              </p>
+              className="w-full h-[400px] md:h-[600px] rounded-2xl bg-slate-800 border border-slate-700/50 overflow-hidden relative z-0"
+              style={{ minHeight: '400px' }}
+            >
+              {loading && (
+                <div className="w-full h-full flex items-center justify-center bg-slate-900/50 absolute inset-0 z-50">
+                  <div className="text-slate-400">{t.loadingMap}</div>
+                </div>
+              )}
             </div>
+            {location?.vehicleLat && location?.vehicleLon && (
+              <button 
+                onClick={() => {
+                  if (mapRef.current && location.vehicleLat && location.vehicleLon) {
+                    mapRef.current.setView([location.vehicleLat, location.vehicleLon], 15);
+                  }
+                }}
+                className="absolute bottom-4 right-4 z-10 bg-slate-900/80 backdrop-blur border border-slate-700 text-slate-200 p-3 rounded-xl shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center group"
+                title={t.centerOnCar}
+              >
+                <Car className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
+              </button>
+            )}
           </div>
 
           {/* Info Panel */}
           <div className="space-y-4">
             {/* Vehicle Info */}
-            <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl shadow-xl">
-              <div className="text-xs text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <Navigation className="w-4 h-4 text-blue-400" />
-                Vehicle Info
+            {location && status?.status === 'accepted' && (
+              <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl">
+                <div className="text-xs text-slate-400 uppercase tracking-wider mb-4">
+                  {t.vehicleInfo}
+                </div>
+                <div className="space-y-3">
+                  {location.licenseNo && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.licenseNo}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {location.licenseNo}
+                      </div>
+                    </div>
+                  )}
+                  {location.regNo && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.regNo}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {location.regNo}
+                      </div>
+                    </div>
+                  )}
+                  {location.licenseNo && getCarDetails(location.licenseNo) && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.carModel}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {getCarDetails(location.licenseNo)?.model} ({getCarDetails(location.licenseNo)?.color})
+                      </div>
+                    </div>
+                  )}
+                  {location.vehicleType && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.vehicleType}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {location.vehicleType}
+                      </div>
+                    </div>
+                  )}
+                  {location.gpsVelocity !== undefined && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.speed}</div>
+                      <div className="text-lg font-semibold text-white">
+                        {Math.round(location.gpsVelocity / 10)} km/h
+                      </div>
+                    </div>
+                  )}
+                  {location.eta !== undefined && (
+                    <div>
+                      <div className="text-sm text-slate-400 mb-1">{t.eta}</div>
+                      <div className="text-2xl font-bold text-green-400">
+                        {location.eta} min
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="space-y-3">
-                <div>
-                  <div className="text-sm text-slate-400 mb-1">Number Plate</div>
-                  <div className="text-lg font-semibold text-white">R166</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-400 mb-1">Vehicle Type</div>
-                  <div className="text-lg font-semibold text-white">VW Crafter</div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-400 mb-1">Speed</div>
-                  <div className="text-lg font-semibold text-white">
-                    {Math.round(location.speed)} km/h
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-slate-400 mb-1">ETA</div>
-                  <div className="text-2xl font-bold text-green-400">3 min</div>
-                </div>
-              </div>
-            </div>
+            )}
 
 
-            {/* Locations */}
-            <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl shadow-xl space-y-4">
+            {/* Pickup/Dropoff */}
+            <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl space-y-4">
               <div>
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-green-400" />
-                  Pickup
+                  {t.pickup}
                 </div>
-                <div className="text-sm text-slate-300">Grevlesvegen 22</div>
-                <div className="text-xs text-slate-500 mt-1">60.6592, 6.4209</div>
+                {location?.pickupAddress ? (
+                  <div className="text-sm font-medium text-white">
+                    {location.pickupAddress}
+                  </div>
+                ) : location?.pickupLat && location?.pickupLon ? (
+                  <div className="text-sm text-slate-300">
+                    {location.pickupLat.toFixed(4)}, {location.pickupLon.toFixed(4)}
+                  </div>
+                ) : null}
               </div>
-              <div className="border-t border-slate-700/50 pt-4">
+              <div>
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <MapPin className="w-3 h-3 text-red-400" />
-                  Destination
+                  {t.destination}
                 </div>
-                <div className="text-sm text-slate-300">Uttrågata 19</div>
-                <div className="text-xs text-slate-500 mt-1">60.6282, 6.4223</div>
+                {location?.destAddress ? (
+                  <div className="text-sm font-medium text-white">
+                    {location.destAddress}
+                  </div>
+                ) : location?.destLat && location?.destLon ? (
+                  <div className="text-sm text-slate-300">
+                    {location.destLat.toFixed(4)}, {location.destLon.toFixed(4)}
+                  </div>
+                ) : null}
               </div>
+              {etaDropoff !== null && (
+                <div className="pt-2 border-t border-slate-700/50 mt-4">
+                  <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">
+                    {lang === 'en' ? 'Est. Time to Dropoff' : 'Est. tid til levering'}
+                  </div>
+                  <div className="text-xl font-bold text-blue-400">
+                    ~{etaDropoff} min
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Actions */}
             <div className="space-y-2">
-              <button className="w-full px-4 py-3 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/50 font-semibold hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2">
+              <a 
+                href={`tel:${location?.activeVehicleMobile ? '+47' + location.activeVehicleMobile.replace(/\s+/g, '') : '+4756511340'}`}
+                className="w-full px-4 py-3 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/50 font-semibold hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2"
+              >
                 <Phone className="w-4 h-4" />
-                Call Driver
-              </button>
-              <button className="w-full px-4 py-3 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/50 font-semibold hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2">
-                <MessageSquare className="w-4 h-4" />
-                Message
-              </button>
-            </div>
-
-            {/* Status */}
-            <div className="rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/30 p-4 text-center">
-              <div className="text-sm font-semibold text-green-400">✅ Driver Accepted</div>
-              <div className="text-xs text-slate-400 mt-1">ETA: 3 minutes</div>
+                {t.callDriver} ({location?.activeVehicleMobile || '+47 56 51 13 40'})
+              </a>
             </div>
           </div>
         </div>
