@@ -85,6 +85,7 @@ export default function TrackingPage() {
 
   const [status, setStatus] = useState<BookingStatus | null>(null);
   const [location, setLocation] = useState<VehicleLocation | null>(null);
+  const [etaDropoff, setEtaDropoff] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -212,6 +213,20 @@ export default function TrackingPage() {
     const interval = setInterval(fetchData, 3000); // Update every 3 seconds
     return () => clearInterval(interval);
   }, [bookingNumber]);
+
+  // Fetch OSRM ETA to dropoff
+  useEffect(() => {
+    if (location?.vehicleLat && location?.vehicleLon && location?.destLat && location?.destLon) {
+      fetch(`https://router.project-osrm.org/route/v1/driving/${location.vehicleLon},${location.vehicleLat};${location.destLon},${location.destLat}?overview=false`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+            setEtaDropoff(Math.ceil(data.routes[0].duration / 60)); // duration in minutes
+          }
+        })
+        .catch(err => console.error("Failed to fetch OSRM ETA:", err));
+    }
+  }, [location?.vehicleLat, location?.vehicleLon, location?.destLat, location?.destLon]);
 
   const updatePickupMarker = (lat: number, lon: number) => {
     if (!mapRef.current) return;
@@ -446,6 +461,16 @@ export default function TrackingPage() {
                   </div>
                 )}
               </div>
+              {etaDropoff !== null && (
+                <div className="pt-2 border-t border-slate-700/50 mt-4">
+                  <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">
+                    {lang === 'en' ? 'Est. Time to Dropoff' : 'Est. tid til levering'}
+                  </div>
+                  <div className="text-xl font-bold text-blue-400">
+                    ~{etaDropoff} min
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Actions */}
