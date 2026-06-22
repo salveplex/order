@@ -72,8 +72,8 @@ export async function GET(request: NextRequest) {
       const data = await bookingRes.json();
       const booking = Array.isArray(data) ? data[0] : data;
       if (booking) {
-        if (booking.latitude) vehicleLat = booking.latitude;
-        if (booking.longitude) vehicleLon = booking.longitude;
+        if (booking.latitude) pickupLat = booking.latitude;
+        if (booking.longitude) pickupLon = booking.longitude;
         if (booking.toLatitude) destLat = booking.toLatitude;
         if (booking.toLongitude) destLon = booking.toLongitude;
         if (booking.vehicleNo) assignedVehicleNo = String(booking.vehicleNo);

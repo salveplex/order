@@ -330,9 +330,19 @@ export default function TrackingPage() {
     if (!L) return;
 
     if (!pickupMarkerRef.current) {
+      const greenIcon = L.divIcon({
+        html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #22c55e;">🟢</div>`,
+        className: 'custom-pickup-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30],
+      });
+
       pickupMarkerRef.current = L.marker([lat, lon], {
+        icon: greenIcon,
         title: 'Hentested',
         opacity: 0.8,
+        zIndexOffset: 500
       }).addTo(mapRef.current).bindPopup('<b>Hentested</b>');
     } else {
       pickupMarkerRef.current.setLatLng([lat, lon]);
