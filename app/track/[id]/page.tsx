@@ -41,27 +41,29 @@ export default function TrackingPage() {
 
   const t = {
     nn: {
-      back: 'Tilbake til bestilling',
-      tracking: 'Turoversikt',
+      back: 'Attende til bestilling',
+      tracking: 'SPORING',
       status: 'Status',
-      driverAccepted: '🚗 Sjåfør akseptert! Kjøretøy er på vei',
-      inProgress: '⏳ Tur i gang',
-      completed: '✅ Tur fullført',
-      waiting: '⏰ Venter på sjåfør...',
-      loadingMap: 'Laster kart...',
-      vehicleInfo: 'Kjøretøyinfo',
+      driverAccepted: 'Sjåfør godkjend! Køyretøy er på veg',
+      inProgress: 'Passasjer i bil! Køyrer til destinasjon',
+      completed: 'Tur fullført',
+      waiting: 'Ventar på sjåfør',
+      loadingMap: 'Lastar kart...',
+      vehicleInfo: 'Køyretøyinfo',
       numberPlate: 'Skiltnummer',
       vehicleType: 'Biltype',
       speed: 'Fart',
       eta: 'Ankomst',
-      pickup: 'Hentested',
+      pickup: 'Hentestad',
       destination: 'Destinasjon',
       callDriver: 'Ring sjåfør',
       regNo: 'Reg.nr',
       licenseNo: 'Løyvenr',
       carModel: 'Bilmerke',
       message: 'Melding',
-      centerOnCar: 'Sentrer på bil'
+      centerOnCar: 'Sentrer på bil',
+      pickupLocation: 'Hentestad',
+      dropoffLocation: 'Destinasjon'
     },
     en: {
       back: 'Back to Booking',
@@ -84,7 +86,9 @@ export default function TrackingPage() {
       licenseNo: 'License No',
       carModel: 'Car Model',
       message: 'Message',
-      centerOnCar: 'Center on car'
+      centerOnCar: 'Center on car',
+      pickupLocation: 'Pickup Location',
+      dropoffLocation: 'Destination'
     },
     de: {
       back: 'Zurück zur Buchung',
@@ -107,7 +111,9 @@ export default function TrackingPage() {
       licenseNo: 'Konzessionsnummer',
       carModel: 'Automarke',
       message: 'Nachricht',
-      centerOnCar: 'Auf Auto zentrieren'
+      centerOnCar: 'Auf Auto zentrieren',
+      pickupLocation: 'Abholort',
+      dropoffLocation: 'Zielort'
     },
     fr: {
       back: 'Retour à la réservation',
@@ -130,7 +136,9 @@ export default function TrackingPage() {
       licenseNo: 'No de licence',
       carModel: 'Marque de voiture',
       message: 'Message',
-      centerOnCar: 'Centrer sur la voiture'
+      centerOnCar: 'Centrer sur la voiture',
+      pickupLocation: 'Lieu de prise en charge',
+      dropoffLocation: 'Destination'
     },
     es: {
       back: 'Volver a la reserva',
@@ -153,23 +161,25 @@ export default function TrackingPage() {
       licenseNo: 'No de licencia',
       carModel: 'Marca de coche',
       message: 'Mensaje',
-      centerOnCar: 'Centrar en el coche'
+      centerOnCar: 'Centrar en el coche',
+      pickupLocation: 'Lugar de recogida',
+      dropoffLocation: 'Destino'
     }
   }[lang] || {
-    back: 'Tilbake til bestilling',
-    tracking: 'Turoversikt',
+    back: 'Attende til bestilling',
+    tracking: 'SPORING',
     status: 'Status',
-    driverAccepted: '🚗 Sjåfør akseptert! Kjøretøy er på vei',
-    inProgress: '⏳ Tur i gang',
-    completed: '✅ Tur fullført',
-    waiting: '⏰ Venter på sjåfør...',
-    loadingMap: 'Laster kart...',
-    vehicleInfo: 'Kjøretøyinfo',
+    driverAccepted: 'Sjåfør godkjend! Køyretøy er på veg',
+    inProgress: 'Passasjer i bil! Køyrer til destinasjon',
+    completed: 'Tur fullført',
+    waiting: 'Ventar på sjåfør',
+    loadingMap: 'Lastar kart...',
+    vehicleInfo: 'Køyretøyinfo',
     numberPlate: 'Skiltnummer',
     vehicleType: 'Biltype',
     speed: 'Fart',
     eta: 'Ankomst',
-    pickup: 'Hentested',
+    pickup: 'Hentestad',
     destination: 'Destinasjon',
     callDriver: 'Ring sjåfør',
     regNo: 'Reg.nr',
@@ -340,10 +350,10 @@ export default function TrackingPage() {
 
       pickupMarkerRef.current = L.marker([lat, lon], {
         icon: greenIcon,
-        title: 'Hentested',
+        title: t.pickupLocation,
         opacity: 0.8,
         zIndexOffset: 500
-      }).addTo(mapRef.current).bindPopup('<b>Hentested</b>');
+      }).addTo(mapRef.current).bindPopup(`<b>${t.pickupLocation}</b>`);
     } else {
       pickupMarkerRef.current.setLatLng([lat, lon]);
     }
@@ -366,9 +376,9 @@ export default function TrackingPage() {
 
       destMarkerRef.current = L.marker([lat, lon], {
         icon: redIcon,
-        title: 'Destinasjon',
+        title: t.dropoffLocation,
         opacity: 0.8,
-      }).addTo(mapRef.current).bindPopup('<b>Destinasjon</b>');
+      }).addTo(mapRef.current).bindPopup(`<b>${t.dropoffLocation}</b>`);
     } else {
       destMarkerRef.current.setLatLng([lat, lon]);
     }
