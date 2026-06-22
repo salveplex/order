@@ -135,6 +135,8 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
   
   if (statusLetter === 'l' || booking.tripStatusCode === 2) {
     genericStatus = 'completed';
+  } else if (msgOut.includes('POB') || msgOut.includes('ANKOMMET') || msgOut.includes('OPPTATT') || msgOut.includes('I BIL')) {
+    genericStatus = 'inProgress';
   } else if (statusLetter === 'I' || booking.vehicleNo || booking.tripStatusCode === 1) {
     genericStatus = 'accepted';
   }
