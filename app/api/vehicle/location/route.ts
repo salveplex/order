@@ -72,8 +72,8 @@ export async function GET(request: NextRequest) {
       const data = await bookingRes.json();
       const booking = Array.isArray(data) ? data[0] : data;
       if (booking) {
-        if (booking.latitude) pickupLat = booking.latitude;
-        if (booking.longitude) pickupLon = booking.longitude;
+        if (booking.latitude) vehicleLat = booking.latitude;
+        if (booking.longitude) vehicleLon = booking.longitude;
         if (booking.toLatitude) destLat = booking.toLatitude;
         if (booking.toLongitude) destLon = booking.toLongitude;
         if (booking.vehicleNo) assignedVehicleNo = String(booking.vehicleNo);
@@ -127,12 +127,12 @@ export async function GET(request: NextRequest) {
 
     // Return combined vehicle location data
     return NextResponse.json({
-      pickupLat: vehicle.pickupLat || pickupLat,
-      pickupLon: vehicle.pickupLon || pickupLon,
-      destLat: vehicle.destLat || destLat,
-      destLon: vehicle.destLon || destLon,
-      vehicleLat: vehicle.gpsLat || vehicle.latitude || vehicleLat,
-      vehicleLon: vehicle.gpsLon || vehicle.longitude || vehicleLon,
+      pickupLat: vehicle.pickupLat || pickupLat || null,
+      pickupLon: vehicle.pickupLon || pickupLon || null,
+      destLat: vehicle.destLat || destLat || null,
+      destLon: vehicle.destLon || destLon || null,
+      vehicleLat: vehicleLat || null,
+      vehicleLon: vehicleLon || null,
       driverName: vehicle.driverName,
       licenseNo: vehicle.licenseNo || assignedVehicleNo,
       regNo: vehicle.regNo,
