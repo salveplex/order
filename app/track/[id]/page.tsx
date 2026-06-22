@@ -205,7 +205,7 @@ export default function TrackingPage() {
 
     // Create custom taxi icon
     const taxiIcon = L.divIcon({
-      html: `<div style="transform: rotate(${direction}deg); font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #f59e0b;">🚕</div>`,
+      html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #f59e0b;">🚕</div>`,
       className: 'custom-taxi-icon',
       iconSize: [40, 40],
       iconAnchor: [20, 20],
