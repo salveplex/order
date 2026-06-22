@@ -1,6 +1,3 @@
-// Automatically updated car definitions for Voss Taxi
-// These models and colors map to the licenseNo (Løyvenummer)
-
 export const carModels: Record<string, { model: string, color: string }> = {
   "VE 2133": { "model": "VOLVO EX90", "color": "SVART" },
   "R 164": { "model": "NIO ES8", "color": "MØRK BLÅ" },
@@ -17,7 +14,11 @@ export const carModels: Record<string, { model: string, color: string }> = {
   "R 166": { "model": "VOLKSWAGEN CRAFTER", "color": "HVIT" },
   "R 161": { "model": "VOLVO XC 40", "color": "SVART" },
   "R 844": { "model": "MERCEDES SPRINTER", "color": "MØRK BLÅ" },
-  "VE 2065": { "model": "TESLA", "color": "KVIT" }
+  "VE 2065": { "model": "TESLA", "color": "KVIT" },
+  "VT 2624": { "model": "SPRINTER", "color": "GRÅ" },
+  "R 40": { "model": "TESLA", "color": "SVART" },
+  "I 34": { "model": "MERCEDES", "color": "KVIT" },
+  "VE 2614": { "model": "VW CRAFTER", "color": "GRÅ" },
 };
 
 export function getCarDetails(licenseNo: string | null | undefined) {

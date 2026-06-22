@@ -29,6 +29,8 @@ interface VehicleLocation {
   activeTrip?: string;
   vehicleType?: string;
   regNo?: string;
+  carModel?: string;
+  carColor?: string;
   eta?: number; // minutes
 }
 

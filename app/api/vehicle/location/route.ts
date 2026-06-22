@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getCarDetails } from '@/lib/cars';
 
 const API_BASE = 'https://api.taxi4u.cab';
 const API_USERNAME = process.env.TAXI4U_USERNAME || '';
@@ -157,6 +158,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    const carDetails = getCarDetails(vehicle.licenseNo || assignedVehicleNo);
+
     // Return combined vehicle location data
     return NextResponse.json({
       pickupLat: vehicle.pickupLat || pickupLat || null,
@@ -174,6 +177,8 @@ export async function GET(request: NextRequest) {
       gpsVelocity: vehicle.gpsVelocity || 0,
       gpsDirection: vehicle.gpsDirection || 0,
       activeTrip: vehicle.activeTrip || bookRef,
+      carModel: carDetails?.model || null,
+      carColor: carDetails?.color || null,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
