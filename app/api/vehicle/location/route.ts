@@ -51,40 +51,63 @@ export async function GET(request: NextRequest) {
     // Get auth token
     const authToken = await getAuthToken();
 
-    // Fetch active vehicles list to find the one with this booking
+    // 1. Fetch booking to get exact latitude/longitude and vehicleNo
+    const bookingParams = new URLSearchParams();
+    bookingParams.append('bookRefs', bookRef);
+    bookingParams.append('centralCode', centralCode);
+
+    const bookingRes = await fetch(`${API_BASE}/api/v2/book?${bookingParams.toString()}`, {
+      headers: { 'Authorization': `Bearer ${authToken}` },
+    });
+
+    let bookingLat = 60.5627;
+    let bookingLon = 6.4227;
+    let assignedVehicleNo: string | null = null;
+
+    if (bookingRes.ok) {
+      const data = await bookingRes.json();
+      const booking = Array.isArray(data) ? data[0] : data;
+      if (booking) {
+        if (booking.latitude) bookingLat = booking.latitude;
+        if (booking.longitude) bookingLon = booking.longitude;
+        if (booking.vehicleNo) assignedVehicleNo = String(booking.vehicleNo);
+      }
+    }
+
+    // 2. Fetch active vehicles list to get extended details (speed, direction)
     const vehicleResponse = await fetch(
       `${API_BASE}/api/vehicle?centralCode=${encodeURIComponent(centralCode)}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-        },
-      }
+      { headers: { 'Authorization': `Bearer ${authToken}` } }
     );
 
     if (!vehicleResponse.ok) {
-      console.error('Vehicle API error:', vehicleResponse.status);
-      return NextResponse.json(
-        { error: 'Failed to fetch vehicle information' },
-        { status: 500 }
-      );
+      // If vehicle list fails, at least return the coordinates from the booking
+      return NextResponse.json({
+        pickupLat: bookingLat,
+        pickupLon: bookingLon,
+        destLat: 60.5637,
+        destLon: 6.4189,
+        activeTrip: bookRef,
+        licenseNo: assignedVehicleNo,
+      });
     }
 
     const vehicles = await vehicleResponse.json();
 
-    // Find vehicle with matching activeTrip
+    // Find vehicle with matching activeTrip OR matching assignedVehicleNo
     const vehicle = vehicles.find(
-      (v: any) => v.activeTrip === bookRef
+      (v: any) => v.activeTrip === bookRef || (assignedVehicleNo && (String(v.licenseNo) === assignedVehicleNo || String(v.regNo) === assignedVehicleNo))
     );
 
     if (!vehicle) {
-      // Return empty location data if vehicle not found yet
+      // Return booking coordinates if vehicle not found in active list
       return NextResponse.json({
-        pickupLat: 60.5627, // Default to Voss
-        pickupLon: 6.4227,
+        pickupLat: bookingLat,
+        pickupLon: bookingLon,
         destLat: 60.5637,
         destLon: 6.4189,
         driverName: null,
-        licenseNo: null,
+        licenseNo: assignedVehicleNo,
         regNo: null,
         gpsVelocity: 0,
         gpsDirection: 0,
@@ -92,18 +115,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Return vehicle location data
+    // Return combined vehicle location data
     return NextResponse.json({
-      pickupLat: vehicle.pickupLat || 60.5627,
-      pickupLon: vehicle.pickupLon || 6.4227,
+      pickupLat: vehicle.latitude || vehicle.pickupLat || bookingLat,
+      pickupLon: vehicle.longitude || vehicle.pickupLon || bookingLon,
       destLat: vehicle.destLat || 60.5637,
       destLon: vehicle.destLon || 6.4189,
       driverName: vehicle.driverName,
-      licenseNo: vehicle.licenseNo,
+      licenseNo: vehicle.licenseNo || assignedVehicleNo,
       regNo: vehicle.regNo,
       gpsVelocity: vehicle.gpsVelocity || 0,
       gpsDirection: vehicle.gpsDirection || 0,
-      activeTrip: vehicle.activeTrip,
+      activeTrip: vehicle.activeTrip || bookRef,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
