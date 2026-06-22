@@ -947,6 +947,17 @@ export default function BookingForm() {
                         </div>
                       )}
                     </div>
+                    {(bookingStatus.status === 'accepted' || bookingStatus.status === 'inProgress') && (
+                      <div className="pt-3">
+                        <a 
+                          href={`/track/${bookingStatus.bookingNumber}`}
+                          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors font-medium shadow-sm"
+                        >
+                          <MapPin className="w-5 h-5" />
+                          {language === 'en' ? 'Track taxi on map' : language === 'de' ? 'Taxi auf Karte verfolgen' : language === 'fr' ? 'Suivre le taxi sur la carte' : language === 'es' ? 'Rastrear taxi en el mapa' : 'Spor taxien på kartet'}
+                        </a>
+                      </div>
+                    )}
                   </div>
                 )}
 
