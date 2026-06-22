@@ -37,10 +37,10 @@ export default function TrackingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const bookingNumber = params.id as string;
-  const lang = (searchParams?.get('lang') as 'no' | 'en') || 'no';
+  const lang = (searchParams?.get('lang') as 'nn' | 'en' | 'de' | 'fr' | 'es') || 'nn';
 
   const t = {
-    no: {
+    nn: {
       back: 'Tilbake til bestilling',
       tracking: 'Turoversikt',
       status: 'Status',
@@ -83,8 +83,95 @@ export default function TrackingPage() {
       licenseNo: 'License No',
       carModel: 'Car Model',
       message: 'Message'
+    },
+    de: {
+      back: 'Zurück zur Buchung',
+      tracking: 'Fahrtübersicht',
+      status: 'Status',
+      driverAccepted: '🚗 Fahrer akzeptiert! Fahrzeug ist unterwegs',
+      inProgress: '⏳ Fahrt läuft',
+      completed: '✅ Fahrt beendet',
+      waiting: '⏰ Warten auf Fahrer...',
+      loadingMap: 'Karte wird geladen...',
+      vehicleInfo: 'Fahrzeuginfos',
+      numberPlate: 'Kennzeichen',
+      vehicleType: 'Fahrzeugtyp',
+      speed: 'Geschwindigkeit',
+      eta: 'Ankunft',
+      pickup: 'Abholung',
+      destination: 'Ziel',
+      callDriver: 'Fahrer anrufen',
+      regNo: 'Kennzeichen',
+      licenseNo: 'Konzessionsnummer',
+      carModel: 'Automarke',
+      message: 'Nachricht'
+    },
+    fr: {
+      back: 'Retour à la réservation',
+      tracking: 'Suivi du trajet',
+      status: 'Statut',
+      driverAccepted: '🚗 Chauffeur accepté ! Le véhicule est en route',
+      inProgress: '⏳ En cours',
+      completed: '✅ Terminé',
+      waiting: '⏰ En attente du chauffeur...',
+      loadingMap: 'Chargement de la carte...',
+      vehicleInfo: 'Infos véhicule',
+      numberPlate: 'Plaque d\'immatriculation',
+      vehicleType: 'Type de véhicule',
+      speed: 'Vitesse',
+      eta: 'Heure d\'arrivée',
+      pickup: 'Prise en charge',
+      destination: 'Destination',
+      callDriver: 'Appeler le chauffeur',
+      regNo: 'No d\'immatriculation',
+      licenseNo: 'No de licence',
+      carModel: 'Marque de voiture',
+      message: 'Message'
+    },
+    es: {
+      back: 'Volver a la reserva',
+      tracking: 'Seguimiento del viaje',
+      status: 'Estado',
+      driverAccepted: '🚗 ¡Conductor aceptado! El vehículo está en camino',
+      inProgress: '⏳ En curso',
+      completed: '✅ Completado',
+      waiting: '⏰ Esperando al conductor...',
+      loadingMap: 'Cargando mapa...',
+      vehicleInfo: 'Info del vehículo',
+      numberPlate: 'Matrícula',
+      vehicleType: 'Tipo de vehículo',
+      speed: 'Velocidad',
+      eta: 'Llegada',
+      pickup: 'Recogida',
+      destination: 'Destino',
+      callDriver: 'Llamar al conductor',
+      regNo: 'Matrícula',
+      licenseNo: 'No de licencia',
+      carModel: 'Marca de coche',
+      message: 'Mensaje'
     }
-  }[lang];
+  }[lang] || {
+    back: 'Tilbake til bestilling',
+    tracking: 'Turoversikt',
+    status: 'Status',
+    driverAccepted: '🚗 Sjåfør akseptert! Kjøretøy er på vei',
+    inProgress: '⏳ Tur i gang',
+    completed: '✅ Tur fullført',
+    waiting: '⏰ Venter på sjåfør...',
+    loadingMap: 'Laster kart...',
+    vehicleInfo: 'Kjøretøyinfo',
+    numberPlate: 'Skiltnummer',
+    vehicleType: 'Biltype',
+    speed: 'Fart',
+    eta: 'Ankomst',
+    pickup: 'Hentested',
+    destination: 'Destinasjon',
+    callDriver: 'Ring sjåfør',
+    regNo: 'Reg.nr',
+    licenseNo: 'Løyvenr',
+    carModel: 'Bilmerke',
+    message: 'Melding'
+  };
 
   const [status, setStatus] = useState<BookingStatus | null>(null);
   const [location, setLocation] = useState<VehicleLocation | null>(null);

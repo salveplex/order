@@ -950,7 +950,7 @@ export default function BookingForm() {
                     {(bookingStatus.status === 'accepted' || bookingStatus.status === 'inProgress') && (
                       <div className="pt-3">
                         <a 
-                          href={`/track/${bookingStatus.bookingNumber}`}
+                          href={`/track/${bookingStatus.bookingNumber}?lang=${language}`}
                           className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors font-medium shadow-sm"
                         >
                           <MapPin className="w-5 h-5" />
