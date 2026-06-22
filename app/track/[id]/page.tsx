@@ -20,6 +20,7 @@ interface VehicleLocation {
   vehicleLat?: number;
   vehicleLon?: number;
   driverName?: string;
+  activeVehicleMobile?: string;
   licenseNo?: string;
   gpsVelocity?: number;
   gpsDirection?: number;
@@ -476,11 +477,11 @@ export default function TrackingPage() {
             {/* Actions */}
             <div className="space-y-2">
               <a 
-                href="tel:+4756511340"
+                href={`tel:${location?.activeVehicleMobile ? '+47' + location.activeVehicleMobile.replace(/\s+/g, '') : '+4756511340'}`}
                 className="w-full px-4 py-3 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/50 font-semibold hover:bg-blue-500/30 transition-colors flex items-center justify-center gap-2"
               >
                 <Phone className="w-4 h-4" />
-                {t.callDriver} (+47 56 51 13 40)
+                {t.callDriver} ({location?.activeVehicleMobile || '+47 56 51 13 40'})
               </a>
             </div>
           </div>
