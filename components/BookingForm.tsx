@@ -711,7 +711,7 @@ export default function BookingForm() {
                         ).length;
 
                         return (
-                          <details key={group.id} className="bg-zinc-800/50  rounded-xl border border-gray-200  group overflow-hidden">
+                          <details key={group.id} className="bg-zinc-800/50 rounded-xl border border-zinc-700/50 group overflow-hidden">
                             <summary className="p-3.5 font-medium text-zinc-100  flex items-center justify-between cursor-pointer list-none select-none">
                               <div className="flex items-center gap-2">
                                 <span className="text-xl">{group.icon}</span>
@@ -724,7 +724,7 @@ export default function BookingForm() {
                               </div>
                               <span className="text-gray-400 transition-transform group-open:rotate-180 text-xs">▼</span>
                             </summary>
-                            <div className="p-3.5 pt-0 flex flex-wrap gap-2 border-t border-gray-200  mt-1">
+                            <div className="p-3.5 pt-3 flex flex-wrap gap-2 border-t border-zinc-700/50 mt-1">
                               {group.options.map((opt) => {
                                 const isSelected = opt.id === -1 ? formData.hasBike : formData.attributes.includes(opt.id);
                                 return (
@@ -735,7 +735,7 @@ export default function BookingForm() {
                                     className={`px-3 py-1.5 rounded-lg text-sm transition-colors border ${
                                       isSelected
                                         ? 'bg-amber-600 border-amber-600 text-white shadow-sm'
-                                        : 'bg-zinc-900  border-gray-200  text-zinc-300  hover:border-amber-400 :border-amber-500'
+                                        : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-amber-400 hover:text-amber-400'
                                     }`}
                                   >
                                     {opt.labels[language as keyof typeof opt.labels]}
