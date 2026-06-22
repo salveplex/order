@@ -17,6 +17,8 @@ interface VehicleLocation {
   pickupLon?: number;
   destLat?: number;
   destLon?: number;
+  vehicleLat?: number;
+  vehicleLon?: number;
   driverName?: string;
   licenseNo?: string;
   gpsVelocity?: number;
@@ -86,7 +88,8 @@ export default function TrackingPage() {
   const [loading, setLoading] = useState(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
+  const vehicleMarkerRef = useRef<any>(null);
+  const pickupMarkerRef = useRef<any>(null);
 
   // Initialize map (using OpenStreetMap/Leaflet via CDN)
   useEffect(() => {
@@ -148,14 +151,22 @@ export default function TrackingPage() {
           const locationData = await locationRes.json();
           setLocation(locationData);
 
-          // Update map marker
+          // Draw pickup location
           if (mapRef.current && locationData.pickupLat && locationData.pickupLon) {
-            updateMapMarker(
-              locationData.pickupLat,
-              locationData.pickupLon,
+            updatePickupMarker(locationData.pickupLat, locationData.pickupLon);
+          }
+
+          // Draw vehicle marker
+          if (mapRef.current && locationData.vehicleLat && locationData.vehicleLon) {
+            updateVehicleMarker(
+              locationData.vehicleLat,
+              locationData.vehicleLon,
               locationData.gpsDirection || 0,
               locationData.licenseNo || 'Taxi'
             );
+          } else if (mapRef.current && locationData.pickupLat && locationData.pickupLon && !vehicleMarkerRef.current) {
+             // Fallback: center map on pickup if no vehicle location
+             mapRef.current.setView([locationData.pickupLat, locationData.pickupLon], 13);
           }
         }
 
@@ -171,26 +182,50 @@ export default function TrackingPage() {
     return () => clearInterval(interval);
   }, [bookingNumber]);
 
-  const updateMapMarker = (lat: number, lon: number, direction: number, label: string) => {
+  const updatePickupMarker = (lat: number, lon: number) => {
+    if (!mapRef.current) return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (!pickupMarkerRef.current) {
+      pickupMarkerRef.current = L.marker([lat, lon], {
+        title: 'Hentested',
+        opacity: 0.8,
+      }).addTo(mapRef.current).bindPopup('<b>Hentested</b>');
+    } else {
+      pickupMarkerRef.current.setLatLng([lat, lon]);
+    }
+  };
+
+  const updateVehicleMarker = (lat: number, lon: number, direction: number, label: string) => {
     if (!mapRef.current) return;
 
     const L = (window as any).L;
     if (!L) return;
 
-    // Remove old marker
-    if (markerRef.current) {
-      mapRef.current.removeLayer(markerRef.current);
+    // Create custom taxi icon
+    const taxiIcon = L.divIcon({
+      html: `<div style="transform: rotate(${direction}deg); font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #f59e0b;">🚕</div>`,
+      className: 'custom-taxi-icon',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+    });
+
+    if (vehicleMarkerRef.current) {
+      // Update existing marker
+      vehicleMarkerRef.current.setLatLng([lat, lon]);
+      vehicleMarkerRef.current.setIcon(taxiIcon);
+    } else {
+      // Add new marker
+      vehicleMarkerRef.current = L.marker([lat, lon], {
+        icon: taxiIcon,
+        title: label,
+        opacity: 1,
+        zIndexOffset: 1000 // Ensure car is above pickup pin
+      })
+        .addTo(mapRef.current)
+        .bindPopup(`<b>${label}</b><br/>${Math.round(location?.gpsVelocity || 0)} km/h`);
     }
-
-    // Add new marker
-    const marker = L.marker([lat, lon], {
-      title: label,
-      opacity: 1,
-    })
-      .addTo(mapRef.current)
-      .bindPopup(`<b>${label}</b><br/>Moving at ${Math.round(location?.gpsVelocity || 0)} km/h`);
-
-    markerRef.current = marker;
 
     // Center map on car
     mapRef.current.setView([lat, lon], 15);

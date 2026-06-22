@@ -106,6 +106,8 @@ export async function GET(request: NextRequest) {
         pickupLon: bookingLon,
         destLat: 60.5637,
         destLon: 6.4189,
+        vehicleLat: null,
+        vehicleLon: null,
         driverName: null,
         licenseNo: assignedVehicleNo,
         regNo: null,
@@ -117,10 +119,12 @@ export async function GET(request: NextRequest) {
 
     // Return combined vehicle location data
     return NextResponse.json({
-      pickupLat: vehicle.latitude || vehicle.pickupLat || bookingLat,
-      pickupLon: vehicle.longitude || vehicle.pickupLon || bookingLon,
+      pickupLat: bookingLat,
+      pickupLon: bookingLon,
       destLat: vehicle.destLat || 60.5637,
       destLon: vehicle.destLon || 6.4189,
+      vehicleLat: vehicle.latitude || vehicle.pickupLat || null,
+      vehicleLon: vehicle.longitude || vehicle.pickupLon || null,
       driverName: vehicle.driverName,
       licenseNo: vehicle.licenseNo || assignedVehicleNo,
       regNo: vehicle.regNo,
