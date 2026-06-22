@@ -647,7 +647,7 @@ export default function BookingForm() {
                       value={formData.date}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2.5 rounded-lg border border-gray-300  bg-zinc-900  text-zinc-100  text-sm focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-500 transition-colors"
+                      className="soft-input w-full px-4 py-2.5"
                     />
                   </div>
 
@@ -770,7 +770,7 @@ export default function BookingForm() {
 
                   {/* Phone */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-zinc-300  mb-1.5">
+                    <label className="block text-sm font-medium text-zinc-300 mb-2">
                       {t.phone} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
