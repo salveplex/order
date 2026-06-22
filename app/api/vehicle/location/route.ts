@@ -60,16 +60,16 @@ export async function GET(request: NextRequest) {
       headers: { 'Authorization': `Bearer ${authToken}` },
     });
 
-    let bookingLat = 60.5627;
-    let bookingLon = 6.4227;
+    let vehicleLat: number | null = null;
+    let vehicleLon: number | null = null;
     let assignedVehicleNo: string | null = null;
 
     if (bookingRes.ok) {
       const data = await bookingRes.json();
       const booking = Array.isArray(data) ? data[0] : data;
       if (booking) {
-        if (booking.latitude) bookingLat = booking.latitude;
-        if (booking.longitude) bookingLon = booking.longitude;
+        if (booking.latitude) vehicleLat = booking.latitude;
+        if (booking.longitude) vehicleLon = booking.longitude;
         if (booking.vehicleNo) assignedVehicleNo = String(booking.vehicleNo);
       }
     }
@@ -102,12 +102,12 @@ export async function GET(request: NextRequest) {
     if (!vehicle) {
       // Return booking coordinates if vehicle not found in active list
       return NextResponse.json({
-        pickupLat: bookingLat,
-        pickupLon: bookingLon,
+        pickupLat: null,
+        pickupLon: null,
         destLat: 60.5637,
         destLon: 6.4189,
-        vehicleLat: null,
-        vehicleLon: null,
+        vehicleLat: vehicleLat,
+        vehicleLon: vehicleLon,
         driverName: null,
         licenseNo: assignedVehicleNo,
         regNo: null,
@@ -119,12 +119,12 @@ export async function GET(request: NextRequest) {
 
     // Return combined vehicle location data
     return NextResponse.json({
-      pickupLat: bookingLat,
-      pickupLon: bookingLon,
+      pickupLat: null,
+      pickupLon: null,
       destLat: vehicle.destLat || 60.5637,
       destLon: vehicle.destLon || 6.4189,
-      vehicleLat: vehicle.latitude || vehicle.pickupLat || null,
-      vehicleLon: vehicle.longitude || vehicle.pickupLon || null,
+      vehicleLat: vehicle.latitude || vehicle.pickupLat || vehicleLat,
+      vehicleLon: vehicle.longitude || vehicle.pickupLon || vehicleLon,
       driverName: vehicle.driverName,
       licenseNo: vehicle.licenseNo || assignedVehicleNo,
       regNo: vehicle.regNo,

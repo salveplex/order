@@ -224,7 +224,7 @@ export default function TrackingPage() {
         zIndexOffset: 1000 // Ensure car is above pickup pin
       })
         .addTo(mapRef.current)
-        .bindPopup(`<b>${label}</b><br/>${Math.round(location?.gpsVelocity || 0)} km/h`);
+        .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
     }
 
     // Center map on car
@@ -349,7 +349,7 @@ export default function TrackingPage() {
                     <div>
                       <div className="text-sm text-slate-400 mb-1">{t.speed}</div>
                       <div className="text-lg font-semibold text-white">
-                        {Math.round(location.gpsVelocity)} km/h
+                        {Math.round(location.gpsVelocity / 10)} km/h
                       </div>
                     </div>
                   )}
