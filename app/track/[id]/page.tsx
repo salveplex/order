@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, MapPin, Phone, MessageSquare } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, MessageSquare, Car } from 'lucide-react';
 import { getCarDetails } from '@/lib/cars';
 
 interface BookingStatus {
@@ -476,7 +476,7 @@ export default function TrackingPage() {
                 className="absolute bottom-4 right-4 z-10 bg-slate-900/80 backdrop-blur border border-slate-700 text-slate-200 p-3 rounded-xl shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center group"
                 title={t.centerOnCar}
               >
-                <MapPin className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
+                <Car className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
               </button>
             )}
           </div>
