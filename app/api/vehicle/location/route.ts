@@ -83,10 +83,12 @@ export async function GET(request: NextRequest) {
     if (!vehicleResponse.ok) {
       // If vehicle list fails, at least return the coordinates from the booking
       return NextResponse.json({
-        pickupLat: bookingLat,
-        pickupLon: bookingLon,
+        pickupLat: null,
+        pickupLon: null,
         destLat: 60.5637,
         destLon: 6.4189,
+        vehicleLat: vehicleLat,
+        vehicleLon: vehicleLon,
         activeTrip: bookRef,
         licenseNo: assignedVehicleNo,
       });
