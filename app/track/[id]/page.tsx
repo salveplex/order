@@ -60,7 +60,8 @@ export default function TrackingPage() {
       regNo: 'Reg.nr',
       licenseNo: 'Løyvenr',
       carModel: 'Bilmerke',
-      message: 'Melding'
+      message: 'Melding',
+      centerOnCar: 'Sentrer på bil'
     },
     en: {
       back: 'Back to Booking',
@@ -82,7 +83,8 @@ export default function TrackingPage() {
       regNo: 'Reg. No',
       licenseNo: 'License No',
       carModel: 'Car Model',
-      message: 'Message'
+      message: 'Message',
+      centerOnCar: 'Center on car'
     },
     de: {
       back: 'Zurück zur Buchung',
@@ -104,7 +106,8 @@ export default function TrackingPage() {
       regNo: 'Kennzeichen',
       licenseNo: 'Konzessionsnummer',
       carModel: 'Automarke',
-      message: 'Nachricht'
+      message: 'Nachricht',
+      centerOnCar: 'Auf Auto zentrieren'
     },
     fr: {
       back: 'Retour à la réservation',
@@ -126,7 +129,8 @@ export default function TrackingPage() {
       regNo: 'No d\'immatriculation',
       licenseNo: 'No de licence',
       carModel: 'Marque de voiture',
-      message: 'Message'
+      message: 'Message',
+      centerOnCar: 'Centrer sur la voiture'
     },
     es: {
       back: 'Volver a la reserva',
@@ -148,7 +152,8 @@ export default function TrackingPage() {
       regNo: 'Matrícula',
       licenseNo: 'No de licencia',
       carModel: 'Marca de coche',
-      message: 'Mensaje'
+      message: 'Mensaje',
+      centerOnCar: 'Centrar en el coche'
     }
   }[lang] || {
     back: 'Tilbake til bestilling',
@@ -170,7 +175,8 @@ export default function TrackingPage() {
     regNo: 'Reg.nr',
     licenseNo: 'Løyvenr',
     carModel: 'Bilmerke',
-    message: 'Melding'
+    message: 'Melding',
+    centerOnCar: 'Sentrer på bil'
   };
 
   const [status, setStatus] = useState<BookingStatus | null>(null);
@@ -387,9 +393,6 @@ export default function TrackingPage() {
         .addTo(mapRef.current)
         .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
     }
-
-    // Center map on car
-    mapRef.current.setView([lat, lon], 15);
   };
 
   if (!bookingNumber) {
@@ -451,18 +454,31 @@ export default function TrackingPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 relative">
             <div
               ref={mapContainerRef}
-              className="w-full h-[400px] md:h-[600px] rounded-2xl bg-slate-800 border border-slate-700/50 overflow-hidden"
+              className="w-full h-[400px] md:h-[600px] rounded-2xl bg-slate-800 border border-slate-700/50 overflow-hidden relative z-0"
               style={{ minHeight: '400px' }}
             >
               {loading && (
-                <div className="w-full h-full flex items-center justify-center bg-slate-900/50">
+                <div className="w-full h-full flex items-center justify-center bg-slate-900/50 absolute inset-0 z-50">
                   <div className="text-slate-400">{t.loadingMap}</div>
                 </div>
               )}
             </div>
+            {location?.vehicleLat && location?.vehicleLon && (
+              <button 
+                onClick={() => {
+                  if (mapRef.current && location.vehicleLat && location.vehicleLon) {
+                    mapRef.current.setView([location.vehicleLat, location.vehicleLon], 15);
+                  }
+                }}
+                className="absolute bottom-4 right-4 z-10 bg-slate-900/80 backdrop-blur border border-slate-700 text-slate-200 p-3 rounded-xl shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center group"
+                title={t.centerOnCar}
+              >
+                <MapPin className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
+              </button>
+            )}
           </div>
 
           {/* Info Panel */}
