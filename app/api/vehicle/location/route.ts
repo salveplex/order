@@ -72,16 +72,39 @@ export async function GET(request: NextRequest) {
       const data = await bookingRes.json();
       const booking = Array.isArray(data) ? data[0] : data;
       if (booking) {
-        if (booking.latitude) {
+        // 1. Pickup Coordinates
+        if (booking.fromLatitude) {
+          pickupLat = parseFloat(booking.fromLatitude);
+        } else if (booking.pickupLat) {
+          pickupLat = parseFloat(booking.pickupLat);
+        } else if (booking.latitude) {
           pickupLat = parseFloat(booking.latitude);
-          vehicleLat = parseFloat(booking.latitude); // Fallback vehicle to pickup
         }
-        if (booking.longitude) {
+        
+        if (booking.fromLongitude) {
+          pickupLon = parseFloat(booking.fromLongitude);
+        } else if (booking.pickupLon) {
+          pickupLon = parseFloat(booking.pickupLon);
+        } else if (booking.longitude) {
           pickupLon = parseFloat(booking.longitude);
-          vehicleLon = parseFloat(booking.longitude); // Fallback vehicle to pickup
         }
-        if (booking.toLatitude) destLat = parseFloat(booking.toLatitude);
-        if (booking.toLongitude) destLon = parseFloat(booking.toLongitude);
+
+        // 2. Destination Coordinates
+        if (booking.toLatitude) {
+          destLat = parseFloat(booking.toLatitude);
+        } else if (booking.destLat) {
+          destLat = parseFloat(booking.destLat);
+        }
+        
+        if (booking.toLongitude) {
+          destLon = parseFloat(booking.toLongitude);
+        } else if (booking.destLon) {
+          destLon = parseFloat(booking.destLon);
+        }
+
+        // 3. Vehicle Coordinates
+        if (booking.latitude) vehicleLat = parseFloat(booking.latitude);
+        if (booking.longitude) vehicleLon = parseFloat(booking.longitude);
         if (booking.vehicleNo) assignedVehicleNo = String(booking.vehicleNo);
       }
     }
