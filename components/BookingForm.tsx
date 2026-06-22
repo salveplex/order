@@ -917,21 +917,13 @@ export default function BookingForm() {
                       <div className="flex justify-between items-center pb-3 border-b border-green-200">
                         <span className="text-green-800/70">{t.status}:</span>
                         <span className="font-semibold text-green-700">
-                          {language === 'nn'
-                            ? bookingStatus.status === 'pending'
-                              ? 'Venter på godkjenning'
-                              : bookingStatus.status === 'accepted'
-                              ? 'Godkjent av kjøretøy'
-                              : bookingStatus.status === 'inProgress'
-                              ? 'Underveis'
-                              : 'Fullført'
-                            : bookingStatus.status === 'pending'
-                            ? 'Awaiting Acceptance'
+                          {bookingStatus.status === 'pending'
+                            ? t.pending
                             : bookingStatus.status === 'accepted'
-                            ? 'Accepted by Vehicle'
+                            ? t.accepted
                             : bookingStatus.status === 'inProgress'
-                            ? 'In Progress'
-                            : 'Completed'}
+                            ? t.inProgress
+                            : t.completed}
                         </span>
                       </div>
                       {bookingStatus.vehicle && (
