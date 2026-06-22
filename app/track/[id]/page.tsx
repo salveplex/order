@@ -151,6 +151,31 @@ export default function TrackingPage() {
         if (locationRes.ok) {
           const locationData = await locationRes.json();
           setLocation(locationData);
+          const L = (window as any).L;
+
+          // First load logic - fit all points in view
+          if (mapRef.current && !mapRef.current.hasSetInitialCenter) {
+            const bounds = L.latLngBounds();
+            let hasPoints = false;
+
+            if (locationData.vehicleLat && locationData.vehicleLon) {
+              bounds.extend([locationData.vehicleLat, locationData.vehicleLon]);
+              hasPoints = true;
+            }
+            if (locationData.pickupLat && locationData.pickupLon) {
+              bounds.extend([locationData.pickupLat, locationData.pickupLon]);
+              hasPoints = true;
+            }
+            if (locationData.destLat && locationData.destLon) {
+              bounds.extend([locationData.destLat, locationData.destLon]);
+              hasPoints = true;
+            }
+
+            if (hasPoints) {
+              mapRef.current.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+              mapRef.current.hasSetInitialCenter = true;
+            }
+          }
 
           // Draw pickup location
           if (mapRef.current && locationData.pickupLat && locationData.pickupLon) {
@@ -209,14 +234,13 @@ export default function TrackingPage() {
     if (!L) return;
 
     if (!destMarkerRef.current) {
-      // Create a red icon for destination
-      const redIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+      // Create a red icon for destination using emoji
+      const redIcon = L.divIcon({
+        html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #ef4444;">📍</div>`,
+        className: 'custom-dest-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30],
       });
 
       destMarkerRef.current = L.marker([lat, lon], {
