@@ -479,10 +479,6 @@ export default function TrackingPage() {
                 <Phone className="w-4 h-4" />
                 {t.callDriver}
               </button>
-              <button className="w-full px-4 py-3 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/50 font-semibold hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2">
-                <MessageSquare className="w-4 h-4" />
-                {t.message}
-              </button>
             </div>
           </div>
         </div>
