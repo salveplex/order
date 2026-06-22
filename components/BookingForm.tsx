@@ -911,11 +911,11 @@ export default function BookingForm() {
                     <h3 className="text-lg font-semibold text-green-900">{t.bookingFound}</h3>
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                        <span className="text-zinc-400 ">{t.bookingNumber}:</span>
-                        <span className="font-semibold text-zinc-100 ">{bookingStatus.bookingNumber}</span>
+                        <span className="text-green-800/70">{t.bookingNumber}:</span>
+                        <span className="font-semibold text-green-900">{bookingStatus.bookingNumber}</span>
                       </div>
                       <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                        <span className="text-zinc-400 ">{t.status}:</span>
+                        <span className="text-green-800/70">{t.status}:</span>
                         <span className="font-semibold text-green-700">
                           {language === 'nn'
                             ? bookingStatus.status === 'pending'
@@ -936,14 +936,14 @@ export default function BookingForm() {
                       </div>
                       {bookingStatus.vehicle && (
                         <div className="flex justify-between items-center pb-3 border-b border-green-200">
-                          <span className="text-zinc-400 ">{t.assignedVehicle}:</span>
-                          <span className="font-semibold text-zinc-100 ">{bookingStatus.vehicle}</span>
+                          <span className="text-green-800/70">{t.assignedVehicle}:</span>
+                          <span className="font-semibold text-green-900">{bookingStatus.vehicle}</span>
                         </div>
                       )}
                       {bookingStatus.driver && (
                         <div className="flex justify-between items-center">
-                          <span className="text-zinc-400 ">{t.driver}:</span>
-                          <span className="font-semibold text-zinc-100 ">{bookingStatus.driver}</span>
+                          <span className="text-green-800/70">{t.driver}:</span>
+                          <span className="font-semibold text-green-900">{bookingStatus.driver}</span>
                         </div>
                       )}
                     </div>
