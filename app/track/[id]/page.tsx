@@ -90,6 +90,7 @@ export default function TrackingPage() {
   const mapRef = useRef<any>(null);
   const vehicleMarkerRef = useRef<any>(null);
   const pickupMarkerRef = useRef<any>(null);
+  const destMarkerRef = useRef<any>(null);
 
   // Initialize map (using OpenStreetMap/Leaflet via CDN)
   useEffect(() => {
@@ -156,6 +157,11 @@ export default function TrackingPage() {
             updatePickupMarker(locationData.pickupLat, locationData.pickupLon);
           }
 
+          // Draw destination location
+          if (mapRef.current && locationData.destLat && locationData.destLon) {
+            updateDestMarker(locationData.destLat, locationData.destLon);
+          }
+
           // Draw vehicle marker
           if (mapRef.current && locationData.vehicleLat && locationData.vehicleLon) {
             updateVehicleMarker(
@@ -194,6 +200,32 @@ export default function TrackingPage() {
       }).addTo(mapRef.current).bindPopup('<b>Hentested</b>');
     } else {
       pickupMarkerRef.current.setLatLng([lat, lon]);
+    }
+  };
+
+  const updateDestMarker = (lat: number, lon: number) => {
+    if (!mapRef.current) return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (!destMarkerRef.current) {
+      // Create a red icon for destination
+      const redIcon = L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      destMarkerRef.current = L.marker([lat, lon], {
+        icon: redIcon,
+        title: 'Destinasjon',
+        opacity: 0.8,
+      }).addTo(mapRef.current).bindPopup('<b>Destinasjon</b>');
+    } else {
+      destMarkerRef.current.setLatLng([lat, lon]);
     }
   };
 

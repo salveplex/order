@@ -60,6 +60,10 @@ export async function GET(request: NextRequest) {
       headers: { 'Authorization': `Bearer ${authToken}` },
     });
 
+    let pickupLat: number | null = null;
+    let pickupLon: number | null = null;
+    let destLat: number | null = null;
+    let destLon: number | null = null;
     let vehicleLat: number | null = null;
     let vehicleLon: number | null = null;
     let assignedVehicleNo: string | null = null;
@@ -68,8 +72,10 @@ export async function GET(request: NextRequest) {
       const data = await bookingRes.json();
       const booking = Array.isArray(data) ? data[0] : data;
       if (booking) {
-        if (booking.latitude) vehicleLat = booking.latitude;
-        if (booking.longitude) vehicleLon = booking.longitude;
+        if (booking.latitude) pickupLat = booking.latitude;
+        if (booking.longitude) pickupLon = booking.longitude;
+        if (booking.toLatitude) destLat = booking.toLatitude;
+        if (booking.toLongitude) destLon = booking.toLongitude;
         if (booking.vehicleNo) assignedVehicleNo = String(booking.vehicleNo);
       }
     }
@@ -83,10 +89,10 @@ export async function GET(request: NextRequest) {
     if (!vehicleResponse.ok) {
       // If vehicle list fails, at least return the coordinates from the booking
       return NextResponse.json({
-        pickupLat: null,
-        pickupLon: null,
-        destLat: 60.5637,
-        destLon: 6.4189,
+        pickupLat: pickupLat,
+        pickupLon: pickupLon,
+        destLat: destLat,
+        destLon: destLon,
         vehicleLat: vehicleLat,
         vehicleLon: vehicleLon,
         activeTrip: bookRef,
@@ -104,10 +110,10 @@ export async function GET(request: NextRequest) {
     if (!vehicle) {
       // Return booking coordinates if vehicle not found in active list
       return NextResponse.json({
-        pickupLat: null,
-        pickupLon: null,
-        destLat: 60.5637,
-        destLon: 6.4189,
+        pickupLat: pickupLat,
+        pickupLon: pickupLon,
+        destLat: destLat,
+        destLon: destLon,
         vehicleLat: vehicleLat,
         vehicleLon: vehicleLon,
         driverName: null,
@@ -121,12 +127,12 @@ export async function GET(request: NextRequest) {
 
     // Return combined vehicle location data
     return NextResponse.json({
-      pickupLat: null,
-      pickupLon: null,
-      destLat: vehicle.destLat || 60.5637,
-      destLon: vehicle.destLon || 6.4189,
-      vehicleLat: vehicle.latitude || vehicle.pickupLat || vehicleLat,
-      vehicleLon: vehicle.longitude || vehicle.pickupLon || vehicleLon,
+      pickupLat: vehicle.pickupLat || pickupLat,
+      pickupLon: vehicle.pickupLon || pickupLon,
+      destLat: vehicle.destLat || destLat,
+      destLon: vehicle.destLon || destLon,
+      vehicleLat: vehicle.gpsLat || vehicle.latitude || vehicleLat,
+      vehicleLon: vehicle.gpsLon || vehicle.longitude || vehicleLon,
       driverName: vehicle.driverName,
       licenseNo: vehicle.licenseNo || assignedVehicleNo,
       regNo: vehicle.regNo,
