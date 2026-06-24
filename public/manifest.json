@@ -1,6 +1,6 @@
 {
-  "name": "VossTaxi Booking",
-  "short_name": "VossTaxi",
+  "name": "Voss Taxi Booking",
+  "short_name": "Voss Taxi Booking",
   "description": "Bestill taxi i Voss og omegn",
   "start_url": "/",
   "display": "standalone",
