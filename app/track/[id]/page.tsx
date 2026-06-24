@@ -630,7 +630,7 @@ export default function TrackingPage() {
                   </div>
                 ) : null}
               </div>
-              {status?.status === 'accepted' && etaPickup !== null && (
+              {(status?.status === 'accepted' && location?.vehicleStatus !== 4) && etaPickup !== null && (
                 <div className="pt-2 border-t border-slate-700/50 mt-4">
                   <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">
                     {lang === 'en' ? 'Est. Time to Pickup' : 'Est. tid til henting'}
