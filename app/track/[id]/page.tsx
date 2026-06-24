@@ -27,6 +27,7 @@ interface VehicleLocation {
   gpsVelocity?: number;
   gpsDirection?: number;
   activeTrip?: string;
+  vehicleStatus?: number | null;
   vehicleType?: string;
   regNo?: string;
   carModel?: string;
