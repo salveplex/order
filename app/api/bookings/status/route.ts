@@ -133,9 +133,9 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
 
   let genericStatus = 'pending';
   
-  if (statusLetter === 'l' || booking.tripStatusCode === 2) {
+  if (statusLetter === 'l' || booking.tripStatusCode === 3 || msgOut.includes('AVSLUTTET')) {
     genericStatus = 'completed';
-  } else if (msgOut.includes('POB') || msgOut.includes('ANKOMMET') || msgOut.includes('OPPTATT') || msgOut.includes('I BIL')) {
+  } else if (msgOut.includes('POB') || msgOut.includes('ANKOMMET') || msgOut.includes('OPPTATT') || msgOut.includes('I BIL') || booking.tripStatusCode === 2) {
     genericStatus = 'inProgress';
   } else if (statusLetter === 'I' || booking.vehicleNo || booking.tripStatusCode === 1) {
     genericStatus = 'accepted';

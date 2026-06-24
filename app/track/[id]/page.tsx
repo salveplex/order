@@ -272,11 +272,11 @@ export default function TrackingPage() {
               bounds.extend([locationData.vehicleLat, locationData.vehicleLon]);
               hasPoints = true;
             }
-            if (locationData.pickupLat && locationData.pickupLon) {
+            if (locationData.pickupLat && locationData.pickupLon && locationData.pickupLat !== 0 && locationData.pickupLon !== 0) {
               bounds.extend([locationData.pickupLat, locationData.pickupLon]);
               hasPoints = true;
             }
-            if (locationData.destLat && locationData.destLon) {
+            if (locationData.destLat && locationData.destLon && locationData.destLat !== 0 && locationData.destLon !== 0) {
               bounds.extend([locationData.destLat, locationData.destLon]);
               hasPoints = true;
             }
@@ -288,12 +288,12 @@ export default function TrackingPage() {
           }
 
           // Draw pickup location
-          if (mapRef.current && locationData.pickupLat && locationData.pickupLon) {
+          if (mapRef.current && locationData.pickupLat && locationData.pickupLon && locationData.pickupLat !== 0) {
             updatePickupMarker(locationData.pickupLat, locationData.pickupLon);
           }
 
           // Draw destination location
-          if (mapRef.current && locationData.destLat && locationData.destLon) {
+          if (mapRef.current && locationData.destLat && locationData.destLon && locationData.destLat !== 0) {
             updateDestMarker(locationData.destLat, locationData.destLon);
           }
 
@@ -303,9 +303,10 @@ export default function TrackingPage() {
               locationData.vehicleLat,
               locationData.vehicleLon,
               locationData.gpsDirection || 0,
-              locationData.licenseNo || 'Taxi'
+              locationData.licenseNo || 'Taxi',
+              locationData.gpsVelocity || 0
             );
-          } else if (mapRef.current && locationData.pickupLat && locationData.pickupLon && !vehicleMarkerRef.current) {
+          } else if (mapRef.current && locationData.pickupLat && locationData.pickupLon && locationData.pickupLat !== 0 && !vehicleMarkerRef.current) {
              // Fallback: center map on pickup if no vehicle location
              mapRef.current.setView([locationData.pickupLat, locationData.pickupLon], 13);
           }
@@ -335,7 +336,7 @@ export default function TrackingPage() {
             }
           })
           .catch(err => console.error("Failed to fetch OSRM ETA to pickup:", err));
-      } else if (location?.destLat && location?.destLon) {
+      } else if (location?.destLat && location?.destLon && location.destLat !== 0 && location.destLon !== 0) {
         fetch(`https://router.project-osrm.org/route/v1/driving/${location.vehicleLon},${location.vehicleLat};${location.destLon},${location.destLat}?overview=false`)
           .then(res => res.json())
           .then(data => {
@@ -397,7 +398,7 @@ export default function TrackingPage() {
     }
   };
 
-  const updateVehicleMarker = (lat: number, lon: number, direction: number, label: string) => {
+  const updateVehicleMarker = (lat: number, lon: number, direction: number, label: string, speed: number) => {
     if (!mapRef.current) return;
 
     const L = (window as any).L;
@@ -415,6 +416,10 @@ export default function TrackingPage() {
       // Update existing marker
       vehicleMarkerRef.current.setLatLng([lat, lon]);
       vehicleMarkerRef.current.setIcon(taxiIcon);
+      const popup = vehicleMarkerRef.current.getPopup();
+      if (popup) {
+        popup.setContent(`<b>${label}</b><br/>${Math.round(speed / 10)} km/h`);
+      }
     } else {
       // Add new marker
       vehicleMarkerRef.current = L.marker([lat, lon], {
@@ -424,7 +429,7 @@ export default function TrackingPage() {
         zIndexOffset: 1000 // Ensure car is above pickup pin
       })
         .addTo(mapRef.current)
-        .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
+        .bindPopup(`<b>${label}</b><br/>${Math.round(speed / 10)} km/h`);
     }
   };
 
