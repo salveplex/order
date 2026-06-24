@@ -155,6 +155,7 @@ export async function GET(request: NextRequest) {
         gpsVelocity: 0,
         gpsDirection: 0,
         activeTrip: bookRef,
+        vehicleStatus: null,
       });
     }
 
@@ -177,6 +178,7 @@ export async function GET(request: NextRequest) {
       gpsVelocity: vehicle.gpsVelocity || 0,
       gpsDirection: vehicle.gpsDirection || 0,
       activeTrip: vehicle.activeTrip || bookRef,
+      vehicleStatus: vehicle.status || null,
       carModel: carDetails?.model || null,
       carColor: carDetails?.color || null,
     });

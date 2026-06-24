@@ -327,7 +327,7 @@ export default function TrackingPage() {
   // Fetch OSRM ETA
   useEffect(() => {
     if (location?.vehicleLat && location?.vehicleLon) {
-      if (status?.status === 'accepted' && location?.pickupLat && location?.pickupLon) {
+      if ((status?.status === 'accepted' && location?.vehicleStatus !== 4) && location?.pickupLat && location?.pickupLon) {
         fetch(`https://router.project-osrm.org/route/v1/driving/${location.vehicleLon},${location.vehicleLat};${location.pickupLon},${location.pickupLat}?overview=false`)
           .then(res => res.json())
           .then(data => {
@@ -474,13 +474,13 @@ export default function TrackingPage() {
             {/* Status Badge */}
             {status && (
               <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                (location?.vehicleStatus === 4 || status.status === 'inProgress') ? 'bg-blue-500/20 text-blue-400' :
                 status.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
-                status.status === 'inProgress' ? 'bg-blue-500/20 text-blue-400' :
                 status.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
                 'bg-yellow-500/20 text-yellow-400'
               }`}>
-                {status.status === 'accepted' && t.driverAccepted}
-                {status.status === 'inProgress' && t.inProgress}
+                {status.status === 'accepted' && location?.vehicleStatus !== 4 && t.driverAccepted}
+                {(status.status === 'inProgress' || location?.vehicleStatus === 4) && t.inProgress}
                 {status.status === 'completed' && t.completed}
                 {status.status === 'pending' && t.waiting}
               </div>
@@ -538,7 +538,7 @@ export default function TrackingPage() {
           {/* Info Panel */}
           <div className="space-y-4">
             {/* Vehicle Info */}
-            {location && (status?.status === 'accepted' || status?.status === 'inProgress') && (
+            {location && (status?.status === 'accepted' || status?.status === 'inProgress' || location?.vehicleStatus === 4) && (
               <div className="rounded-2xl bg-slate-900/50 border border-slate-700/50 p-6 backdrop-blur-xl">
                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-4">
                   {t.vehicleInfo}
