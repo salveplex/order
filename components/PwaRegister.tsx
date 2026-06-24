@@ -52,7 +52,7 @@ export default function PwaRegister() {
 
   if (isInstalled) {
     return (
-      <div className="fixed bottom-4 right-4 z-50 pointer-events-none opacity-50">
+      <div className="fixed top-4 right-4 z-50 pointer-events-none opacity-50">
         <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 text-slate-400 text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
           <CheckCircle2 className="w-3.5 h-3.5 text-green-400" />
           <span>App installert</span>
@@ -63,7 +63,7 @@ export default function PwaRegister() {
 
   if (showPrompt || (isIOS && !isInstalled)) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed top-4 right-4 z-50">
         <button 
           onClick={handleInstallClick}
           className="bg-amber-500/90 hover:bg-amber-500 backdrop-blur-sm text-slate-900 text-xs font-semibold px-4 py-2 rounded-full flex items-center gap-2 shadow-lg transition-all hover:scale-105 active:scale-95"
