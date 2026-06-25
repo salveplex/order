@@ -317,6 +317,26 @@ export default function BookingForm() {
         // Auto-switch to status tab
         setActiveTab('status');
 
+        // Persist booking to backend history using phone as identifier
+        try {
+          void fetch('/api/history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              phone: formData.phone,
+              bookingId: response.bookingNumber,
+              driverPhone: response.driver?.phone ?? '',
+              status: response.status ?? '',
+              vehicleLocation: ''
+            })
+          });
+        } catch (e) {
+          console.error('Failed to save booking history', e);
+        }
+
+        // Store phone in cookie for later retrieval of history (1 year)
+        document.cookie = `bookingPhone=${encodeURIComponent(formData.phone)}; path=/; max-age=${60 * 60 * 24 * 365}`;
+
         // Reset form but keep today's date and current time
         const resetToday = new Date().toISOString().split('T')[0];
         const resetNow = new Date();
