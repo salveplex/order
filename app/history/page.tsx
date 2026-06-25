@@ -1,3 +1,5 @@
+'use client';
+
 // app/history/page.tsx
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
