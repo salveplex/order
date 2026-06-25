@@ -325,8 +325,8 @@ export default function BookingForm() {
             body: JSON.stringify({
               phone: formData.phone,
               bookingId: response.bookingNumber,
-              driverPhone: response.driver?.phone ?? '',
-              status: response.status ?? '',
+              driverPhone: '',
+              status: 'pending',
               vehicleLocation: ''
             })
           });
