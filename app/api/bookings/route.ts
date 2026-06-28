@@ -154,33 +154,6 @@ async function createBookingWithTaxi4U(data: BookingData) {
     ...(attributeString && { attributes: attributeString }),
   };
 
-  // Add email notification if provided
-  if (data.email && data.email.trim()) {
-    console.log(`Booking email for receipt: ${data.email}`);
-    // Send receipt email using Nodemailer (if SMTP config provided)
-    try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || '',
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-        auth: {
-          user: process.env.SMTP_USER || '',
-          pass: process.env.SMTP_PASS || '',
-        },
-      });
-      const mailOptions = {
-        from: process.env.SMTP_FROM || 'no-reply@vosstaxi.no',
-        to: data.email,
-        subject: 'Voss Taxi Booking Receipt',
-        text: `Your booking has been created successfully.\n\nBooking Number: ${bookingNumber}\nPickup: ${data.pickupLocation}\nDropoff: ${data.dropoffLocation}\nDate/Time: ${data.date} ${data.time}\n\nThank you for choosing Voss Taxi!`,
-      };
-      await transporter.sendMail(mailOptions);
-      console.log('✅ Booking receipt email sent');
-    } catch (emailErr) {
-      console.error('❌ Failed to send booking receipt email:', emailErr);
-    }
-  }
-
   try {
     // Get auth token
     const authToken = await getAuthToken();
@@ -224,6 +197,33 @@ async function createBookingWithTaxi4U(data: BookingData) {
 
     // Taxi4U returns the AppBook object with BookRef populated
     const bookingNumber = result.bookRef || result.id || `BK-${Date.now()}`;
+
+    // Add email notification if provided
+    if (data.email && data.email.trim()) {
+      console.log(`Booking email for receipt: ${data.email}`);
+      // Send receipt email using Nodemailer (if SMTP config provided)
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST || '',
+          port: parseInt(process.env.SMTP_PORT || '587'),
+          secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+          auth: {
+            user: process.env.SMTP_USER || '',
+            pass: process.env.SMTP_PASS || '',
+          },
+        });
+        const mailOptions = {
+          from: process.env.SMTP_FROM || 'no-reply@vosstaxi.no',
+          to: data.email,
+          subject: 'Voss Taxi Booking Receipt',
+          text: `Your booking has been created successfully.\n\nBooking Number: ${bookingNumber}\nPickup: ${data.pickupLocation}\nDropoff: ${data.dropoffLocation}\nDate/Time: ${data.date} ${data.time}\n\nThank you for choosing Voss Taxi!`,
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('✅ Booking receipt email sent');
+      } catch (emailErr) {
+        console.error('❌ Failed to send booking receipt email:', emailErr);
+      }
+    }
 
     console.log('📍 Extracted bookingNumber:', bookingNumber);
     console.log('   - from bookRef:', result.bookRef);
