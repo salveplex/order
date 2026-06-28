@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
 
 const API_BASE = 'https://api.taxi4u.cab';
 const API_USERNAME = process.env.TAXI4U_USERNAME || '';
@@ -106,7 +107,21 @@ async function createBookingWithTaxi4U(data: BookingData) {
     messageText += `Notat: ${data.additionalInfo}`;
   }
 
-  const attributeString = data.attributes && data.attributes.length > 0 ? data.attributes.join(',') : '';
+  let attributeString = data.attributes && data.attributes.length > 0 ? data.attributes.join(',') : '';
+
+  // Apply default vehicle attribute if none was explicitly selected
+  if (!attributeString) {
+    if (!data.passengers || data.passengers <= 4) {
+      attributeString = '3'; // Lav bil / Personbil
+    } else if (data.passengers <= 6) {
+      attributeString = '0'; // 6 setar
+    } else if (data.passengers === 7) {
+      attributeString = '1'; // 7 setar
+    } else {
+      attributeString = '89'; // 8 setar
+    }
+    console.log(`No vehicle type selected. Defaulting attribute to ${attributeString} based on ${data.passengers || 1} passengers.`);
+  }
 
   // Use /api/v2/book/general endpoint for auto-dispatch support
   // This endpoint supports manualProcessing: false to enable auto-dispatch
@@ -114,7 +129,6 @@ async function createBookingWithTaxi4U(data: BookingData) {
     req: {},  // Required field for API (must be an object)
     centralCode: 'VS',  // Voss/Sogn central code
     manualProcessing: false,  // Enable auto-dispatch (lowercase!)
-    attributes: attributeString ? attributeString : undefined, // Set vehicle type attribute (string)
     orderedBy: 'Order',
     bookedBy: 'Order',
     passengers: [
@@ -136,11 +150,35 @@ async function createBookingWithTaxi4U(data: BookingData) {
       }
     ],
     messageToCar: messageText,  // Send car type info to driver
+    // Only include vehicle attribute if one was selected
+    ...(attributeString && { attributes: attributeString }),
   };
 
   // Add email notification if provided
   if (data.email && data.email.trim()) {
     console.log(`Booking email for receipt: ${data.email}`);
+    // Send receipt email using Nodemailer (if SMTP config provided)
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || '',
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+        auth: {
+          user: process.env.SMTP_USER || '',
+          pass: process.env.SMTP_PASS || '',
+        },
+      });
+      const mailOptions = {
+        from: process.env.SMTP_FROM || 'no-reply@vosstaxi.no',
+        to: data.email,
+        subject: 'Voss Taxi Booking Receipt',
+        text: `Your booking has been created successfully.\n\nBooking Number: ${bookingNumber}\nPickup: ${data.pickupLocation}\nDropoff: ${data.dropoffLocation}\nDate/Time: ${data.date} ${data.time}\n\nThank you for choosing Voss Taxi!`,
+      };
+      await transporter.sendMail(mailOptions);
+      console.log('✅ Booking receipt email sent');
+    } catch (emailErr) {
+      console.error('❌ Failed to send booking receipt email:', emailErr);
+    }
   }
 
   try {
