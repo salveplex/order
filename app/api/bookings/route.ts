@@ -20,6 +20,7 @@ interface BookingData {
   phone: string;
   email: string;
   wantReceipt?: boolean;
+  language?: string;
   additionalInfo: string;
   pickupLat?: number;
   pickupLon?: number;
