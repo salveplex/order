@@ -28,6 +28,7 @@ export async function GET(request: Request) {
       id: number;
       bookingId: string;
       email: string;
+      language: string;
       status: string;
       timestamp: number;
     }[];
