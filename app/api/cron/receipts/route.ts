@@ -1,10 +1,25 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import db from '@/lib/db';
-import { getAuthToken } from '@/lib/taxi4u-api';
-
 const API_BASE = 'https://api.taxi4u.cab';
 
+async function getAuthToken(): Promise<string> {
+  const loginResponse = await fetch(`${API_BASE}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId: process.env.TAXI4U_USERNAME,
+      password: process.env.TAXI4U_PASSWORD,
+    }),
+  });
+
+  if (!loginResponse.ok) {
+    throw new Error(`Auth failed: ${loginResponse.status}`);
+  }
+
+  const loginData = await loginResponse.text();
+  return loginData.replace(/['"]+/g, '');
+}
 export async function GET(request: Request) {
   try {
     // 1. Get all pending receipt requests
