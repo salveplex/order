@@ -342,7 +342,7 @@ export default function TrackingPage() {
     }
   }, [location?.vehicleLat, location?.vehicleLon, location?.destLat, location?.destLon, location?.pickupLat, location?.pickupLon, status?.status]);
 
-  const updatePickupMarker = (lat: number, lon: number) => {
+  function updatePickupMarker(lat: number, lon: number) {
     if (!mapRef.current) return;
     const L = (window as any).L;
     if (!L) return;
@@ -365,9 +365,9 @@ export default function TrackingPage() {
     } else {
       pickupMarkerRef.current.setLatLng([lat, lon]);
     }
-  };
+  }
 
-  const updateDestMarker = (lat: number, lon: number) => {
+  function updateDestMarker(lat: number, lon: number) {
     if (!mapRef.current) return;
     const L = (window as any).L;
     if (!L) return;
@@ -389,9 +389,9 @@ export default function TrackingPage() {
     } else {
       destMarkerRef.current.setLatLng([lat, lon]);
     }
-  };
+  }
 
-  const updateVehicleMarker = (lat: number, lon: number, direction: number, label: string) => {
+  function updateVehicleMarker(lat: number, lon: number, direction: number, label: string) {
     if (!mapRef.current) return;
 
     const L = (window as any).L;
@@ -420,7 +420,7 @@ export default function TrackingPage() {
         .addTo(mapRef.current)
         .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
     }
-  };
+  }
 
   if (!bookingNumber) {
     return (

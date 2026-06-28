@@ -90,7 +90,7 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
     );
   }
 
-  let data = await response.json();
+  const data = await response.json();
 
   console.log(`📥 Raw Taxi4U response:`, JSON.stringify(data, null, 2));
 
