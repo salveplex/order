@@ -355,13 +355,14 @@ export default function BookingForm() {
           name: '',
           phone: '+47 ',
           email: '',
+          wantReceipt: false,
           additionalInfo: '',
           pickupLat: undefined,
           pickupLon: undefined,
           pickupCity: undefined,
           dropoffLat: undefined,
           dropoffLon: undefined,
-          dropoffCity: undefined,
+          dropoffCity: undefined
         });
 
         // Don't hide success message - keep it visible
