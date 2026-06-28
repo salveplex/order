@@ -23,6 +23,7 @@ interface FormData {
   phone: string;
   email: string;
   wantReceipt: boolean;
+  language?: string;
   additionalInfo: string;
   pickupLat?: number;
   pickupLon?: number;
@@ -306,7 +307,8 @@ export default function BookingForm() {
         }
       }
 
-      const response = await createBooking(formData);
+      const dataToSubmit = { ...formData, language };
+      const response = await createBooking(dataToSubmit);
 
       if (response.success) {
         setSuccess(true);

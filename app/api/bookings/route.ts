@@ -204,10 +204,10 @@ async function createBookingWithTaxi4U(data: BookingData) {
       console.log(`Queueing receipt request for: ${data.email} with booking: ${bookingNumber}`);
       try {
         const stmt = db.prepare(`
-          INSERT INTO receipt_requests (bookingId, email, timestamp, status)
-          VALUES (?, ?, ?, 'pending')
+          INSERT INTO receipt_requests (bookingId, email, language, timestamp, status)
+          VALUES (?, ?, ?, ?, 'pending')
         `);
-        stmt.run(bookingNumber, data.email.trim(), Date.now());
+        stmt.run(bookingNumber, data.email.trim(), data.language || 'no', Date.now());
         console.log('✅ Receipt request saved to queue');
       } catch (dbErr) {
         console.error('❌ Failed to save receipt request to DB:', dbErr);

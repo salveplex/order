@@ -30,9 +30,17 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     bookingId TEXT NOT NULL,
     email TEXT NOT NULL,
+    language TEXT NOT NULL DEFAULT 'no',
     status TEXT NOT NULL DEFAULT 'pending',
     timestamp INTEGER NOT NULL
   );
 `);
+
+// Simple migration for existing table
+try {
+  db.exec("ALTER TABLE receipt_requests ADD COLUMN language TEXT NOT NULL DEFAULT 'no'");
+} catch (e) {
+  // Ignore error if column already exists
+}
 
 export default db;
