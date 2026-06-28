@@ -133,12 +133,20 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
 
   let genericStatus = 'pending';
   
-  if (statusLetter === 'l' || booking.tripStatusCode === 3 || msgOut.includes('AVSLUTTET')) {
+  // Trip is completed (tripStatusCode 3, or msg contains AVSLUTTET/FULLFØRT/LEVERT)
+  if (booking.tripStatusCode === 3 || msgOut.includes('AVSLUTTET') || msgOut.includes('FULLFØRT') || msgOut.includes('LEVERT')) {
     genericStatus = 'completed';
-  } else if (msgOut.includes('POB') || msgOut.includes('ANKOMMET') || msgOut.includes('OPPTATT') || msgOut.includes('I BIL') || booking.tripStatusCode === 2) {
+    statusLetter = 'l'; // 'l' maps to "Levert og fullført" in frontend
+  } 
+  // Trip is in progress (tripStatusCode 2, or msg contains POB/OPPTATT)
+  else if (booking.tripStatusCode === 2 || msgOut.includes('POB') || msgOut.includes('OPPTATT') || msgOut.includes('I BIL')) {
     genericStatus = 'inProgress';
-  } else if (statusLetter === 'I' || booking.vehicleNo || booking.tripStatusCode === 1) {
+    statusLetter = 'P'; // Custom letter for "In progress"
+  } 
+  // Car is assigned / accepted (tripStatusCode 1, or vehicle assigned, or msg contains TILDELT/ANKOMMET)
+  else if (booking.tripStatusCode === 1 || booking.vehicleNo > 0 || msgOut.includes('TILDELT') || msgOut.includes('ANKOMMET') || msgOut.includes('AKSEPTERT')) {
     genericStatus = 'accepted';
+    statusLetter = 'I'; // 'I' maps to "Sjåfør akseptert!" in frontend
   }
 
   return {
@@ -149,7 +157,8 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
     status: genericStatus, // Dynamic status
     statusCode: statusLetter, // Letter code for cancellation check
     vehicle: booking.vehicleNo ? `${booking.vehicleNo}` : undefined,
-    driver: undefined,
+    driver: booking.driverNo ? `${booking.driverNo}` : undefined,
+    driverName: booking.driverName ? `${booking.driverName}` : undefined,
     tripStatusCode: tripStatus, // Numeric code from Taxi4U
     message: booking.msgOut,
   };

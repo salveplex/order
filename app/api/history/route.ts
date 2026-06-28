@@ -1,27 +1,6 @@
 // app/api/history/route.ts
 import { NextResponse } from 'next/server';
-import path from 'path';
-import fs from 'fs';
-import Database from 'better-sqlite3';
-
-// Ensure data directory exists
-const dataDir = path.resolve(process.cwd(), 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-const dbPath = path.join(dataDir, 'history.db');
-const db = new Database(dbPath);
-
-// Initialize table if not exists
-db.exec(`CREATE TABLE IF NOT EXISTS bookings (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  phone TEXT NOT NULL,
-  bookingId TEXT NOT NULL,
-  driverPhone TEXT,
-  timestamp INTEGER NOT NULL,
-  status TEXT,
-  vehicleLocation TEXT
-);`);
+import db from '@/lib/db';
 
 export async function POST(request: Request) {
   try {

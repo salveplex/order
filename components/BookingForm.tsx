@@ -22,6 +22,7 @@ interface FormData {
   name: string;
   phone: string;
   email: string;
+  wantReceipt: boolean;
   additionalInfo: string;
   pickupLat?: number;
   pickupLon?: number;
@@ -78,6 +79,7 @@ export default function BookingForm() {
     name: '',
     phone: '+47 ',
     email: '',
+    wantReceipt: false,
     additionalInfo: '',
   });
 
@@ -810,19 +812,34 @@ export default function BookingForm() {
                   </div>
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-sm font-medium text-zinc-300  mb-2">
-                    {t.email} <span className="text-gray-400 font-normal">(optional)</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder={language === 'en' ? 'Your email (optional)' : language === 'de' ? 'Ihre E-Mail (optional)' : language === 'fr' ? 'Votre email (optionnel)' : language === 'es' ? 'Su correo electrónico (opcional)' : 'Din e-post (valgfritt)'}
-                    className="soft-input w-full px-4 py-2.5"
-                  />
+                {/* Email & Receipt */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-zinc-300  mb-2">
+                      {t.email} <span className="text-gray-400 font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder={language === 'en' ? 'Your email (optional)' : language === 'de' ? 'Ihre E-Mail (optional)' : language === 'fr' ? 'Votre email (optionnel)' : language === 'es' ? 'Su correo electrónico (opcional)' : 'Din e-post (valgfritt)'}
+                      className="soft-input w-full px-4 py-2.5"
+                    />
+                  </div>
+                  {formData.email && formData.email.includes('@') && (
+                    <label className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={formData.wantReceipt}
+                        onChange={(e) => setFormData({ ...formData, wantReceipt: e.target.checked })}
+                        className="w-5 h-5 rounded border-zinc-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                      />
+                      <span className="text-sm text-zinc-300">
+                        {language === 'nn' ? 'Send meg kvittering på e-post etter at turen er ferdigkjørt' : 'Send me a receipt by email after the trip is completed'}
+                      </span>
+                    </label>
+                  )}
                 </div>
 
                 {/* Additional Info */}

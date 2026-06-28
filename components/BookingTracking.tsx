@@ -168,6 +168,7 @@ export default function BookingTracking({
       'N': { no: 'Klar for fakturering', en: 'Ready for invoicing' },
       'n': { no: 'Bestilling ble ikke brukt', en: 'Booking was not used' },
       'l': { no: '✅ Levert og fullført', en: '✅ Delivered and completed' },
+      'P': { no: '🚖 Tur i gang / Bil på vei', en: '🚖 Trip in progress / Car on way' },
       'J': { no: 'Venter på svar...', en: 'Waiting for response...' }, // NEI-SVAR hidden as generic waiting
     };
 

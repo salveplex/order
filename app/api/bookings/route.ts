@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import db from '@/lib/db';
 
 const API_BASE = 'https://api.taxi4u.cab';
 const API_USERNAME = process.env.TAXI4U_USERNAME || '';
@@ -19,6 +19,7 @@ interface BookingData {
   name: string;
   phone: string;
   email: string;
+  wantReceipt?: boolean;
   additionalInfo: string;
   pickupLat?: number;
   pickupLon?: number;
@@ -198,30 +199,18 @@ async function createBookingWithTaxi4U(data: BookingData) {
     // Taxi4U returns the AppBook object with BookRef populated
     const bookingNumber = result.bookRef || result.id || `BK-${Date.now()}`;
 
-    // Add email notification if provided
-    if (data.email && data.email.trim()) {
-      console.log(`Booking email for receipt: ${data.email}`);
-      // Send receipt email using Nodemailer (if SMTP config provided)
+    // Add email notification request to queue if provided
+    if (data.email && data.email.trim() && data.wantReceipt) {
+      console.log(`Queueing receipt request for: ${data.email} with booking: ${bookingNumber}`);
       try {
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST || '',
-          port: parseInt(process.env.SMTP_PORT || '587'),
-          secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-          auth: {
-            user: process.env.SMTP_USER || '',
-            pass: process.env.SMTP_PASS || '',
-          },
-        });
-        const mailOptions = {
-          from: process.env.SMTP_FROM || 'no-reply@vosstaxi.no',
-          to: data.email,
-          subject: 'Voss Taxi Booking Receipt',
-          text: `Your booking has been created successfully.\n\nBooking Number: ${bookingNumber}\nPickup: ${data.pickupLocation}\nDropoff: ${data.dropoffLocation}\nDate/Time: ${data.date} ${data.time}\n\nThank you for choosing Voss Taxi!`,
-        };
-        await transporter.sendMail(mailOptions);
-        console.log('✅ Booking receipt email sent');
-      } catch (emailErr) {
-        console.error('❌ Failed to send booking receipt email:', emailErr);
+        const stmt = db.prepare(`
+          INSERT INTO receipt_requests (bookingId, email, timestamp, status)
+          VALUES (?, ?, ?, 'pending')
+        `);
+        stmt.run(bookingNumber, data.email.trim(), Date.now());
+        console.log('✅ Receipt request saved to queue');
+      } catch (dbErr) {
+        console.error('❌ Failed to save receipt request to DB:', dbErr);
       }
     }
 
