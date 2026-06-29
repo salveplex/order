@@ -812,33 +812,35 @@ export default function BookingForm() {
                   </div>
                 </div>
 
-                {/* Email & Receipt */}
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-zinc-300  mb-2">
-                      {t.email} <span className="text-gray-400 font-normal">(optional)</span>
-                    </label>
+                {/* Receipt Checkbox */}
+                <div className="space-y-4">
+                  <label className="flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-zinc-800/50 transition-colors bg-zinc-800/30 border border-zinc-700/50">
                     <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder={language === 'en' ? 'Your email (optional)' : language === 'de' ? 'Ihre E-Mail (optional)' : language === 'fr' ? 'Votre email (optionnel)' : language === 'es' ? 'Su correo electrónico (opcional)' : 'Din e-post (valgfritt)'}
-                      className="soft-input w-full px-4 py-2.5"
+                      type="checkbox"
+                      checked={formData.wantReceipt}
+                      onChange={(e) => setFormData({ ...formData, wantReceipt: e.target.checked, email: e.target.checked ? formData.email : '' })}
+                      className="w-5 h-5 rounded border-zinc-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900 bg-zinc-900"
                     />
-                  </div>
-                  {formData.email && formData.email.includes('@') && (
-                    <label className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-zinc-800/50 transition-colors">
+                    <span className="text-sm font-medium text-zinc-300">
+                      {language === 'nn' ? 'Jeg vil ha kvittering på e-post' : language === 'en' ? 'I want to receive a receipt by email' : language === 'de' ? 'Ich möchte eine Quittung per E-Mail erhalten' : language === 'fr' ? 'Je veux recevoir un reçu par email' : 'Quiero recibir un recibo por correo electrónico'}
+                    </span>
+                  </label>
+
+                  {formData.wantReceipt && (
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-300 mb-2">
+                        {t.email} <span className="text-red-500">*</span>
+                      </label>
                       <input
-                        type="checkbox"
-                        checked={formData.wantReceipt}
-                        onChange={(e) => setFormData({ ...formData, wantReceipt: e.target.checked })}
-                        className="w-5 h-5 rounded border-zinc-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder={language === 'en' ? 'Your email address' : language === 'de' ? 'Ihre E-Mail-Adresse' : language === 'fr' ? 'Votre adresse email' : language === 'es' ? 'Su dirección de correo electrónico' : 'Din e-postadresse'}
+                        required={formData.wantReceipt}
+                        className="soft-input w-full px-4 py-2.5"
                       />
-                      <span className="text-sm text-zinc-300">
-                        {language === 'nn' ? 'Send meg kvittering på e-post etter at turen er ferdigkjørt' : 'Send me a receipt by email after the trip is completed'}
-                      </span>
-                    </label>
+                    </div>
                   )}
                 </div>
 
