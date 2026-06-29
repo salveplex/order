@@ -14,7 +14,7 @@ interface BookingTrackingProps {
 }
 
 interface BookingStatus {
-  status: 'pending' | 'accepted' | 'inProgress' | 'completed';
+  status: 'pending' | 'assigned' | 'accepted' | 'inProgress' | 'completed';
   statusCode?: string; // Raw Taxi4U status code
   vehicle?: string;
   driver?: string;
@@ -143,6 +143,8 @@ export default function BookingTracking({
   const getStatusIcon = () => {
     if (!status) return <Clock className="w-5 h-5" />;
     switch (status.status) {
+      case 'assigned':
+        return <Clock className="w-5 h-5 text-orange-400" />;
       case 'accepted':
         return <CheckCircle className="w-5 h-5 text-green-400" />;
       case 'inProgress':
@@ -159,17 +161,18 @@ export default function BookingTracking({
 
     // Map Taxi4U status codes to user-friendly text
     const statusMap: Record<string, any> = {
+      'A': { no: '⏳ Bil tildelt - ventar på sjåfør-godkjenning', en: '⏳ Car assigned - waiting for driver acceptance' },
       'D': { no: 'Ble akseptert av system', en: 'Accepted by system' },
       'G': { no: 'Sendt til sjåfører', en: 'Sent to drivers' },
-      'I': { no: '✅ Sjåfør akseptert!', en: '✅ Driver accepted!' },
+      'I': { no: '✅ Sjåfør akseptert! Bil på vei', en: '✅ Driver accepted! Car is on the way' },
       'K': { no: 'Venter på svar fra sjåfør...', en: 'Waiting for driver response...' },
       'H': { no: 'Prøver å kontakte sjåfør...', en: 'Trying to reach driver...' },
       'X': { no: 'Tur gikk - bestilling kansellert', en: 'Trip departed - booking cancelled' },
       'N': { no: 'Klar for fakturering', en: 'Ready for invoicing' },
       'n': { no: 'Bestilling ble ikke brukt', en: 'Booking was not used' },
       'l': { no: '✅ Levert og fullført', en: '✅ Delivered and completed' },
-      'P': { no: '🚖 Tur i gang / Bil på vei', en: '🚖 Trip in progress / Car on way' },
-      'J': { no: 'Venter på svar...', en: 'Waiting for response...' }, // NEI-SVAR hidden as generic waiting
+      'P': { no: '🚖 Passasjer i bil', en: '🚖 Passenger on board' },
+      'J': { no: 'Venter på svar...', en: 'Waiting for response...' },
     };
 
     return statusMap[taxi4uStatus] ? statusMap[taxi4uStatus][language] : null;
@@ -188,12 +191,14 @@ export default function BookingTracking({
 
     // Fallback to generic status
     switch (status.status) {
+      case 'assigned':
+        return language === 'en' ? '⏳ Car assigned - waiting for driver to accept' : language === 'de' ? '⏳ Auto zugewiesen - warte auf Fahrer-Bestätigung' : language === 'fr' ? '⏳ Voiture assignée - en attente de la confirmation du chauffeur' : language === 'es' ? '⏳ Auto asignado - esperando confirmación del conductor' : '⏳ Bil tildelt - ventar på sjåfør-godkjenning';
       case 'accepted':
         return `🚗 ${language === 'en' ? 'Driver accepted! ' + (status.vehicle || 'Taxi') + ' is on the way' : language === 'de' ? 'Fahrer akzeptiert! ' + (status.vehicle || 'Taxi') + ' ist unterwegs' : language === 'fr' ? 'Chauffeur accepté! ' + (status.vehicle || 'Taxi') + ' est en route' : language === 'es' ? '¡Conductor aceptado! ' + (status.vehicle || 'Taxi') + ' está en camino' : 'Sjåfør akseptert! ' + (status.vehicle || 'Taxi') + ' er på veg'}`;
       case 'inProgress':
-        return language === 'en' ? 'Trip in progress...' : language === 'de' ? 'Fahrt läuft...' : language === 'fr' ? 'Trajet en cours...' : language === 'es' ? 'Viaje en curso...' : 'Tur i gang...';
+        return language === 'en' ? '🚖 Passenger on board' : language === 'de' ? '🚖 Passagier an Bord' : language === 'fr' ? '🚖 Passager à bord' : language === 'es' ? '🚖 Pasajero a bordo' : '🚖 Passasjer i bil';
       case 'completed':
-        return language === 'en' ? 'Trip completed' : language === 'de' ? 'Fahrt abgeschlossen' : language === 'fr' ? 'Trajet terminé' : language === 'es' ? 'Viaje completado' : 'Tur fullført';
+        return language === 'en' ? '✅ Trip completed' : language === 'de' ? '✅ Fahrt abgeschlossen' : language === 'fr' ? '✅ Trajet terminé' : language === 'es' ? '✅ Viaje completado' : '✅ Tur fullført';
       default:
         return language === 'en' ? 'Waiting for driver...' : language === 'de' ? 'Warten auf Fahrer...' : language === 'fr' ? 'En attente du chauffeur...' : language === 'es' ? 'Esperando al conductor...' : 'Ventar på sjåfør...';
     }

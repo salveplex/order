@@ -6,7 +6,7 @@ import { ArrowLeft, MapPin, Phone, Car } from 'lucide-react';
 import { getCarDetails } from '@/lib/cars';
 
 interface BookingStatus {
-  status: 'pending' | 'accepted' | 'inProgress' | 'completed';
+  status: 'pending' | 'assigned' | 'accepted' | 'inProgress' | 'completed';
   vehicle?: string;
   driver?: string;
   found: boolean;
@@ -470,11 +470,13 @@ export default function TrackingPage() {
             {/* Status Badge */}
             {status && (
               <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                status.status === 'assigned' ? 'bg-orange-500/20 text-orange-400' :
                 (location?.vehicleStatus === 4 || status.status === 'inProgress') ? 'bg-blue-500/20 text-blue-400' :
                 status.status === 'accepted' ? 'bg-green-500/20 text-green-400' :
                 status.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
                 'bg-yellow-500/20 text-yellow-400'
               }`}>
+                {status.status === 'assigned' && '⏳ Bil tildelt - ventar på godkjenning'}
                 {status.status === 'accepted' && location?.vehicleStatus !== 4 && t.driverAccepted}
                 {(status.status === 'inProgress' || location?.vehicleStatus === 4) && t.inProgress}
                 {status.status === 'completed' && t.completed}

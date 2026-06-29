@@ -114,39 +114,36 @@ async function getBookingStatusFromTaxi4U(bookingId: string) {
   console.log(`   - bookRef: ${booking.bookRef}`);
   console.log(`   - status: ${booking.status}`);
 
-  // Map Taxi4U numeric status code to letter codes used by dispatcher
-  // Numeric tripStatusCode: 0-10+ maps to letter codes: D, G, I, K, H, X, N, etc
-  // For now, use tripStatusCode as-is and handle numeric status in BookingTracking
   const tripStatus = booking.tripStatusCode;
-
-  // Convert numeric to letter codes if needed (from Taxi4U docs)
-  // 0 = pending/waiting, 1+ = various states
-  let statusLetter = 'D'; // Default to 'D' (accepted by system)
-
-  // Map message text to status code if available
   const msgOut = (booking.msgOut || '').toUpperCase();
-  if (msgOut.includes('AKSEPTERT')) statusLetter = 'I'; // Accepted
-  else if (msgOut.includes('SENDT')) statusLetter = 'G'; // Sent to drivers
-  else if (msgOut.includes('VENTER')) statusLetter = 'K'; // Waiting
-  else if (msgOut.includes('KONTAKT')) statusLetter = 'H'; // Trying to reach
-  else if (msgOut.includes('LEVERT') || msgOut.includes('FULLFØRT')) statusLetter = 'l'; // Completed
 
   let genericStatus = 'pending';
-  
-  // Trip is completed (tripStatusCode 3, or msg contains AVSLUTTET/FULLFØRT/LEVERT)
+  let statusLetter = 'D'; // Default
+
+  // Map based on tripStatusCode and msgOut patterns from Taxi4U
+  // tripStatusCode 0 = "Tur på vent" - bil assigned but driver hasn't accepted yet
+  // tripStatusCode 2 = "Passasjer i bil" - driver accepted, passenger on board
+  // tripStatusCode 3 = "Avsluttet" - trip completed
+
   if (booking.tripStatusCode === 3 || msgOut.includes('AVSLUTTET') || msgOut.includes('FULLFØRT') || msgOut.includes('LEVERT')) {
+    // Trip completed
     genericStatus = 'completed';
-    statusLetter = 'l'; // 'l' maps to "Levert og fullført" in frontend
-  } 
-  // Trip is in progress (tripStatusCode 2, or msg contains POB/OPPTATT)
+    statusLetter = 'l';
+  }
   else if (booking.tripStatusCode === 2 || msgOut.includes('POB') || msgOut.includes('OPPTATT') || msgOut.includes('I BIL')) {
+    // Passenger on board - actively driving
     genericStatus = 'inProgress';
-    statusLetter = 'P'; // Custom letter for "In progress"
-  } 
-  // Car is assigned / accepted (tripStatusCode 1, or vehicle assigned, or msg contains TILDELT/ANKOMMET)
-  else if (booking.tripStatusCode === 1 || booking.vehicleNo > 0 || msgOut.includes('TILDELT') || msgOut.includes('ANKOMMET') || msgOut.includes('AKSEPTERT')) {
+    statusLetter = 'P';
+  }
+  else if (booking.tripStatusCode === 1 || msgOut.includes('GODKJENT') || msgOut.includes('AKSEPTERT') || msgOut.includes('ANKOMMET')) {
+    // Driver accepted the booking - car is on the way to pickup
     genericStatus = 'accepted';
-    statusLetter = 'I'; // 'I' maps to "Sjåfør akseptert!" in frontend
+    statusLetter = 'I';
+  }
+  else if (booking.tripStatusCode === 0 || msgOut.includes('TUR PÅ VENT') || msgOut.includes('TILDELT')) {
+    // Car assigned but driver hasn't accepted yet (waiting for driver to accept on meter)
+    genericStatus = 'assigned';
+    statusLetter = 'A';
   }
 
   return {
