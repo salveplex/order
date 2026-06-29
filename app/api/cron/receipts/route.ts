@@ -267,7 +267,7 @@ export async function GET() {
                     <div class="column-value">${receiptData.toAddress ? receiptData.toAddress.split(',')[0].trim() : 'Ikkje oppgitt'}</div>
                   </div>
                   <div class="column-row">
-                    <div class="column-label">Søne</div>
+                    <div class="column-label">Tot.km</div>
                     <div class="column-value">${receiptData.km} km</div>
                   </div>
                   <div class="column-row">
@@ -279,20 +279,20 @@ export async function GET() {
                 <div class="column">
                   <div class="column-title">Reisegrunnlag</div>
                   <div class="column-row">
-                    <div class="column-label">REKV.NR</div>
+                    <div class="column-label">Løyve</div>
                     <div class="column-value">${receiptData.licenseNo || '-'}</div>
                   </div>
                   <div class="column-row">
                     <div class="column-label">Førarkort</div>
-                    <div class="column-value">${receiptData.driverId || '-'}</div>
+                    <div class="column-value">${receiptData.licenseNo || '-'}</div>
                   </div>
                   <div class="column-row">
-                    <div class="column-label">Løyve</div>
+                    <div class="column-label">Leyveid</div>
                     <div class="column-value">${receiptData.receiptNo}</div>
                   </div>
                   <div class="column-row">
                     <div class="column-label">Klient</div>
-                    <div class="column-value">Privat</div>
+                    <div class="column-value">${req.email ? req.email.split('@')[0] : 'Privat'}</div>
                   </div>
                 </div>
               </div>
