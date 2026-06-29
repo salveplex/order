@@ -316,11 +316,6 @@ export async function GET() {
                 </div>
               </div>
 
-              <!-- Kreditt -->
-              <div style="padding: 20px 30px; border-bottom: 1px solid #e5e5e5; font-size: 13px;">
-                <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Kreditt</div>
-                <div style="font-weight: bold; color: #1a2332;">KTO: ${receiptData.taxiAccountNo || '1011'}</div>
-              </div>
 
               <!-- Specification Table -->
               <div class="table-section">
