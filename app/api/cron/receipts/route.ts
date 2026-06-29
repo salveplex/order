@@ -20,7 +20,7 @@ async function getAuthToken(): Promise<string> {
   const loginData = await loginResponse.text();
   return loginData.replace(/['"]+/g, '');
 }
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // 1. Get all pending receipt requests
     const stmt = db.prepare(`SELECT * FROM receipt_requests WHERE status = 'pending'`);

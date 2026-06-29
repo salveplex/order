@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, MapPin, Phone, MessageSquare, Car } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, Car } from 'lucide-react';
 import { getCarDetails } from '@/lib/cars';
 
 interface BookingStatus {
@@ -200,6 +200,83 @@ export default function TrackingPage() {
   const pickupMarkerRef = useRef<any>(null);
   const destMarkerRef = useRef<any>(null);
 
+  function updatePickupMarker(lat: number, lon: number) {
+    if (!mapRef.current) return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (!pickupMarkerRef.current) {
+      const greenIcon = L.divIcon({
+        html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#22c55e" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg>`,
+        className: 'custom-pickup-icon',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      pickupMarkerRef.current = L.marker([lat, lon], {
+        icon: greenIcon,
+        title: t.pickupLocation,
+        opacity: 0.8,
+        zIndexOffset: 500
+      }).addTo(mapRef.current).bindPopup(`<b>${t.pickupLocation}</b>`);
+    } else {
+      pickupMarkerRef.current.setLatLng([lat, lon]);
+    }
+  }
+
+  function updateDestMarker(lat: number, lon: number) {
+    if (!mapRef.current) return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (!destMarkerRef.current) {
+      const redIcon = L.divIcon({
+        html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#ef4444" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg>`,
+        className: 'custom-dest-icon',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      destMarkerRef.current = L.marker([lat, lon], {
+        icon: redIcon,
+        title: t.dropoffLocation,
+        opacity: 0.8,
+      }).addTo(mapRef.current).bindPopup(`<b>${t.dropoffLocation}</b>`);
+    } else {
+      destMarkerRef.current.setLatLng([lat, lon]);
+    }
+  }
+
+  function updateVehicleMarker(lat: number, lon: number, direction: number, label: string) {
+    if (!mapRef.current) return;
+
+    const L = (window as any).L;
+    if (!L) return;
+
+    const taxiIcon = L.divIcon({
+      html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #f59e0b;">🚕</div>`,
+      className: 'custom-taxi-icon',
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+    });
+
+    if (vehicleMarkerRef.current) {
+      vehicleMarkerRef.current.setLatLng([lat, lon]);
+      vehicleMarkerRef.current.setIcon(taxiIcon);
+    } else {
+      vehicleMarkerRef.current = L.marker([lat, lon], {
+        icon: taxiIcon,
+        title: label,
+        opacity: 1,
+        zIndexOffset: 1000
+      })
+        .addTo(mapRef.current)
+        .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
+    }
+  }
+
   // Initialize map (using OpenStreetMap/Leaflet via CDN)
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -341,86 +418,6 @@ export default function TrackingPage() {
       }
     }
   }, [location?.vehicleLat, location?.vehicleLon, location?.destLat, location?.destLon, location?.pickupLat, location?.pickupLon, status?.status]);
-
-  function updatePickupMarker(lat: number, lon: number) {
-    if (!mapRef.current) return;
-    const L = (window as any).L;
-    if (!L) return;
-
-    if (!pickupMarkerRef.current) {
-      const greenIcon = L.divIcon({
-        html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#22c55e" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg>`,
-        className: 'custom-pickup-icon',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-      });
-
-      pickupMarkerRef.current = L.marker([lat, lon], {
-        icon: greenIcon,
-        title: t.pickupLocation,
-        opacity: 0.8,
-        zIndexOffset: 500
-      }).addTo(mapRef.current).bindPopup(`<b>${t.pickupLocation}</b>`);
-    } else {
-      pickupMarkerRef.current.setLatLng([lat, lon]);
-    }
-  }
-
-  function updateDestMarker(lat: number, lon: number) {
-    if (!mapRef.current) return;
-    const L = (window as any).L;
-    if (!L) return;
-
-    if (!destMarkerRef.current) {
-      const redIcon = L.divIcon({
-        html: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#ef4444" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="white"></circle></svg>`,
-        className: 'custom-dest-icon',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
-      });
-
-      destMarkerRef.current = L.marker([lat, lon], {
-        icon: redIcon,
-        title: t.dropoffLocation,
-        opacity: 0.8,
-      }).addTo(mapRef.current).bindPopup(`<b>${t.dropoffLocation}</b>`);
-    } else {
-      destMarkerRef.current.setLatLng([lat, lon]);
-    }
-  }
-
-  function updateVehicleMarker(lat: number, lon: number, direction: number, label: string) {
-    if (!mapRef.current) return;
-
-    const L = (window as any).L;
-    if (!L) return;
-
-    // Create custom taxi icon
-    const taxiIcon = L.divIcon({
-      html: `<div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border: 2px solid #f59e0b;">🚕</div>`,
-      className: 'custom-taxi-icon',
-      iconSize: [40, 40],
-      iconAnchor: [20, 20],
-    });
-
-    if (vehicleMarkerRef.current) {
-      // Update existing marker
-      vehicleMarkerRef.current.setLatLng([lat, lon]);
-      vehicleMarkerRef.current.setIcon(taxiIcon);
-    } else {
-      // Add new marker
-      vehicleMarkerRef.current = L.marker([lat, lon], {
-        icon: taxiIcon,
-        title: label,
-        opacity: 1,
-        zIndexOffset: 1000 // Ensure car is above pickup pin
-      })
-        .addTo(mapRef.current)
-        .bindPopup(`<b>${label}</b><br/>${Math.round((location?.gpsVelocity || 0) / 10)} km/h`);
-    }
-  }
 
   if (!bookingNumber) {
     return (

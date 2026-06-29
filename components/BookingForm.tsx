@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MapPin, Clock, Users, Car, Phone, Mail, MessageSquare, Search, ChevronDown } from 'lucide-react';
+import { MapPin, Clock, ChevronDown } from 'lucide-react';
 import { useTranslation, type Language } from '@/lib/i18n';
 import { ATTRIBUTE_GROUPS } from '@/lib/attributes';
 import BookingTracking from '@/components/BookingTracking';
@@ -46,11 +46,8 @@ interface BookingStatus {
 export default function BookingForm() {
   const [language, setLanguage] = useState<Language>('nn');
   const t = useTranslation(language);
-  
-  const isDark = false;
 
   const [activeTab, setActiveTab] = useState<'booking' | 'status'>('booking');
-  const timeInputRef = React.useRef<HTMLInputElement>(null);
 
   // Request notification permission on mount
   React.useEffect(() => {
