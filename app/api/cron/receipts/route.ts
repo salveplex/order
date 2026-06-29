@@ -254,47 +254,72 @@ export async function GET() {
                 <div class="time-range">${startTime} - ${endTime}</div>
               </div>
 
-              <!-- Two Columns -->
-              <div class="columns">
-                <div class="column">
-                  <div class="column-title">Turdetaljar</div>
-                  <div class="column-row">
-                    <div class="column-label">Frå</div>
-                    <div class="column-value">${receiptData.fromAddress ? receiptData.fromAddress.split(',')[0].trim() : 'Ikkje oppgitt'}</div>
+              <!-- Receipt Details Grid -->
+              <div style="padding: 20px 30px; border-bottom: 1px solid #e5e5e5; font-size: 13px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Torsdag</div>
+                    <div style="font-weight: bold; color: #1a2332;">${new Date(receiptData.startDateTime).toLocaleDateString('no-NO', { year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
                   </div>
-                  <div class="column-row">
-                    <div class="column-label">Til</div>
-                    <div class="column-value">${receiptData.toAddress ? receiptData.toAddress.split(',')[0].trim() : 'Ikkje oppgitt'}</div>
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Kvitt.nr</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.receiptNo}</div>
                   </div>
-                  <div class="column-row">
-                    <div class="column-label">Tot.km</div>
-                    <div class="column-value">${receiptData.km} km</div>
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Fører ID</div>
+                    <div style="font-weight: bold; color: #1a2332;">1011</div>
                   </div>
-                  <div class="column-row">
-                    <div class="column-label">Konto</div>
-                    <div class="column-value">1011</div>
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Løyve nr</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.licenseNo || '-'}</div>
                   </div>
                 </div>
 
-                <div class="column">
-                  <div class="column-title">Reisegrunnlag</div>
-                  <div class="column-row">
-                    <div class="column-label">Løyve</div>
-                    <div class="column-value">${receiptData.licenseNo || '-'}</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Rekv.nr</div>
+                    <div style="font-weight: bold; color: #1a2332;">-</div>
                   </div>
-                  <div class="column-row">
-                    <div class="column-label">Førarkort</div>
-                    <div class="column-value">${receiptData.licenseNo || '-'}</div>
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Klient</div>
+                    <div style="font-weight: bold; color: #1a2332;">Privat</div>
                   </div>
-                  <div class="column-row">
-                    <div class="column-label">Leyveid</div>
-                    <div class="column-value">${receiptData.receiptNo}</div>
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Pristilbud</div>
+                    <div style="font-weight: bold; color: #1a2332;">0,00</div>
                   </div>
-                  <div class="column-row">
-                    <div class="column-label">Klient</div>
-                    <div class="column-value">${req.email ? req.email.split('@')[0] : 'Privat'}</div>
+                  <div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Org.nr</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.vatRegistrationNo || '970 148 642 MVA'}</div>
                   </div>
                 </div>
+
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e5e5;">
+                  <div style="margin-bottom: 12px;">
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Frå</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.fromAddress || 'Ikkje oppgitt'}</div>
+                  </div>
+                  <div style="margin-bottom: 12px;">
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Til</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.toAddress || 'Ikkje oppgitt'}</div>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                      <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Frå sone</div>
+                      <div style="font-weight: bold; color: #1a2332;">-</div>
+                    </div>
+                    <div>
+                      <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Til sone</div>
+                      <div style="font-weight: bold; color: #1a2332;">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Kreditt -->
+              <div style="padding: 20px 30px; border-bottom: 1px solid #e5e5e5; font-size: 13px;">
+                <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Kreditt</div>
+                <div style="font-weight: bold; color: #1a2332;">KTO: 1011</div>
               </div>
 
               <!-- Specification Table -->
