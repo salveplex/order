@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import db from '@/lib/db';
+import puppeteer from 'puppeteer';
 const API_BASE = 'https://api.taxi4u.cab';
 
 async function getAuthToken(): Promise<string> {
@@ -19,6 +20,60 @@ async function getAuthToken(): Promise<string> {
 
   const loginData = await loginResponse.text();
   return loginData.replace(/['"]+/g, '');
+}
+
+async function getZonesFromTDS(bookingId: string): Promise<{ fromZone: number | null; toZone: number | null }> {
+  try {
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+
+    await page.goto('https://turliste.tds.as/login', { waitUntil: 'networkidle2', timeout: 45000 });
+    await page.waitForSelector('input[name="epost"]');
+
+    await page.type('input[name="epost"]', process.env.TDS_EMAIL || 'salveplex@gmail.com');
+    await page.type('input[name="passord"]', process.env.TDS_PASSWORD || 'Outback2318&&');
+    await page.click('button');
+
+    await page.waitForNavigation({ waitUntil: 'networkidle2' }).catch(() => {});
+    await new Promise(r => setTimeout(r, 2000));
+
+    // Click FERDIGE tab
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      btns.find(b => b.textContent.includes('FERDIGE'))?.click();
+    });
+
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Click 24 timer
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button'));
+      btns.find(b => b.textContent.includes('24 timer'))?.click();
+    });
+
+    await new Promise(r => setTimeout(r, 2000));
+
+    const zones = await page.evaluate((bid) => {
+      const text = document.body.innerText;
+      const lines = text.split('\n');
+      const bookingIndex = lines.findIndex(l => l.includes(bid));
+
+      if (bookingIndex >= 0) {
+        const bookingLine = lines[bookingIndex];
+        const cells = bookingLine.split(/\t+/);
+        const fromZone = cells[3] ? parseInt(cells[3]) : null;
+        const toZone = cells[4] ? parseInt(cells[4]) : null;
+        return { fromZone, toZone };
+      }
+      return { fromZone: null, toZone: null };
+    }, bookingId);
+
+    await browser.close();
+    return zones;
+  } catch (error) {
+    console.error(`Error fetching zones from TDS for ${bookingId}:`, error);
+    return { fromZone: null, toZone: null };
+  }
 }
 export async function GET() {
   try {
@@ -58,7 +113,7 @@ export async function GET() {
         // We use centralCode=VS, you might want this configurable
         const centralCode = 'VS';
         const url = `${API_BASE}/api/receipt?centralCode=${centralCode}&bookRef=${req.bookingId}`;
-        
+
         const response = await fetch(url, {
           headers: {
             'Authorization': `Bearer ${authToken}`
@@ -77,6 +132,22 @@ export async function GET() {
         }
 
         const receiptData = await response.json();
+
+        // Fetch booking details for passenger name
+        const bookingDetailsUrl = `${API_BASE}/api/v2/bookingdetails?bookRef=${req.bookingId}&centralCode=${centralCode}`;
+        const bookingDetailsRes = await fetch(bookingDetailsUrl, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        const bookingDetails = bookingDetailsRes.ok ? await bookingDetailsRes.json() : null;
+        const passengerName = bookingDetails?.passengers?.[0]?.clientName || 'Privat';
+
+        // Fetch zones from TDS (fallback to null if fails)
+        let zones: { fromZone: number | null; toZone: number | null } = { fromZone: null, toZone: null };
+        try {
+          zones = await getZonesFromTDS(req.bookingId);
+        } catch (err: unknown) {
+          console.warn(`Warning: Could not fetch zones from TDS for ${req.bookingId}:`, err instanceof Error ? err.message : 'Unknown error');
+        }
         
         const lang = req.language || 'no';
         const t = {
@@ -282,7 +353,7 @@ export async function GET() {
                   </div>
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Klient</div>
-                    <div style="font-weight: bold; color: #1a2332;">${req.email || 'Privat'}</div>
+                    <div style="font-weight: bold; color: #1a2332;">${passengerName}</div>
                   </div>
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Pristilbud</div>
@@ -306,11 +377,11 @@ export async function GET() {
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
                       <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Frå sone</div>
-                      <div style="font-weight: bold; color: #1a2332;">-</div>
+                      <div style="font-weight: bold; color: #1a2332;">${zones.fromZone || '-'}</div>
                     </div>
                     <div>
                       <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Til sone</div>
-                      <div style="font-weight: bold; color: #1a2332;">-</div>
+                      <div style="font-weight: bold; color: #1a2332;">${zones.toZone || '-'}</div>
                     </div>
                   </div>
                 </div>
@@ -400,7 +471,7 @@ export async function GET() {
         console.log(`✅ Sent receipt to ${req.email} for booking ${req.bookingId}`);
 
       } catch (err) {
-        console.error(`❌ Failed to process receipt for booking ${req.bookingId}:`, err);
+        console.error(`❌ Failed to process receipt for booking ${req.bookingId}:`, err instanceof Error ? err.message : err);
       }
     }
 
