@@ -310,7 +310,7 @@ export async function GET() {
                   <p>Tlf. 56 51 13 40 | Org.nr: ${receiptData.vatRegistrationNo || '970 148 642 MVA'}</p>
                 </div>
                 <div class="header-right">
-                  <div class="badge">KVITTERING</div>
+                  <div class="badge">${lang === 'nn' ? 'KVITTERING' : lang === 'en' ? 'RECEIPT' : lang === 'de' ? 'QUITTUNG' : lang === 'fr' ? 'REÇU' : lang === 'es' ? 'RECIBO' : 'KVITTERING'}</div>
                   <div class="receipt-no">#${receiptData.receiptNo}</div>
                   <div class="receipt-date">${receiptDate}</div>
                 </div>
@@ -319,7 +319,7 @@ export async function GET() {
               <!-- Amount Box -->
               <div class="amount-box">
                 <div>
-                  <div class="amount-label">Betalt</div>
+                  <div class="amount-label">${lang === 'nn' ? 'Betalt' : lang === 'en' ? 'Paid' : lang === 'de' ? 'Bezahlt' : lang === 'fr' ? 'Payé' : lang === 'es' ? 'Pagado' : 'Betalt'}</div>
                   <div class="amount-value">${formatNOK(receiptData.total || 0)} kr</div>
                 </div>
                 <div class="time-range">${startTime} - ${endTime}</div>
@@ -367,12 +367,12 @@ export async function GET() {
 
                 <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e5e5;">
                   <div style="margin-bottom: 12px;">
-                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Frå</div>
-                    <div style="font-weight: bold; color: #1a2332;">${receiptData.fromAddress || 'Ikkje oppgitt'}</div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">${t.from}</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.fromAddress || t.notProvided}</div>
                   </div>
                   <div style="margin-bottom: 12px;">
-                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Til</div>
-                    <div style="font-weight: bold; color: #1a2332;">${receiptData.toAddress || 'Ikkje oppgitt'}</div>
+                    <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">${t.to}</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.toAddress || t.notProvided}</div>
                   </div>
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>

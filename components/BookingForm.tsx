@@ -822,7 +822,7 @@ export default function BookingForm() {
                       className="w-5 h-5 rounded border-zinc-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-zinc-900 bg-zinc-900"
                     />
                     <span className="text-sm font-medium text-zinc-300">
-                      {language === 'nn' ? 'Jeg vil ha kvittering på e-post' : language === 'en' ? 'I want to receive a receipt by email' : language === 'de' ? 'Ich möchte eine Quittung per E-Mail erhalten' : language === 'fr' ? 'Je veux recevoir un reçu par email' : 'Quiero recibir un recibo por correo electrónico'}
+                      {language === 'nn' ? 'Eg ynskjer kvittering for turen på e-post' : language === 'en' ? 'I want to receive a receipt by email' : language === 'de' ? 'Ich möchte eine Quittung per E-Mail erhalten' : language === 'fr' ? 'Je veux recevoir un reçu par email' : 'Quiero recibir un recibo por correo electrónico'}
                     </span>
                   </label>
 
