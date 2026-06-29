@@ -205,7 +205,7 @@ const htmlContent = `<!DOCTYPE html>
             <td style="text-align: right;">0,00</td>
           </tr>
           <tr>
-            <td>Kjøreleie</td>
+            <td>Kjørt</td>
             <td></td>
             <td>${receipt.km} km</td>
             <td>${receipt.km}</td>

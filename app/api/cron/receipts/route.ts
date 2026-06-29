@@ -267,7 +267,7 @@ export async function GET() {
                   </div>
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Fører ID</div>
-                    <div style="font-weight: bold; color: #1a2332;">1011</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.driverId}</div>
                   </div>
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Løyve nr</div>
@@ -278,11 +278,11 @@ export async function GET() {
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Rekv.nr</div>
-                    <div style="font-weight: bold; color: #1a2332;">-</div>
+                    <div style="font-weight: bold; color: #1a2332;">${receiptData.licenseNo || '-'}</div>
                   </div>
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Klient</div>
-                    <div style="font-weight: bold; color: #1a2332;">Privat</div>
+                    <div style="font-weight: bold; color: #1a2332;">${req.email || 'Privat'}</div>
                   </div>
                   <div>
                     <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Pristilbud</div>
@@ -319,7 +319,7 @@ export async function GET() {
               <!-- Kreditt -->
               <div style="padding: 20px 30px; border-bottom: 1px solid #e5e5e5; font-size: 13px;">
                 <div style="color: #666; font-size: 11px; text-transform: uppercase; margin-bottom: 4px;">Kreditt</div>
-                <div style="font-weight: bold; color: #1a2332;">KTO: 1011</div>
+                <div style="font-weight: bold; color: #1a2332;">KTO: ${receiptData.taxiAccountNo || '1011'}</div>
               </div>
 
               <!-- Specification Table -->
@@ -346,7 +346,7 @@ export async function GET() {
                       <td style="text-align: right;">0,00</td>
                     </tr>
                     <tr>
-                      <td>Kjøreleie</td>
+                      <td>Kjørt</td>
                       <td></td>
                       <td>${receiptData.km} km</td>
                       <td>${receiptData.km}</td>
